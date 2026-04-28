@@ -36,6 +36,33 @@ const sessions = new Map();
 const getSession = uid => sessions.get(uid) || {};
 const setSession = (uid, d) => sessions.set(uid, { ...getSession(uid), ...d });
 
+// ── CRRT Session: active เมื่อกด Rich Menu เท่านั้น ─────────────────────
+// หมดอายุใน 30 นาที หากไม่มีการใช้งาน
+const SESSION_TTL_MS = 30 * 60 * 1000;
+
+function isCrrtActive(uid) {
+  const s = getSession(uid);
+  if (!s.crrtActive) return false;
+  if (Date.now() - (s.crrtLastActive || 0) > SESSION_TTL_MS) {
+    // หมดอายุ → reset
+    setSession(uid, { crrtActive: false });
+    return false;
+  }
+  return true;
+}
+
+function activateCrrt(uid) {
+  setSession(uid, { crrtActive: true, crrtLastActive: Date.now() });
+}
+
+function touchCrrt(uid) {
+  setSession(uid, { crrtLastActive: Date.now() });
+}
+
+function deactivateCrrt(uid) {
+  setSession(uid, { crrtActive: false });
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 // DATABASE
 // ════════════════════════════════════════════════════════════════════════════
@@ -245,6 +272,11 @@ async function handleEvent(event) {
     "https://script.google.com/macros/s/AKfycbxzRLSgcMCW7QOruEsDTMoPwidZDx7szWEqZaL-2SKj1fFQHEmYk6EBMGa5b51kQ9g4Nw/exec";
   axios.post(OLD_WEBHOOK, { events: [event] }).catch(() => {});
 
+  // ── ตอบเฉพาะ Direct Message (1:1) เท่านั้น ─────────────────────────────
+  // ถ้าเป็นกลุ่ม (group) หรือห้องแชท (room) → ไม่ตอบ
+  const sourceType = event.source?.type;
+  if (sourceType === "group" || sourceType === "room") return;
+
   const uid = event.source?.userId;
 
   // ── Follow event → IGNORE (ไม่ส่งข้อความ) ───────────────────────────────
@@ -258,6 +290,8 @@ async function handleEvent(event) {
   // IMAGE → Gemini Vision
   // ════════════════════════════════════════════════════════════════════════
   if (message.type === "image") {
+    if (!isCrrtActive(uid)) return;
+    touchCrrt(uid);
     await lineClient.replyMessage(replyToken, {
       type: "text",
       text: "🔍 กำลังวิเคราะห์ภาพ Alarm ด้วย Gemini AI...\nรอสักครู่ครับ ⏳",
@@ -315,6 +349,17 @@ async function handleEvent(event) {
     });
     return;
   }
+
+  // ── Activate CRRT Session เมื่อกด Rich Menu (main_menu) ─────────────────
+  if (text === "main_menu") {
+    activateCrrt(uid);
+  }
+
+  // ── ถ้า CRRT ยังไม่ active → ไม่ตอบ (รอให้กด Rich Menu ก่อน) ───────────
+  if (!isCrrtActive(uid)) return;
+
+  // ── อัปเดต timestamp ทุกครั้งที่มีการใช้งาน ──────────────────────────────
+  touchCrrt(uid);
 
   // ── STEP 1: Sub_Flows trigger ─────────────────────────────────────────
   const subRows = getSubRows(text);
