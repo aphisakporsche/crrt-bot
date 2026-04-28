@@ -355,6 +355,17 @@ async function handleEvent(event) {
     activateCrrt(uid);
   }
 
+  // ── ออกจาก CRRT Bot ────────────────────────────────────────────────────
+  if (text === "exit_crrt" || text === "ออกจากระบบ") {
+    deactivateCrrt(uid);
+    await lineClient.replyMessage(replyToken, {
+      type: "text",
+      text: "👋 ออกจากระบบ CRRT Bot แล้วครับ
+หากต้องการใช้งานอีกครั้ง กด Rich Menu ได้เลยครับ",
+    });
+    return;
+  }
+
   // ── ถ้า CRRT ยังไม่ active → ไม่ตอบ (รอให้กด Rich Menu ก่อน) ───────────
   if (!isCrrtActive(uid)) return;
 
