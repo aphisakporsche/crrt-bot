@@ -200,35 +200,23 @@ async function analyzeImage(b64) {
   return res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "unknown";
 }
 
-async function analyzeImage(b64) {
-  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
-
-  const body = {
-    contents: [
+async function getImageB64(msgId) {
+  try {
+    const res = await axios.get(
+      `https://api-data.line.me/v2/bot/message/${msgId}/content`,
       {
-        role: "user",
-        parts: [
-          {
-            text: IMG_PROMPT
-          },
-          {
-            inlineData: {
-              mimeType: "image/jpeg",
-              data: b64
-            }
-          }
-        ]
+        headers: {
+          Authorization: `Bearer ${LINE_CFG.channelAccessToken}`
+        },
+        responseType: "arraybuffer"
       }
-    ]
-  };
+    );
 
-  const res = await axios.post(url, body, {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-
-  return res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "unknown";
+    return Buffer.from(res.data).toString("base64");
+  } catch (err) {
+    console.error("❌ GET IMAGE FAIL:", err.response?.status, err.message);
+    throw err;
+  }
 }
 
 function extractAlarmName(text) {
