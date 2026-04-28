@@ -242,17 +242,67 @@ async function handleEvent(event) {
   const { replyToken, message } = event;
 
   // ── IMAGE ─────────────────────────────────────────────────────────────────
-  if (message.type === "image") {
-    // 2. ตอบรูปเฉพาะเมื่อ session active
-    if (!isActive(uid)) return;
-    touch(uid);
+ if (message.type === "image") {
+  if (!isActive(uid)) return;
+  touch(uid);
 
-    const b64 = await getImageB64(message.id); // 🔥 ดึงก่อนเลย
+  // 🔥 1) ดึงรูปทันที
+  let b64;
+  try {
+    b64 = await getImageB64(message.id);
+  } catch (e) {
+    console.error("Image error:", e.message);
+    await lineClient.replyMessage(replyToken, {
+      type: "text",
+      text: "❌ ดึงรูปไม่สำเร็จ กรุณาส่งใหม่ครับ"
+    });
+    return;
+  }
 
-await lineClient.replyMessage(replyToken, {
-  type: "text", text: "🔍 กำลังวิเคราะห์ภาพ Alarm ด้วย Gemini AI...\nรอสักครู่ครับ ⏳",
-});
+  // 🔥 2) ตอบทันที (ไม่รอ Gemini)
+  await lineClient.replyMessage(replyToken, {
+    type: "text",
+    text: "🔍 กำลังวิเคราะห์ภาพ Alarm ด้วย Gemini AI...\nรอสักครู่ครับ ⏳",
+  });
+
+  // 🔥 3) ให้ Gemini ทำงานต่อแบบไม่กระทบ timing
+  (async () => {
+    try {
       const result = await analyzeImage(b64);
+      const name   = extractAlarmName(result);
+      const clean  = result.replace(/^ALARM_NAME:.+\n*/i, "").trim();
+
+      await lineClient.pushMessage(uid, { type: "text", text: clean });
+
+      const alarmRow = name && name !== "unknown" ? findAlarm(name) : null;
+      if (alarmRow) {
+        const trigger = TITLE_TO_TRIGGER[alarmRow.alarm_title];
+        const sub     = trigger ? getSubRows(trigger) : [];
+        const qr      = buildQR(sub);
+        const msg     = {
+          type: "text",
+          text: `📋 พบ Protocol: ${alarmRow.alarm_title}\nกดปุ่มด้านล่างเพื่อดำเนินการต่อ`
+        };
+        if (qr) msg.quickReply = qr;
+        await lineClient.pushMessage(uid, msg);
+      } else {
+        const fb = buildQR(getSubRows("fallback"));
+        const msg = { type: "text", text: "📞 หากต้องการความช่วยเหลือเพิ่มเติม:" };
+        if (fb) msg.quickReply = fb;
+        await lineClient.pushMessage(uid, msg);
+      }
+
+    } catch (e) {
+      console.error("Gemini error:", e.message);
+      await lineClient.pushMessage(uid, {
+        type: "text",
+        text: "❌ วิเคราะห์รูปไม่ได้ กรุณาพิมพ์ชื่อ Alarm ครับ"
+      });
+    }
+  })();
+
+  return;
+}
       const name   = extractAlarmName(result);
       const clean  = result.replace(/^ALARM_NAME:.+\n*/i, "").trim();
       await lineClient.pushMessage(uid, { type: "text", text: clean });
