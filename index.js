@@ -261,6 +261,10 @@ async function handleEvent(event) {
     activate(uid);
   }
 
+  // ── ซ่อนข้อความ trigger keys ไม่ให้แสดงใน chat ──────────────────────────
+  // (LINE message action จะแสดงข้อความ trigger ใน chat เสมอ
+  //  วิธีลด confusion: ใช้ label ที่อ่านง่าย และ bot ตอบทับทันที)
+
   // ── 3. ปุ่มออกจาก CRRT Bot ───────────────────────────────────────────────
   if (text === "exit_crrt") {
     deactivate(uid);
