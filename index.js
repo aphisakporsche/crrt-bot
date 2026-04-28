@@ -247,11 +247,11 @@ async function handleEvent(event) {
     if (!isActive(uid)) return;
     touch(uid);
 
-    await lineClient.replyMessage(replyToken, {
-      type: "text", text: "🔍 กำลังวิเคราะห์ภาพ Alarm ด้วย Gemini AI...\nรอสักครู่ครับ ⏳",
-    });
-    try {
-      const b64    = await getImageB64(message.id);
+    const b64 = await getImageB64(message.id); // 🔥 ดึงก่อนเลย
+
+await lineClient.replyMessage(replyToken, {
+  type: "text", text: "🔍 กำลังวิเคราะห์ภาพ Alarm ด้วย Gemini AI...\nรอสักครู่ครับ ⏳",
+});
       const result = await analyzeImage(b64);
       const name   = extractAlarmName(result);
       const clean  = result.replace(/^ALARM_NAME:.+\n*/i, "").trim();
