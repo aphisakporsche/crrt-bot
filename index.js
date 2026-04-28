@@ -180,11 +180,35 @@ async function analyzeImage(b64) {
   return res.data.candidates[0].content.parts[0].text;
 }
 
-async function getImageB64(msgId) {
-  const stream = await lineClient.getMessageContent(msgId);
-  const chunks = [];
-  for await (const chunk of stream) chunks.push(chunk);
-  return Buffer.concat(chunks).toString("base64");
+async function analyzeImage(b64) {
+  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+
+  const body = {
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: IMG_PROMPT
+          },
+          {
+            inlineData: {
+              mimeType: "image/jpeg",
+              data: b64
+            }
+          }
+        ]
+      }
+    ]
+  };
+
+  const res = await axios.post(url, body, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  return res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "unknown";
 }
 
 function extractAlarmName(text) {
