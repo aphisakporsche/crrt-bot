@@ -135,8 +135,24 @@ function alarmMessages(alarm, subRows) {
     msgs.push({ type: "image", originalContentUrl: img, previewImageUrl: img });
   }
 
-  // ปุ่ม quick reply จาก Sub_Flows ของ alarm นี้
-  const qr = buildQR(subRows);
+  // ── สร้างปุ่มจาก btn_1 ~ btn_6 ใน Main_Database (flow ตาม sheet) ──
+  const btnItems = [];
+  for (let n = 1; n <= 6; n++) {
+    const lbl = (alarm[`btn_${n}_label`] || "").trim();
+    const act = (alarm[`btn_${n}_action`] || "").trim();
+    if (!lbl || lbl === "nan" || !act || act === "nan") continue;
+    btnItems.push({
+      type: "action",
+      action: act.startsWith("http")
+        ? { type: "uri",     label: lbl.slice(0,20), uri: act }
+        : { type: "message", label: lbl.slice(0,20), text: act },
+    });
+  }
+
+  // ถ้าไม่มีปุ่มจาก Main → fallback ใช้ subRows
+  const qr = btnItems.length
+    ? { items: btnItems.slice(0, 13) }
+    : buildQR(subRows);
   if (qr) msgs[msgs.length - 1].quickReply = qr;
   return msgs;
 }
