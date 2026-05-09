@@ -89,63 +89,116 @@ const NAV = new Set([
   "crrt_knowledge","crrt_mode_info","crrt_pressure_info",
 ]);
 
+// สีและ config แต่ละ alarm
 const ACFG = {
-  "cardiac_arrest":    { color:"#B71C1C", light:"#FFF5F5", emoji:"❤️",  level:"วิกฤต",    tag:"🔴 CRITICAL" },
-  "blood_leak":        { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  level:"วิกฤต",    tag:"🔴 CRITICAL" },
-  "disconnect":        { color:"#880E4F", light:"#FFF0F5", emoji:"🔌",  level:"วิกฤต",    tag:"🔴 CRITICAL" },
-  "air_detected":      { color:"#1565C0", light:"#F0F7FF", emoji:"💨",  level:"วิกฤต",    tag:"🔴 CRITICAL" },
-  "system_error":      { color:"#4527A0", light:"#F5F0FF", emoji:"⚙️",  level:"ระบบ",     tag:"🔴 CRITICAL" },
-  "tmp_high":          { color:"#E65100", light:"#FFF8F0", emoji:"📊",  level:"เร่งด่วน", tag:"🟡 WARNING"  },
-  "filter_clotted":    { color:"#BF360C", light:"#FFF5F0", emoji:"🔧",  level:"เร่งด่วน", tag:"🟡 WARNING"  },
-  "access_neg":        { color:"#1A237E", light:"#F0F2FF", emoji:"📉",  level:"แจ้งเตือน",tag:"🟡 WARNING"  },
-  "return_pos":        { color:"#0D47A1", light:"#F0F6FF", emoji:"📈",  level:"แจ้งเตือน",tag:"🟡 WARNING"  },
-  "access_pos":        { color:"#006064", light:"#F0FFFE", emoji:"📈",  level:"แจ้งเตือน",tag:"🟡 WARNING"  },
-  "hypotension":       { color:"#B71C1C", light:"#FFF5F5", emoji:"📉",  level:"เร่งด่วน", tag:"🔴 CRITICAL" },
-  "battery_low":       { color:"#E65100", light:"#FFF8F0", emoji:"⚡",  level:"เร่งด่วน", tag:"🟡 WARNING"  },
-  "comm_loss":         { color:"#37474F", light:"#F5F7F8", emoji:"📡",  level:"ระบบ",     tag:"🟡 WARNING"  },
-  "bag_empty":         { color:"#00695C", light:"#F0FFFE", emoji:"💧",  level:"แจ้งเตือน",tag:"🟢 ADVISORY" },
-  "flow_error":        { color:"#2E7D32", light:"#F0FFF2", emoji:"⚖️",  level:"แจ้งเตือน",tag:"🟢 ADVISORY" },
-  "syringe_empty":     { color:"#6A1B9A", light:"#F8F0FF", emoji:"💉",  level:"แจ้งเตือน",tag:"🟢 ADVISORY" },
-  "scale_open":        { color:"#F57F17", light:"#FFFDF0", emoji:"⚖️",  level:"ระวัง",    tag:"🟢 ADVISORY" },
-  "check_access":      { color:"#827717", light:"#FDFFF0", emoji:"🔍",  level:"ระวัง",    tag:"🟢 ADVISORY" },
-  "line_clamped":      { color:"#1B5E20", light:"#F0FFF4", emoji:"🟢",  level:"แจ้งเตือน",tag:"🟢 ADVISORY" },
-  "effluent_overload": { color:"#E65100", light:"#FFF8F0", emoji:"⚖️",  level:"เร่งด่วน", tag:"🟡 WARNING"  },
-  "return_blood":      { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  level:"เร่งด่วน", tag:"🟢 ADVISORY" },
-  "nss_recirculation": { color:"#0277BD", light:"#F0F8FF", emoji:"💧",  level:"แจ้งเตือน",tag:"🟢 ADVISORY" },
-  "self_test_failed":  { color:"#4527A0", light:"#F5F0FF", emoji:"⚙️",  level:"ระบบ",     tag:"🟡 WARNING"  },
+  "cardiac_arrest":    { color:"#B71C1C", light:"#FFF5F5", emoji:"❤️",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#B71C1C" },
+  "blood_leak":        { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#C62828" },
+  "disconnect":        { color:"#880E4F", light:"#FFF0F5", emoji:"🔌",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#880E4F" },
+  "air_detected":      { color:"#1565C0", light:"#EFF7FF", emoji:"💨",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#1565C0" },
+  "system_error":      { color:"#4527A0", light:"#F3F0FF", emoji:"⚙️",  tag:"ระบบ",     level:"🔴 CRITICAL", sectionColor:"#4527A0" },
+  "tmp_high":          { color:"#E65100", light:"#FFF8F0", emoji:"📊",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#E65100" },
+  "filter_clotted":    { color:"#BF360C", light:"#FFF3EE", emoji:"🔧",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#BF360C" },
+  "access_neg":        { color:"#1A237E", light:"#EEF0FF", emoji:"📉",  tag:"เตือน",    level:"🟡 WARNING",  sectionColor:"#1A237E" },
+  "return_pos":        { color:"#0D47A1", light:"#EEF5FF", emoji:"📈",  tag:"เตือน",    level:"🟡 WARNING",  sectionColor:"#0D47A1" },
+  "access_pos":        { color:"#006064", light:"#EEFFFE", emoji:"📈",  tag:"เตือน",    level:"🟡 WARNING",  sectionColor:"#006064" },
+  "hypotension":       { color:"#B71C1C", light:"#FFF5F5", emoji:"📉",  tag:"เร่งด่วน", level:"🔴 CRITICAL", sectionColor:"#B71C1C" },
+  "battery_low":       { color:"#E65100", light:"#FFF8F0", emoji:"⚡",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#E65100" },
+  "comm_loss":         { color:"#37474F", light:"#F4F6F7", emoji:"📡",  tag:"ระบบ",     level:"🟡 WARNING",  sectionColor:"#37474F" },
+  "bag_empty":         { color:"#00695C", light:"#EEFFFE", emoji:"💧",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#00695C" },
+  "flow_error":        { color:"#2E7D32", light:"#EEFFF2", emoji:"⚖️",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#2E7D32" },
+  "syringe_empty":     { color:"#6A1B9A", light:"#F6EEFF", emoji:"💉",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#6A1B9A" },
+  "scale_open":        { color:"#F57F17", light:"#FFFCEE", emoji:"⚖️",  tag:"ระวัง",    level:"🟢 ADVISORY", sectionColor:"#F57F17" },
+  "check_access":      { color:"#827717", light:"#FDFFF0", emoji:"🔍",  tag:"ระวัง",    level:"🟢 ADVISORY", sectionColor:"#827717" },
+  "line_clamped":      { color:"#1B5E20", light:"#EEFFF2", emoji:"🟢",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#1B5E20" },
+  "effluent_overload": { color:"#E65100", light:"#FFF8F0", emoji:"⚖️",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#E65100" },
+  "return_blood":      { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  tag:"เร่งด่วน", level:"🟢 ADVISORY", sectionColor:"#C62828" },
+  "nss_recirculation": { color:"#0277BD", light:"#EEF7FF", emoji:"💧",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#0277BD" },
+  "self_test_failed":  { color:"#4527A0", light:"#F3F0FF", emoji:"⚙️",  tag:"ระบบ",     level:"🟡 WARNING",  sectionColor:"#4527A0" },
 };
-function acfg(t) { return ACFG[t] || { color:"#1A237E", light:"#F0F2FF", emoji:"🚨", level:"Alarm", tag:"⚪ ALARM" }; }
+function acfg(t) { return ACFG[t] || { color:"#1A237E", light:"#EEF0FF", emoji:"🚨", tag:"Alarm", level:"⚪ ALARM", sectionColor:"#1A237E" }; }
 
 function driveUrl(u) {
   const m = u.match(/\/d\/([^/]+)/);
   return m ? `https://drive.google.com/uc?export=view&id=${m[1]}` : u;
 }
 
+// parse instruction เป็น sections แบบฉลาด
+function parseInstruction(text) {
+  if (!text) return [];
+  const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+  const sections = [];
+  let cur = null;
+
+  // keywords หัว section
+  const headKw = /^(เป้าหมาย|สาเหตุ|False Alarm|ขั้นตอน|จัดการ|ข้อควร|ระวัง|หมายเหตุ|วิธี|การ|ขั้น|step|note)/i;
+
+  for (const line of lines) {
+    const isNum  = /^[\d]+[.)]\s/.test(line);
+    const isBullet = /^[•\-]\s/.test(line);
+    const isHead = headKw.test(line) && !isNum && !isBullet && line.length < 60;
+
+    if (isHead) {
+      cur = { head: line, items: [] };
+      sections.push(cur);
+    } else if (isNum || isBullet) {
+      if (!cur) { cur = { head: null, items: [] }; sections.push(cur); }
+      cur.items.push(line.replace(/^[\d•\-.)]+\s*/, "").trim());
+    } else {
+      // ข้อความธรรมดา — ถ้าไม่มี section ให้ใส่ใน section ว่าง
+      if (!cur) { cur = { head: null, items: [] }; sections.push(cur); }
+      cur.items.push(line);
+    }
+  }
+  return sections;
+}
+
+// section block สีสวย
+function sectionBlock(head, items, sectionColor, bgColor) {
+  const blocks = [];
+
+  if (head) {
+    blocks.push({
+      type: "box", layout: "horizontal", margin: "md", spacing: "sm",
+      backgroundColor: sectionColor + "22",
+      paddingAll: "8px", cornerRadius: "8px",
+      contents: [
+        { type: "box", layout: "vertical", width: "4px", backgroundColor: sectionColor, cornerRadius: "4px", contents: [] },
+        { type: "text", text: head, weight: "bold", size: "sm", color: sectionColor, wrap: true, flex: 1, margin: "sm" }
+      ]
+    });
+  }
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    blocks.push({
+      type: "box", layout: "horizontal", margin: "xs", spacing: "sm",
+      paddingStart: head ? "8px" : "0px",
+      contents: [
+        {
+          type: "box", layout: "vertical", flex: 0, justifyContent: "flex-start",
+          paddingTop: "2px",
+          contents: [{
+            type: "box", layout: "vertical", width: "20px", height: "20px",
+            backgroundColor: sectionColor, cornerRadius: "10px",
+            justifyContent: "center", alignItems: "center",
+            contents: [{ type: "text", text: String(i + 1), color: "#FFFFFF", size: "xxs", weight: "bold", align: "center" }]
+          }]
+        },
+        { type: "text", text: item, size: "sm", color: "#333333", wrap: true, flex: 1 }
+      ]
+    });
+  }
+  return blocks;
+}
+
 // ── ALARM FLEX ───────────────────────────────────────────────────────────────
 function buildAlarmFlex(alarm, subRows, trigger) {
   const c = acfg(trigger);
-  const lines = (alarm.instruction || "").split("\n").filter(l => l.trim());
-
-  // จัด section
-  const sections = [];
-  let cur = null;
-  for (const line of lines) {
-    const t = line.trim();
-    if (!t) continue;
-    const isHead = t.match(/^(สาเหตุ|ขั้นตอน|ระวัง|เป้าหมาย|False|วิธี|จัด|ขั้น)/i) ||
-                  (t.length < 45 && !t.match(/^[•\-\d]/) && !cur);
-    if (isHead) {
-      cur = { head: t, items: [] };
-      sections.push(cur);
-    } else {
-      if (!cur) { cur = { head: null, items: [] }; sections.push(cur); }
-      cur.items.push(t);
-    }
-  }
+  const sections = parseInstruction(alarm.instruction);
 
   const body = [];
 
-  // Badge row
+  // Badge
   body.push({
     type: "box", layout: "horizontal", spacing: "sm",
     contents: [
@@ -153,52 +206,50 @@ function buildAlarmFlex(alarm, subRows, trigger) {
         type: "box", layout: "baseline", flex: 0,
         paddingAll: "4px", paddingStart: "10px", paddingEnd: "10px",
         backgroundColor: c.color, cornerRadius: "20px",
-        contents: [{ type: "text", text: c.tag + " • ALARM", color: "#FFFFFF", size: "xxs", weight: "bold", adjustMode: "shrink-to-fit" }]
+        contents: [{ type: "text", text: c.level + " • ALARM", color: "#FFFFFF", size: "xxs", weight: "bold" }]
       },
       { type: "filler" },
-      { type: "text", text: c.emoji + " " + c.level, color: c.color, size: "xs", weight: "bold", align: "end", gravity: "center", flex: 0 }
+      { type: "text", text: c.tag, color: c.color, size: "xs", weight: "bold", flex: 0 }
     ]
   });
 
   // Title
-  body.push({ type: "text", text: alarm.alarm_title || "Alarm", weight: "bold", size: "xl", color: c.color, wrap: true, margin: "sm" });
+  body.push({
+    type: "text", text: alarm.alarm_title || "Alarm",
+    weight: "bold", size: "xl", color: c.color, wrap: true, margin: "sm"
+  });
   body.push({ type: "separator", margin: "sm", color: c.color });
 
-  // Sections
+  // Sections — สีสวยแยกแต่ละ part
   if (sections.length > 0) {
-    for (const sec of sections) {
-      if (sec.head) {
-        body.push({
-          type: "box", layout: "horizontal", margin: "md", spacing: "sm",
-          contents: [
-            { type: "box", layout: "vertical", width: "4px", backgroundColor: c.color, cornerRadius: "4px", contents: [] },
-            { type: "text", text: sec.head, weight: "bold", size: "sm", color: c.color, wrap: true, flex: 1 }
-          ]
-        });
-      }
-      for (const item of sec.items) {
-        const isNum = item.match(/^[\d]+[.)]/);
-        const clean = item.replace(/^[•\-\d.)\s]+/, "").trim() || item;
-        body.push({
-          type: "box", layout: "horizontal", margin: "xs", spacing: "sm",
-          paddingStart: sec.head ? "12px" : "0px",
-          contents: [
-            { type: "text", text: isNum ? "›" : "·", color: c.color, size: "sm", flex: 0 },
-            { type: "text", text: clean, size: "sm", color: "#333333", wrap: true, flex: 1 }
-          ]
-        });
-      }
+    // กำหนดสีแต่ละ section ตาม pattern
+    const SECTION_COLORS = [
+      { color: c.color,   bg: c.light },   // section 1 — สีหลัก
+      { color: "#E65100", bg: "#FFF8F0" }, // section 2 — ส้ม (สาเหตุ)
+      { color: "#1565C0", bg: "#EFF7FF" }, // section 3 — น้ำเงิน (ขั้นตอน)
+      { color: "#B71C1C", bg: "#FFF5F5" }, // section 4 — แดง (ระวัง)
+      { color: "#2E7D32", bg: "#EEFFF2" }, // section 5 — เขียว
+    ];
+
+    for (let si = 0; si < sections.length; si++) {
+      const sec = sections[si];
+      const sc = SECTION_COLORS[si % SECTION_COLORS.length];
+      const blocks = sectionBlock(sec.head, sec.items, sc.color, sc.bg);
+      blocks.forEach(b => body.push(b));
     }
   } else {
-    for (const l of lines) {
+    // fallback — แสดงข้อความตรง
+    const raw = (alarm.instruction || "").split("\n").filter(l => l.trim());
+    for (const l of raw) {
       body.push({ type: "text", text: l.trim(), size: "sm", color: "#333333", wrap: true, margin: "xs" });
     }
   }
 
+  // Warning box
   body.push({ type: "separator", margin: "lg", color: "#EEEEEE" });
   body.push({
     type: "box", layout: "horizontal", margin: "sm",
-    backgroundColor: "#FFF8E1", paddingAll: "8px", cornerRadius: "8px", spacing: "xs",
+    backgroundColor: "#FFF8E1", paddingAll: "8px", cornerRadius: "8px", spacing: "sm",
     contents: [
       { type: "text", text: "⚠️", size: "sm", flex: 0 },
       { type: "text", text: "ใช้วิจารณญาณทางคลินิกประกอบเสมอ", size: "xxs", color: "#795548", wrap: true, flex: 1 }
@@ -218,7 +269,7 @@ function buildAlarmFlex(alarm, subRows, trigger) {
         : { type: "message", label: lbl.slice(0, 20), text: act },
       style: btns.length === 0 ? "primary" : "secondary",
       color: btns.length === 0 ? c.color : undefined,
-      height: "sm", margin: "xs", adjustMode: "shrink-to-fit"
+      height: "sm", margin: "xs"
     });
   }
   if (btns.length === 0) {
@@ -230,7 +281,7 @@ function buildAlarmFlex(alarm, subRows, trigger) {
           : { type: "message", label: r.next_step_label.slice(0, 20), text: r.next_step_action },
         style: i === 0 ? "primary" : "secondary",
         color: i === 0 ? c.color : undefined,
-        height: "sm", margin: "xs", adjustMode: "shrink-to-fit"
+        height: "sm", margin: "xs"
       });
     });
   }
@@ -238,104 +289,93 @@ function buildAlarmFlex(alarm, subRows, trigger) {
     btns.push({ type: "button", action: { type: "message", label: "🏠 Main Menu", text: "main_menu" }, style: "secondary", height: "sm", margin: "xs" });
   }
 
-  const flex = {
-    type: "bubble",
-    hero: {
-      type: "box", layout: "vertical",
-      backgroundColor: c.color, paddingAll: "16px",
-      contents: [
-        {
-          type: "box", layout: "horizontal", spacing: "md",
-          contents: [
-            {
-              type: "box", layout: "vertical", flex: 0, justifyContent: "center",
-              contents: [{
-                type: "image", url: LOGO_URL, size: "sm",
-                aspectMode: "fit", aspectRatio: "1:1"
-              }]
-            },
-            {
-              type: "box", layout: "vertical", flex: 1, justifyContent: "center",
-              contents: [
-                { type: "text", text: "RA5IC · RAMATHIBODI", color: "#FFFFFF", size: "xxs" },
-                { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "md", weight: "bold" },
-                { type: "text", text: c.emoji + "  " + (alarm.alarm_title || ""), color: "#FFFFFF", size: "sm", wrap: true, margin: "xs", adjustMode: "shrink-to-fit" }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    body: {
-      type: "box", layout: "vertical", paddingAll: "14px",
-      backgroundColor: c.light, contents: body
-    },
-    footer: {
-      type: "box", layout: "vertical", paddingAll: "10px", spacing: "xs",
-      backgroundColor: "#FAFAFA", contents: btns
+  return {
+    type: "flex", altText: alarm.alarm_title || "CRRT Alarm",
+    contents: {
+      type: "bubble",
+      // Hero = header ที่มีโลโก้ + emoji ใหญ่
+      hero: {
+        type: "box", layout: "horizontal",
+        backgroundColor: c.color, paddingAll: "14px", spacing: "md",
+        contents: [
+          {
+            type: "image", url: LOGO_URL, size: "xxs", flex: 0,
+            aspectMode: "fit", aspectRatio: "1:1"
+          },
+          {
+            type: "box", layout: "vertical", flex: 1, justifyContent: "center",
+            contents: [
+              { type: "text", text: "RA5IC · RAMATHIBODI", color: "#FFFFFF", size: "xxs" },
+              { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "sm", weight: "bold" }
+            ]
+          },
+          {
+            type: "box", layout: "vertical", flex: 0, justifyContent: "center",
+            contents: [{ type: "text", text: c.emoji, size: "3xl", align: "center" }]
+          }
+        ]
+      },
+      body: {
+        type: "box", layout: "vertical", paddingAll: "14px",
+        backgroundColor: c.light, contents: body
+      },
+      footer: {
+        type: "box", layout: "vertical", paddingAll: "10px", spacing: "xs",
+        backgroundColor: "#FAFAFA", contents: btns
+      }
     }
   };
-
-  // รูปประกอบ alarm ถ้ามี
-  if (alarm.image_url?.startsWith("http")) {
-    flex.hero.contents.push({
-      type: "image", url: driveUrl(alarm.image_url),
-      size: "full", aspectRatio: "20:9", aspectMode: "cover", margin: "md"
-    });
-  }
-
-  return { type: "flex", altText: alarm.alarm_title || "CRRT Alarm", contents: flex };
 }
 
-// ── SUB FLOW FLEX ────────────────────────────────────────────────────────────
+// ── SUB FLOW FLEX ─────────────────────────────────────────────────────────────
 function buildSubFlex(subRows, trigger) {
   const first = subRows.find(r => r.follow_up_msg && r.follow_up_msg !== "nan");
   const msgText = first?.follow_up_msg || "เลือกตัวเลือกด้านล่างครับ";
 
   const MAP = {
-    "show_hotline":        { color: "#1B5E20", emoji: "📞", title: "Hotline CRRT",      bg: "#F0FFF4" },
-    "show_non_citrate":    { color: "#004D40", emoji: "🔵", title: "Preset No Citrate", bg: "#F0FFFE" },
-    "show_with_citrate":   { color: "#E65100", emoji: "🟠", title: "Preset Citrate",    bg: "#FFF8F0" },
-    "crrt_knowledge":      { color: "#1565C0", emoji: "📚", title: "CRRT Knowledge",    bg: "#F0F7FF" },
-    "crrt_mode_info":      { color: "#0D47A1", emoji: "🔄", title: "CRRT Mode",         bg: "#F0F6FF" },
-    "crrt_pressure_info":  { color: "#880E4F", emoji: "📊", title: "ค่า Pressure",      bg: "#FFF0F5" },
-    "how_to_return":       { color: "#C62828", emoji: "🩸", title: "การคืนเลือด",       bg: "#FFF5F5" },
-    "how_to_flush_dlc":    { color: "#00695C", emoji: "💉", title: "หล่อเส้น DLC",      bg: "#F0FFFE" },
-    "show_cleanup":        { color: "#2E7D32", emoji: "✅", title: "เก็บเครื่อง",       bg: "#F0FFF2" },
-    "alarm_menu":          { color: "#B71C1C", emoji: "🚨", title: "เมนู Alarm",        bg: "#FFF5F5" },
-    "alarm_menu_2":        { color: "#B71C1C", emoji: "🚨", title: "เมนู Alarm (2/3)",  bg: "#FFF5F5" },
-    "alarm_menu_3":        { color: "#B71C1C", emoji: "🚨", title: "เมนู Alarm (3/3)",  bg: "#FFF5F5" },
-    "update_status":       { color: "#4527A0", emoji: "📋", title: "สถานะเครื่อง",     bg: "#F5F0FF" },
-    "how_to_closeloop":    { color: "#0277BD", emoji: "💧", title: "NSS Recirculation", bg: "#F0F8FF" },
-    "fallback":            { color: "#546E7A", emoji: "❓", title: "ไม่พบข้อมูล",       bg: "#F5F7F8" },
-    "restart_crrt_flow":   { color: "#1565C0", emoji: "▶️", title: "Start CRRT",        bg: "#F0F7FF" },
-    "end_crrt_flow":       { color: "#C62828", emoji: "⏹️", title: "End CRRT",          bg: "#FFF5F5" },
-    "ask_doctor_plan":     { color: "#1B5E20", emoji: "👨‍⚕️", title: "ปรึกษาแพทย์",     bg: "#F0FFF4" },
+    "show_hotline":        { color:"#1B5E20", emoji:"📞", title:"Hotline CRRT",       bg:"#EEFFF4" },
+    "show_non_citrate":    { color:"#004D40", emoji:"🔵", title:"Preset No Citrate",  bg:"#EEFFFE" },
+    "show_with_citrate":   { color:"#E65100", emoji:"🟠", title:"Preset Citrate",     bg:"#FFF8F0" },
+    "crrt_knowledge":      { color:"#1565C0", emoji:"📚", title:"CRRT Knowledge",     bg:"#EFF7FF" },
+    "crrt_mode_info":      { color:"#0D47A1", emoji:"🔄", title:"CRRT Mode",          bg:"#EEF5FF" },
+    "crrt_pressure_info":  { color:"#880E4F", emoji:"📊", title:"ค่า Pressure",       bg:"#FFF0F5" },
+    "how_to_return":       { color:"#C62828", emoji:"🩸", title:"การคืนเลือด",        bg:"#FFF5F5" },
+    "how_to_flush_dlc":    { color:"#00695C", emoji:"💉", title:"หล่อเส้น DLC",       bg:"#EEFFFE" },
+    "show_cleanup":        { color:"#2E7D32", emoji:"✅", title:"เก็บเครื่อง",        bg:"#EEFFF2" },
+    "alarm_menu":          { color:"#B71C1C", emoji:"🚨", title:"เมนู Alarm",         bg:"#FFF5F5" },
+    "alarm_menu_2":        { color:"#B71C1C", emoji:"🚨", title:"เมนู Alarm 2/3",     bg:"#FFF5F5" },
+    "alarm_menu_3":        { color:"#B71C1C", emoji:"🚨", title:"เมนู Alarm 3/3",     bg:"#FFF5F5" },
+    "update_status":       { color:"#4527A0", emoji:"📋", title:"สถานะเครื่อง",      bg:"#F3F0FF" },
+    "how_to_closeloop":    { color:"#0277BD", emoji:"💧", title:"NSS Recirculation",  bg:"#EEF7FF" },
+    "fallback":            { color:"#546E7A", emoji:"❓", title:"ไม่พบข้อมูล",        bg:"#F4F6F7" },
+    "restart_crrt_flow":   { color:"#1565C0", emoji:"▶️", title:"Start CRRT",         bg:"#EFF7FF" },
+    "end_crrt_flow":       { color:"#C62828", emoji:"⏹️", title:"End CRRT",           bg:"#FFF5F5" },
+    "ask_doctor_plan":     { color:"#1B5E20", emoji:"👨", title:"ปรึกษาแพทย์",       bg:"#EEFFF4" },
+    "how_to_swap_dlc":     { color:"#00695C", emoji:"🔄", title:"เปลี่ยน DLC",        bg:"#EEFFFE" },
   };
-  const m = MAP[trigger] || { color: "#1A237E", emoji: "📋", title: "CRRT Bot", bg: "#F0F2FF" };
+  const m = MAP[trigger] || { color:"#1A237E", emoji:"📋", title:"CRRT Bot", bg:"#EEF0FF" };
 
-  const lines = msgText.split("\n").filter(l => l.trim());
+  const sections = parseInstruction(msgText);
   const body = [];
-  let firstDone = false;
 
-  for (const line of lines) {
-    const t = line.trim();
-    if (!t) continue;
-    const isHead = !firstDone && t.length < 50 && !t.match(/^[•\-\d]/);
-    if (isHead) {
-      body.push({ type: "text", text: t, weight: "bold", size: "md", color: m.color, wrap: true });
-      firstDone = true;
-    } else {
-      const isNum = t.match(/^[\d]+[.)]/);
-      const isBullet = t.match(/^[•\-]/);
-      body.push({
-        type: "box", layout: "horizontal", margin: "xs", spacing: "sm",
-        contents: [
-          { type: "text", text: isNum ? "›" : isBullet ? "·" : "›", color: m.color, size: "sm", flex: 0 },
-          { type: "text", text: t.replace(/^[•\-\d.)\s]+/, "").trim() || t, size: "sm", color: "#333333", wrap: true, flex: 1 }
-        ]
-      });
-      firstDone = true;
+  if (sections.length > 0) {
+    const SCOLS = [
+      { color: m.color },
+      { color: "#E65100" },
+      { color: "#1565C0" },
+      { color: "#B71C1C" },
+      { color: "#2E7D32" },
+    ];
+    for (let si = 0; si < sections.length; si++) {
+      const sec = sections[si];
+      const sc = SCOLS[si % SCOLS.length];
+      const blocks = sectionBlock(sec.head, sec.items, sc.color, m.bg);
+      blocks.forEach(b => body.push(b));
+    }
+  } else {
+    // fallback plain text
+    for (const line of msgText.split("\n").filter(l => l.trim())) {
+      body.push({ type: "text", text: line.trim(), size: "sm", color: "#333333", wrap: true, margin: "xs" });
     }
   }
 
@@ -346,7 +386,7 @@ function buildSubFlex(subRows, trigger) {
       : { type: "message", label: r.next_step_label.slice(0, 20), text: r.next_step_action },
     style: i === 0 ? "primary" : "secondary",
     color: i === 0 ? m.color : undefined,
-    height: "sm", margin: "xs", adjustMode: "shrink-to-fit"
+    height: "sm", margin: "xs"
   }));
 
   if (!["main_menu", "exit_crrt"].includes(trigger) && !btns.some(b => b.action?.text === "main_menu")) {
@@ -358,18 +398,15 @@ function buildSubFlex(subRows, trigger) {
     contents: {
       type: "bubble",
       hero: {
-        type: "box", layout: "horizontal", spacing: "md",
-        backgroundColor: m.color, paddingAll: "12px",
+        type: "box", layout: "horizontal",
+        backgroundColor: m.color, paddingAll: "12px", spacing: "md",
         contents: [
-          {
-            type: "image", url: LOGO_URL, size: "xxs", flex: 0,
-            aspectMode: "fit", aspectRatio: "1:1"
-          },
+          { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "1:1" },
           {
             type: "box", layout: "vertical", flex: 1, justifyContent: "center",
             contents: [
               { type: "text", text: "RA5IC · RAMATHIBODI", color: "#FFFFFF", size: "xxs" },
-              { type: "text", text: m.emoji + " " + m.title, color: "#FFFFFF", size: "sm", weight: "bold", adjustMode: "shrink-to-fit" }
+              { type: "text", text: m.emoji + " " + m.title, color: "#FFFFFF", size: "sm", weight: "bold", wrap: true }
             ]
           }
         ]
@@ -390,7 +427,7 @@ function buildSubFlex(subRows, trigger) {
 // ── ALARM MENU 3 หน้า ────────────────────────────────────────────────────────
 const ALARM_PAGES = [
   {
-    title: "🚨 เมนู Alarm (1/3)", subtitle: "วิกฤต / เร่งด่วน", color: "#B71C1C",
+    title: "🚨 เมนู Alarm (1/3)", sub: "วิกฤต / เร่งด่วน", color: "#B71C1C",
     items: [
       { label: "❤️ Cardiac Arrest", text: "cardiac_arrest", color: "#B71C1C" },
       { label: "🩸 Blood Leak", text: "blood_leak", color: "#C62828" },
@@ -404,7 +441,7 @@ const ALARM_PAGES = [
     next: "alarm_menu_2"
   },
   {
-    title: "🚨 เมนู Alarm (2/3)", subtitle: "แรงดัน / แบตเตอรี่ / สาย", color: "#C62828",
+    title: "🚨 เมนู Alarm (2/3)", sub: "แรงดัน / สาย / อุปกรณ์", color: "#C62828",
     items: [
       { label: "📉 Access Neg.", text: "access_neg", color: "#1A237E" },
       { label: "📈 Return Pos.", text: "return_pos", color: "#0D47A1" },
@@ -418,54 +455,53 @@ const ALARM_PAGES = [
     prev: "alarm_menu", next: "alarm_menu_3"
   },
   {
-    title: "🚨 เมนู Alarm (3/3)", subtitle: "อุปกรณ์ / อื่นๆ", color: "#D32F2F",
+    title: "🚨 เมนู Alarm (3/3)", sub: "อื่นๆ / Procedure", color: "#D32F2F",
     items: [
       { label: "⚖️ Scale Open", text: "scale_open", color: "#F57F17" },
       { label: "🔍 Check Access", text: "check_access", color: "#827717" },
       { label: "🟢 Line Clamped", text: "line_clamped", color: "#1B5E20" },
-      { label: "⚖️ Effluent OL.", text: "effluent_overload", color: "#E65100" },
+      { label: "⚖️ Effluent OL", text: "effluent_overload", color: "#E65100" },
       { label: "🩸 Return Blood", text: "return_blood", color: "#C62828" },
       { label: "💧 NSS Recirc.", text: "nss_recirculation", color: "#0277BD" },
-      { label: "⚙️ Self-Test Fail", text: "self_test_failed", color: "#4527A0" },
+      { label: "⚙️ Self-Test", text: "self_test_failed", color: "#4527A0" },
     ],
     prev: "alarm_menu_2"
   }
 ];
 
-function buildAlarmMenuFlex(pageIdx) {
-  const page = ALARM_PAGES[pageIdx];
-  const btns = page.items.map(item => ({
+function buildAlarmMenuFlex(idx) {
+  const p = ALARM_PAGES[idx];
+  const btns = p.items.map(item => ({
     type: "button",
     action: { type: "message", label: item.label.slice(0, 20), text: item.text },
-    style: "primary", color: item.color, height: "sm", margin: "xs",
-    adjustMode: "shrink-to-fit"
+    style: "primary", color: item.color, height: "sm", margin: "xs"
   }));
 
-  const navRow = [];
-  if (page.prev) navRow.push({ type: "button", action: { type: "message", label: "⬅️ ก่อน", text: page.prev }, style: "secondary", height: "sm", flex: 1 });
-  if (page.next) navRow.push({ type: "button", action: { type: "message", label: "➡️ ถัดไป", text: page.next }, style: "primary", color: page.color, height: "sm", flex: 1 });
-  navRow.push({ type: "button", action: { type: "message", label: "🏠 หลัก", text: "main_menu" }, style: "secondary", height: "sm", flex: 1 });
+  const nav = [];
+  if (p.prev) nav.push({ type: "button", action: { type: "message", label: "⬅️ ก่อน", text: p.prev }, style: "secondary", height: "sm", flex: 1 });
+  if (p.next) nav.push({ type: "button", action: { type: "message", label: "➡️ ถัดไป", text: p.next }, style: "primary", color: p.color, height: "sm", flex: 1 });
+  nav.push({ type: "button", action: { type: "message", label: "🏠 หลัก", text: "main_menu" }, style: "secondary", height: "sm", flex: 1 });
 
   return {
-    type: "flex", altText: page.title,
+    type: "flex", altText: p.title,
     contents: {
       type: "bubble",
       hero: {
-        type: "box", layout: "horizontal", spacing: "md",
-        backgroundColor: page.color, paddingAll: "12px",
+        type: "box", layout: "horizontal",
+        backgroundColor: p.color, paddingAll: "12px", spacing: "md",
         contents: [
           { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "1:1" },
           {
             type: "box", layout: "vertical", flex: 1,
             contents: [
-              { type: "text", text: page.title, color: "#FFFFFF", size: "sm", weight: "bold" },
-              { type: "text", text: page.subtitle, color: "#FFCCCC", size: "xs" }
+              { type: "text", text: p.title, color: "#FFFFFF", size: "sm", weight: "bold" },
+              { type: "text", text: p.sub, color: "#FFCCCC", size: "xs" }
             ]
           }
         ]
       },
       body: { type: "box", layout: "vertical", paddingAll: "10px", spacing: "xs", contents: btns },
-      footer: { type: "box", layout: "horizontal", paddingAll: "10px", spacing: "xs", contents: navRow }
+      footer: { type: "box", layout: "horizontal", paddingAll: "10px", spacing: "xs", contents: nav }
     }
   };
 }
@@ -473,19 +509,16 @@ function buildAlarmMenuFlex(pageIdx) {
 // ── MAIN MENU ─────────────────────────────────────────────────────────────────
 function buildMainMenuFlex() {
   return {
-    type: "flex", altText: "🏥 CRRT Bot RA5IC — Main Menu",
+    type: "flex", altText: "🏥 CRRT Bot RA5IC",
     contents: {
       type: "bubble",
       hero: {
-        type: "box", layout: "vertical", backgroundColor: "#030303", paddingAll: "18px",
+        type: "box", layout: "vertical", backgroundColor: "#030303", paddingAll: "16px",
         contents: [
           {
             type: "box", layout: "horizontal", spacing: "md",
             contents: [
-              {
-                type: "image", url: LOGO_URL, size: "sm", flex: 0,
-                aspectMode: "fit", aspectRatio: "1:1"
-              },
+              { type: "image", url: LOGO_URL, size: "sm", flex: 0, aspectMode: "fit", aspectRatio: "1:1" },
               {
                 type: "box", layout: "vertical", flex: 1, justifyContent: "center",
                 contents: [
@@ -494,10 +527,7 @@ function buildMainMenuFlex() {
                   { type: "text", text: "หอผู้ป่วยวิกฤตศัลยกรรม", color: "#FFECB3", size: "xs" }
                 ]
               },
-              {
-                type: "image", url: MACHINE_URL, size: "sm", flex: 0,
-                aspectMode: "fit", aspectRatio: "1:1"
-              }
+              { type: "image", url: MACHINE_URL, size: "sm", flex: 0, aspectMode: "fit", aspectRatio: "1:1" }
             ]
           }
         ]
@@ -569,14 +599,20 @@ function buildMainMenuFlex() {
   };
 }
 
-// ── GEMINI ───────────────────────────────────────────────────────────────────
+// ── GEMINI ────────────────────────────────────────────────────────────────────
 const IMG_PROMPT = `คุณคือผู้เชี่ยวชาญ CRRT วิเคราะห์รูปภาพนี้:
 ALARM_NAME: [ชื่อ alarm ภาษาอังกฤษ หรือ unknown]
 ---
 🚨 Alarm: [ชื่อ + ค่า]
-⚡ ระดับ: [Critical / Warning / Advisory]
-🔍 สาเหตุ: [2-3 ข้อ]
-🛠️ ขั้นตอน: [2-3 ข้อ]
+ระดับ: [Critical / Warning / Advisory]
+สาเหตุ:
+1. [สาเหตุ 1]
+2. [สาเหตุ 2]
+ขั้นตอน:
+1. [ขั้นตอน 1]
+2. [ขั้นตอน 2]
+ข้อควรระวัง:
+1. [ระวัง 1]
 ⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น`;
 
 async function analyzeImage(b64) {
@@ -645,11 +681,11 @@ async function handleEvent(event) {
     return;
   }
 
-  if (text === "main_menu") { activate(uid); await lineClient.replyMessage(replyToken, buildMainMenuFlex()); return; }
-  if (text === "exit_crrt") { deactivate(uid); await lineClient.replyMessage(replyToken, { type: "text", text: "👋 ออกจากระบบ CRRT Bot แล้วครับ\nกด Rich Menu เพื่อใช้งานอีกครั้งครับ" }); return; }
-  if (text === "alarm_menu")   { activate(uid);  await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(0)); return; }
-  if (text === "alarm_menu_2") { if (!isActive(uid)) return; touch(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(1)); return; }
-  if (text === "alarm_menu_3") { if (!isActive(uid)) return; touch(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(2)); return; }
+  if (text === "main_menu")   { activate(uid); await lineClient.replyMessage(replyToken, buildMainMenuFlex()); return; }
+  if (text === "exit_crrt")   { deactivate(uid); await lineClient.replyMessage(replyToken, { type: "text", text: "👋 ออกจากระบบ CRRT Bot แล้วครับ\nกด Rich Menu เพื่อใช้งานอีกครั้งครับ" }); return; }
+  if (text === "alarm_menu")  { activate(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(0)); return; }
+  if (text === "alarm_menu_2"){ if (!isActive(uid)) return; touch(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(1)); return; }
+  if (text === "alarm_menu_3"){ if (!isActive(uid)) return; touch(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(2)); return; }
 
   if (!isActive(uid)) return;
   touch(uid);
@@ -668,7 +704,7 @@ async function handleEvent(event) {
     return;
   }
 
-  const respRow = DB_MAIN.find(r => [1, 2, 3, 4, 5, 6].some(n => r[`btn_${n}_action`] === text));
+  const respRow = DB_MAIN.find(r => [1,2,3,4,5,6].some(n => r[`btn_${n}_action`] === text));
   if (respRow) {
     let respText = "";
     for (let n = 1; n <= 6; n++) {
@@ -703,9 +739,9 @@ app.post("/webhook", line.middleware(LINE_CFG), async (req, res) => {
   catch (e) { console.error(e); res.status(500).end(); }
 });
 
-app.get("/", (_, res) => res.json({ status: "CRRT Bot RA5IC v7.0", alarms: Object.keys(T2T).length }));
+app.get("/", (_, res) => res.json({ status: "CRRT Bot RA5IC v8.0" }));
 
 loadDB().then(() => {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`CRRT Bot v7.0 :${PORT}`));
+  app.listen(PORT, () => console.log(`CRRT Bot v8.0 :${PORT}`));
 });
