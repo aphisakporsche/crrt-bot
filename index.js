@@ -192,7 +192,7 @@ function buildAlarmFlex(alarm, subRows, trigger) {
   });
 
   // Separator
-  bodyContents.push({ type: "separator", margin: "sm", color: cfg.color + "40" });
+  bodyContents.push({ type: "separator", margin: "sm", color: cfg.color + 'AA' });
 
   // Sections
   for (const sec of sections) {
@@ -200,7 +200,7 @@ function buildAlarmFlex(alarm, subRows, trigger) {
       bodyContents.push({
         type: "box", layout: "horizontal", margin: "md",
         contents: [
-          { type: "box", layout: "vertical", width: "4px", backgroundColor: cfg.color, cornerRadius: "4px", contents: [] },
+          { type: "box", layout: "vertical", flex: 0, backgroundColor: cfg.color, cornerRadius: "4px", contents: [] },
           { type: "text", text: sec.header, weight: "bold", size: "sm", color: cfg.color, margin: "sm", wrap: true }
         ]
       });
@@ -280,13 +280,13 @@ function buildAlarmFlex(alarm, subRows, trigger) {
   });
 
   const flexBody = {
-    type: "bubble", size: "kilo",
+    type: "bubble", size: "mega",
     header: {
       type: "box", layout: "vertical",
       backgroundColor: cfg.color,
       paddingAll: "16px",
       contents: [
-        { type: "text", text: "● RA5IC · RAMATHIBODI", color: "rgba(255,255,255,0.7)", size: "xxs" },
+        { type: "text", text: "● RA5IC · RAMATHIBODI", color: "#FFFFFFB3", size: "xxs" },
         { type: "text", text: "CRRT ALARM BOT", color: "#FFFFFF", size: "md", weight: "bold", margin: "xs" },
       ]
     },
@@ -388,12 +388,12 @@ function buildSubFlex(subRows, trigger) {
     type: "flex",
     altText: `${emoji} ${title}`,
     contents: {
-      type: "bubble", size: "kilo",
+      type: "bubble", size: "mega",
       header: {
         type: "box", layout: "vertical",
         backgroundColor: color, paddingAll: "14px",
         contents: [
-          { type: "text", text: "● RA5IC · RAMATHIBODI", color: "rgba(255,255,255,0.65)", size: "xxs" },
+          { type: "text", text: "● RA5IC · RAMATHIBODI", color: "#FFFFFFA6", size: "xxs" },
           {
             type: "box", layout: "horizontal", margin: "xs",
             contents: [
@@ -425,14 +425,14 @@ function buildMainMenuFlex() {
     type: "flex",
     altText: "🏥 CRRT Bot RA5IC — Main Menu",
     contents: {
-      type: "bubble", size: "kilo",
+      type: "bubble", size: "mega",
       header: {
         type: "box", layout: "vertical",
         backgroundColor: "#030303", paddingAll: "16px",
         contents: [
-          { type: "text", text: "● RA5IC · RAMATHIBODI", color: "rgba(255,200,0,0.8)", size: "xxs" },
+          { type: "text", text: "● RA5IC · RAMATHIBODI", color: "#FFC800CC", size: "xxs" },
           { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "xl", weight: "bold", margin: "xs" },
-          { type: "text", text: "หอผู้ป่วยวิกฤตศัลยกรรม", color: "rgba(255,220,100,0.85)", size: "xs", margin: "xs" }
+          { type: "text", text: "หอผู้ป่วยวิกฤตศัลยกรรม", color: "#FFDC64D9", size: "xs", margin: "xs" }
         ]
       },
       body: {
