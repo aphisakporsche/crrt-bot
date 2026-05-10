@@ -121,119 +121,179 @@ function driveUrl(u) {
   return m ? `https://drive.google.com/uc?export=view&id=${m[1]}` : u;
 }
 
-// Section configs — สีแต่ละ part
-const SECTION_STYLES = [
-  { head_bg:"#E8F0FE", head_color:"#1A237E", bar:"#3F51B5", item_color:"#333333", num_bg:"#3F51B5", icon:"🎯" }, // เป้าหมาย — น้ำเงิน
-  { head_bg:"#FFF3E0", head_color:"#E65100", bar:"#FF6F00", item_color:"#333333", num_bg:"#FF6F00", icon:"🔍" }, // สาเหตุ — ส้ม
-  { head_bg:"#E8F5E9", head_color:"#1B5E20", bar:"#43A047", item_color:"#333333", num_bg:"#43A047", icon:"🚀" }, // ขั้นตอน — เขียว
-  { head_bg:"#FFEBEE", head_color:"#B71C1C", bar:"#E53935", item_color:"#333333", num_bg:"#E53935", icon:"⚠️" }, // ระวัง — แดง
-  { head_bg:"#F3E5F5", head_color:"#6A1B9A", bar:"#8E24AA", item_color:"#333333", num_bg:"#8E24AA", icon:"💡" }, // หมาย/อื่นๆ — ม่วง
+// ── SECTION STYLES (สีกล่องแต่ละ part) ────────────────────────────────────────
+// Index 0: เป้าหมาย → น้ำเงิน
+// Index 1: สาเหตุ/False Alarm → ส้ม
+// Index 2: ขั้นตอน → เขียว
+// Index 3: ระวัง/ข้อควร → แดง
+// Index 4: อื่นๆ → ม่วง
+const SEC_STYLES = [
+  { bar:"#1A73E8", bg:"#E8F0FE", hColor:"#1A237E", icon:"🎯" },
+  { bar:"#F57C00", bg:"#FFF3E0", hColor:"#E65100", icon:"🔍" },
+  { bar:"#2E7D32", bg:"#E8F5E9", hColor:"#1B5E20", icon:"🚀" },
+  { bar:"#C62828", bg:"#FFEBEE", hColor:"#B71C1C", icon:"⚠️" },
+  { bar:"#6A1B9A", bg:"#F3E5F5", hColor:"#4A148C", icon:"💡" },
 ];
 
-function detectSectionType(head) {
-  if (!head) return 0;
+function detectStyle(head) {
+  if (!head) return 2; // default = ขั้นตอน (เขียว)
   const h = head.toLowerCase();
-  if (h.includes("เป้าหมาย") || h.includes("goal"))                    return 0;
-  if (h.includes("สาเหตุ") || h.includes("false") || h.includes("cause")) return 1;
-  if (h.includes("ขั้นตอน") || h.includes("จัดการ") || h.includes("step") || h.includes("วิธี")) return 2;
-  if (h.includes("ระวัง") || h.includes("ข้อควร") || h.includes("warn")) return 3;
+  if (h.includes("เป้าหมาย") || h.includes("goal"))                                 return 0;
+  if (h.includes("สาเหตุ") || h.includes("false") || h.includes("cause"))           return 1;
+  if (h.includes("ขั้นตอน") || h.includes("จัดการ") || h.includes("flow") ||
+      h.includes("ขั้นที่") || h.includes("step") || h.includes("วิธี"))            return 2;
+  if (h.includes("ระวัง") || h.includes("ข้อควร") || h.includes("warn") ||
+      h.includes("alert") || h.includes("ห้าม"))                                    return 3;
   return 4;
 }
 
-function parseInstruction(text) {
-  if (!text) return [];
+// parse instruction format จริงใน Sheet:
+// 【...】 = header ทิ้ง
+// 🔍 สาเหตุที่พบบ่อย = section head
+// ⏱️ เป้าหมาย: ... = section head
+// 🚀 ขั้นตอนการแก้ไข = section head
+// ▶️ ขั้นที่ N: ... = sub-section head
+// 1️⃣2️⃣3️⃣ = items
+// ⚠️ ข้อมูลนี้... = warning (ทิ้ง เพราะเพิ่มเองใน footer)
+function parseInstruction(raw) {
+  if (!raw) return [];
+  // ทำความสะอาด
+  let text = raw
+    .replace(/【[^】]*】/g, "")                   // ลบ 【...】
+    .replace(/⚠️ ข้อมูลนี้.*$/s, "")             // ลบ warning ท้าย
+    .replace(/\\\[/g, "[").replace(/\\\]/g, "]")  // unescape brackets
+    .replace(/\\>/g, ">")
+    .trim();
+
   const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
   const sections = [];
   let cur = null;
-  const headKw = /^(เป้าหมาย|สาเหตุ|False Alarm|ขั้นตอน|จัดการ|ข้อควร|ระวัง|หมาย|วิธี|step|note|การ|ขั้น)/i;
 
   for (const line of lines) {
-    const isNum    = /^[\d]+[.)]\s/.test(line);
-    const isBullet = /^[•\-]\s/.test(line);
-    const isHead   = headKw.test(line) && !isNum && !isBullet && line.length < 60;
+    // Section heads หลัก
+    const isMajorHead =
+      /^(🔍|⏱️|🚀|⚠️|📋|🔴|🟡|🟢|ð\u009f\u0094\u008d|ð\u009f\u009a\u0080)/.test(line) ||
+      /^(สาเหตุ|เป้าหมาย|ขั้นตอน|ข้อควร|ระวัง|False Alarm)/i.test(line);
 
-    if (isHead) {
-      cur = { head: line, items: [] };
+    // Sub-section heads: ▶️ ขั้นที่
+    const isSubHead = /^(▶️|►|➤)/.test(line) ||
+                      /^ขั้นที่\s*\d/i.test(line) ||
+                      /^Step\s*\d/i.test(line);
+
+    // Items: ลงต้นด้วย emoji ตัวเลข 1️⃣2️⃣3️⃣ หรือ 1. 2. 3.
+    const isItem = /^[1-9]️⃣/.test(line) ||
+                   /^[\d]+[.)]\s/.test(line) ||
+                   /^[•\-]\s/.test(line);
+
+    if (isMajorHead) {
+      cur = { head: line, items: [], styleIdx: detectStyle(line) };
       sections.push(cur);
-    } else if (isNum || isBullet) {
-      if (!cur) { cur = { head: null, items: [] }; sections.push(cur); }
-      cur.items.push(line.replace(/^[\d•\-.)]+\s*/, "").trim());
-    } else {
-      if (!cur) { cur = { head: null, items: [] }; sections.push(cur); }
+    } else if (isSubHead) {
+      // Sub-head → เพิ่มเป็น sub-section ใน section ปัจจุบัน หรือสร้างใหม่
+      if (!cur) {
+        cur = { head: null, items: [], styleIdx: 2 };
+        sections.push(cur);
+      }
+      // เพิ่ม sub-head เป็น item แบบ bold
+      cur.items.push("__HEAD__" + line);
+    } else if (isItem) {
+      if (!cur) {
+        cur = { head: null, items: [], styleIdx: 2 };
+        sections.push(cur);
+      }
+      // ลบ prefix emoji/number ออก
+      const clean = line
+        .replace(/^[1-9]️⃣\s*/, "")
+        .replace(/^[\d]+[.)]\s*/, "")
+        .replace(/^[•\-]\s*/, "")
+        .trim();
+      cur.items.push(clean);
+    } else if (line.length > 0) {
+      // ข้อความธรรมดา
+      if (!cur) {
+        cur = { head: null, items: [], styleIdx: 2 };
+        sections.push(cur);
+      }
       cur.items.push(line);
     }
   }
   return sections;
 }
 
-// highlight คำสำคัญใน text
-function highlightText(text, accentColor) {
-  // คำที่ต้อง highlight
-  const keywords = ["ด่วน","ทันที","ห้าม","วิกฤต","หยุด","เร่งด่วน","critical","stop","emergency","สำคัญ","2 นาที","5 นาที"];
-  let hasHighlight = false;
-  for (const kw of keywords) {
-    if (text.toLowerCase().includes(kw.toLowerCase())) { hasHighlight = true; break; }
-  }
+// highlight คำสำคัญ
+const HIGHLIGHT_WORDS = [
+  "ห้าม","ทันที","ด่วน","วิกฤต","stop","ห้ามกด","ห้ามคืน","ห้ามให้",
+  "2 นาที","3 นาที","5 นาที","10 นาที","ห้ามรอ","ห้ามฝืน","เด็ดขาด"
+];
 
-  if (!hasHighlight) {
-    return { type: "text", text, size: "sm", color: "#333333", wrap: true, flex: 1 };
-  }
-
-  // ถ้ามี keyword ให้ text สีเข้มขึ้น
-  return { type: "text", text, size: "sm", color: accentColor, weight: "bold", wrap: true, flex: 1 };
+function mkText(text, defColor, defSize) {
+  const t = text || "";
+  const hasHL = HIGHLIGHT_WORDS.some(kw => t.includes(kw));
+  return {
+    type: "text", text: t, size: defSize || "sm",
+    color: hasHL ? "#C62828" : (defColor || "#333333"),
+    weight: hasHL ? "bold" : "regular",
+    wrap: true, flex: 1
+  };
 }
 
-function buildSectionBlocks(sections, mainColor) {
+function buildSections(sections, mainColor) {
   const blocks = [];
+  if (!sections || sections.length === 0) return blocks;
 
-  if (sections.length === 0) return blocks;
-
-  let secIdx = 0;
+  let secNum = 0;
   for (const sec of sections) {
-    const styleIdx = sec.head ? detectSectionType(sec.head) : secIdx;
-    const style = SECTION_STYLES[styleIdx % SECTION_STYLES.length];
-    secIdx++;
+    const si = sec.styleIdx !== undefined ? sec.styleIdx : (secNum % SEC_STYLES.length);
+    const style = SEC_STYLES[si];
+    secNum++;
 
     if (sec.head) {
-      // หัว section — กล่องสี
+      // กล่อง head
+      const cleanHead = sec.head
+        .replace(/^[🔍⏱️🚀⚠️📋]\s*/, "")
+        .replace(/^(ð\u009f[^\s]+\s*)/, "")
+        .trim();
       blocks.push({
         type: "box", layout: "horizontal", margin: "md", spacing: "sm",
-        backgroundColor: style.head_bg,
-        paddingAll: "8px", cornerRadius: "8px",
+        backgroundColor: style.bg, paddingAll: "8px", cornerRadius: "8px",
         contents: [
-          {
-            type: "box", layout: "vertical", width: "4px",
-            backgroundColor: style.bar, cornerRadius: "4px", contents: []
-          },
-          {
-            type: "text",
-            text: style.icon + " " + sec.head,
-            weight: "bold", size: "sm", color: style.head_color,
-            wrap: true, flex: 1, margin: "sm"
-          }
+          { type: "box", layout: "vertical", width: "4px", backgroundColor: style.bar, cornerRadius: "4px", contents: [] },
+          { type: "text", text: style.icon + " " + cleanHead, weight: "bold", size: "sm", color: style.hColor, wrap: true, flex: 1, margin: "sm" }
         ]
       });
     }
 
-    // items
-    for (let i = 0; i < sec.items.length; i++) {
-      const item = sec.items[i];
-      const numBox = {
-        type: "box", layout: "vertical", flex: 0, justifyContent: "flex-start",
-        paddingTop: "1px",
-        contents: [{
-          type: "box", layout: "vertical",
-          width: "20px", height: "20px",
-          backgroundColor: style.num_bg, cornerRadius: "10px",
-          justifyContent: "center", alignItems: "center",
-          contents: [{ type: "text", text: String(i + 1), color: "#FFFFFF", size: "xxs", weight: "bold", align: "center" }]
-        }]
-      };
-      blocks.push({
-        type: "box", layout: "horizontal", margin: "xs", spacing: "sm",
-        paddingStart: sec.head ? "8px" : "0px",
-        contents: [numBox, highlightText(item, style.head_color)]
-      });
+    let itemNum = 0;
+    for (const item of sec.items) {
+      if (item.startsWith("__HEAD__")) {
+        // sub-head เช่น ▶️ ขั้นที่ 1
+        const subHead = item.replace("__HEAD__", "").replace(/^(▶️|►|➤)\s*/, "").trim();
+        blocks.push({
+          type: "box", layout: "horizontal", margin: "sm", spacing: "sm",
+          paddingStart: sec.head ? "8px" : "0px",
+          contents: [
+            { type: "text", text: "📍", size: "sm", flex: 0 },
+            { type: "text", text: subHead, weight: "bold", size: "sm", color: style.bar, wrap: true, flex: 1 }
+          ]
+        });
+        itemNum = 0; // reset numbering สำหรับ sub-section
+      } else {
+        itemNum++;
+        const numBox = {
+          type: "box", layout: "vertical", flex: 0, justifyContent: "flex-start", paddingTop: "1px",
+          contents: [{
+            type: "box", layout: "vertical", width: "20px", height: "20px",
+            backgroundColor: style.bar, cornerRadius: "10px",
+            justifyContent: "center", alignItems: "center",
+            contents: [{ type: "text", text: String(itemNum), color: "#FFFFFF", size: "xxs", weight: "bold", align: "center" }]
+          }]
+        };
+        blocks.push({
+          type: "box", layout: "horizontal", margin: "xs", spacing: "sm",
+          paddingStart: sec.head ? "8px" : "0px",
+          contents: [numBox, mkText(item, "#333333", "sm")]
+        });
+      }
     }
   }
   return blocks;
@@ -243,6 +303,7 @@ function buildSectionBlocks(sections, mainColor) {
 function buildAlarmFlex(alarm, subRows, trigger) {
   const c = acfg(trigger);
   const sections = parseInstruction(alarm.instruction);
+  const secBlocks = buildSections(sections, c.color);
 
   const body = [];
 
@@ -265,26 +326,23 @@ function buildAlarmFlex(alarm, subRows, trigger) {
   body.push({ type: "text", text: alarm.alarm_title || "Alarm", weight: "bold", size: "xl", color: c.color, wrap: true, margin: "sm" });
   body.push({ type: "separator", margin: "sm", color: c.color });
 
-  // Section blocks — แยกสีแต่ละ part
-  const secBlocks = buildSectionBlocks(sections, c.color);
+  // Sections
   if (secBlocks.length > 0) {
     secBlocks.forEach(b => body.push(b));
   } else {
-    // fallback
     const raw = (alarm.instruction || "").split("\n").filter(l => l.trim());
-    for (const l of raw) {
+    for (const l of raw.slice(0, 10)) {
       body.push({ type: "text", text: l.trim(), size: "sm", color: "#333333", wrap: true, margin: "xs" });
     }
   }
 
-  // Warning box
   body.push({ type: "separator", margin: "lg", color: "#EEEEEE" });
   body.push({
     type: "box", layout: "horizontal", margin: "sm",
     backgroundColor: "#FFF8E1", paddingAll: "8px", cornerRadius: "8px", spacing: "sm",
     contents: [
       { type: "text", text: "⚠️", size: "sm", flex: 0 },
-      { type: "text", text: "ใช้วิจารณญาณทางคลินิกประกอบเสมอ", size: "xxs", color: "#795548", wrap: true, flex: 1 }
+      { type: "text", text: "ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น ใช้วิจารณญาณทางคลินิกประกอบเสมอ", size: "xxs", color: "#795548", wrap: true, flex: 1 }
     ]
   });
 
@@ -294,11 +352,13 @@ function buildAlarmFlex(alarm, subRows, trigger) {
     const lbl = (alarm[`btn_${n}_label`] || "").trim();
     const act = (alarm[`btn_${n}_action`] || "").trim();
     if (!lbl || lbl === "nan" || !act || act === "nan") continue;
+    // ลบ emoji prefix เพื่อให้ข้อความสั้นลงแต่ครบ
+    const shortLbl = lbl.replace(/^[^\w\sก-๙]+\s*/, "").slice(0, 25) || lbl.slice(0, 25);
     btns.push({
       type: "button",
       action: act.startsWith("http")
-        ? { type: "uri", label: lbl, uri: act }
-        : { type: "message", label: lbl, text: act },
+        ? { type: "uri", label: shortLbl, uri: act }
+        : { type: "message", label: shortLbl, text: act },
       style: btns.length === 0 ? "primary" : "secondary",
       color: btns.length === 0 ? c.color : undefined,
       height: "sm", margin: "xs"
@@ -306,11 +366,12 @@ function buildAlarmFlex(alarm, subRows, trigger) {
   }
   if (btns.length === 0) {
     subRows.filter(r => r.next_step_label).slice(0, 4).forEach((r, i) => {
+      const lbl = (r.next_step_label || "").replace(/^[^\w\sก-๙]+\s*/, "").slice(0, 25) || r.next_step_label.slice(0, 25);
       btns.push({
         type: "button",
         action: r.next_step_action?.startsWith("http")
-          ? { type: "uri", label: r.next_step_label, uri: r.next_step_action }
-          : { type: "message", label: r.next_step_label, text: r.next_step_action },
+          ? { type: "uri", label: lbl, uri: r.next_step_action }
+          : { type: "message", label: lbl, text: r.next_step_action },
         style: i === 0 ? "primary" : "secondary",
         color: i === 0 ? c.color : undefined,
         height: "sm", margin: "xs"
@@ -329,10 +390,7 @@ function buildAlarmFlex(alarm, subRows, trigger) {
         type: "box", layout: "horizontal",
         backgroundColor: c.color, paddingAll: "12px", spacing: "sm",
         contents: [
-          {
-            type: "image", url: LOGO_URL, size: "xxs", flex: 0,
-            aspectMode: "fit", aspectRatio: "124:100"
-          },
+          { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "124:100" },
           {
             type: "box", layout: "vertical", flex: 1, justifyContent: "center",
             contents: [
@@ -340,10 +398,7 @@ function buildAlarmFlex(alarm, subRows, trigger) {
               { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "sm", weight: "bold" }
             ]
           },
-          {
-            type: "text", text: c.emoji, size: "xxl", flex: 0,
-            align: "center", gravity: "center"
-          }
+          { type: "text", text: c.emoji, size: "xxl", flex: 0, align: "center", gravity: "center" }
         ]
       },
       body: {
@@ -382,33 +437,45 @@ function buildSubFlex(subRows, trigger) {
     "restart_crrt_flow":   { color:"#1565C0", emoji:"▶️", title:"Start CRRT",         bg:"#EFF7FF" },
     "end_crrt_flow":       { color:"#C62828", emoji:"⏹️", title:"End CRRT",           bg:"#FFF5F5" },
     "ask_doctor_plan":     { color:"#1B5E20", emoji:"👨", title:"ปรึกษาแพทย์",       bg:"#EEFFF4" },
-    "how_to_swap_dlc":     { color:"#00695C", emoji:"🔄", title:"เปลี่ยน DLC",        bg:"#EEFFFE" },
+    "how_to_swap_dlc":     { color:"#00695C", emoji:"🔄", title:"สลับสาย DLC",        bg:"#EEFFFE" },
+    "how_to_swap_dlc_2":   { color:"#00695C", emoji:"🔄", title:"สลับสาย DLC 2",      bg:"#EEFFFE" },
+    "flow_air_fail":       { color:"#1565C0", emoji:"💨", title:"Air Detected",       bg:"#EFF7FF" },
   };
   const m = MAP[trigger] || { color:"#1A237E", emoji:"📋", title:"CRRT Bot", bg:"#EEF0FF" };
 
-  // parse และแสดงด้วย section blocks
+  // parse section
   const sections = parseInstruction(msgText);
-  const body = [];
+  const secBlocks = buildSections(sections, m.color);
 
-  if (sections.length > 0) {
-    const secBlocks = buildSectionBlocks(sections, m.color);
+  const body = [];
+  if (secBlocks.length > 0) {
     secBlocks.forEach(b => body.push(b));
   } else {
-    // plain text
-    for (const line of msgText.split("\n").filter(l => l.trim())) {
-      body.push({ type: "text", text: line.trim(), size: "sm", color: "#333333", wrap: true, margin: "xs" });
+    const lines = msgText.split("\n").filter(l => l.trim());
+    for (const line of lines.slice(0, 15)) {
+      const t = line.trim();
+      body.push({
+        type: "box", layout: "horizontal", spacing: "sm", margin: "xs",
+        contents: [
+          { type: "text", text: "›", color: m.color, size: "sm", flex: 0 },
+          mkText(t, "#333333", "sm")
+        ]
+      });
     }
   }
 
-  const btns = subRows.filter(r => r.next_step_label).slice(0, 5).map((r, i) => ({
-    type: "button",
-    action: r.next_step_action?.startsWith("http")
-      ? { type: "uri", label: r.next_step_label, uri: r.next_step_action }
-      : { type: "message", label: r.next_step_label, text: r.next_step_action },
-    style: i === 0 ? "primary" : "secondary",
-    color: i === 0 ? m.color : undefined,
-    height: "sm", margin: "xs"
-  }));
+  const btns = subRows.filter(r => r.next_step_label).slice(0, 5).map((r, i) => {
+    const lbl = (r.next_step_label || "").replace(/^[^\w\sก-๙]+\s*/, "").slice(0, 25) || r.next_step_label.slice(0, 25);
+    return {
+      type: "button",
+      action: r.next_step_action?.startsWith("http")
+        ? { type: "uri", label: lbl, uri: r.next_step_action }
+        : { type: "message", label: lbl, text: r.next_step_action },
+      style: i === 0 ? "primary" : "secondary",
+      color: i === 0 ? m.color : undefined,
+      height: "sm", margin: "xs"
+    };
+  });
 
   if (!["main_menu", "exit_crrt"].includes(trigger) && !btns.some(b => b.action?.text === "main_menu")) {
     btns.push({ type: "button", action: { type: "message", label: "🏠 Main Menu", text: "main_menu" }, style: "secondary", height: "sm", margin: "xs" });
@@ -445,7 +512,7 @@ function buildSubFlex(subRows, trigger) {
   };
 }
 
-// ── ALARM MENU 3 หน้า ────────────────────────────────────────────────────────
+// ── ALARM MENU ────────────────────────────────────────────────────────────────
 const ALARM_PAGES = [
   {
     title: "🚨 เมนู Alarm (1/3)", sub: "วิกฤต / เร่งด่วน", color: "#B71C1C",
@@ -464,24 +531,24 @@ const ALARM_PAGES = [
   {
     title: "🚨 เมนู Alarm (2/3)", sub: "แรงดัน / สาย / อุปกรณ์", color: "#C62828",
     items: [
-      { label: "📉 Access Neg.", text: "access_neg", color: "#1A237E" },
-      { label: "📈 Return Pos.", text: "return_pos", color: "#0D47A1" },
-      { label: "📈 Access Pos.", text: "access_pos", color: "#006064" },
-      { label: "⚡ Battery Low", text: "battery_low", color: "#E65100" },
-      { label: "📡 Comm. Loss", text: "comm_loss", color: "#37474F" },
-      { label: "💧 Bag Empty", text: "bag_empty", color: "#00695C" },
-      { label: "⚖️ Flow Error", text: "flow_error", color: "#2E7D32" },
+      { label: "📉 Access Extremely Neg.", text: "access_neg", color: "#1A237E" },
+      { label: "📈 Return Extremely Pos.", text: "return_pos", color: "#0D47A1" },
+      { label: "📈 Access Extremely Pos.", text: "access_pos", color: "#006064" },
+      { label: "⚡ Battery Low/No AC Power", text: "battery_low", color: "#E65100" },
+      { label: "📡 Communication Loss", text: "comm_loss", color: "#37474F" },
+      { label: "💧 Bag Empty/Effluent Full", text: "bag_empty", color: "#00695C" },
+      { label: "⚖️ Flow Error/Weight Err.", text: "flow_error", color: "#2E7D32" },
       { label: "💉 Syringe Empty", text: "syringe_empty", color: "#6A1B9A" },
     ],
     prev: "alarm_menu", next: "alarm_menu_3"
   },
   {
-    title: "🚨 เมนู Alarm (3/3)", sub: "อื่นๆ / Procedure", color: "#D32F2F",
+    title: "🚨 เมนู Alarm (3/3)", sub: "อุปกรณ์ / Procedure / อื่นๆ", color: "#D32F2F",
     items: [
       { label: "⚖️ Scale Open", text: "scale_open", color: "#F57F17" },
       { label: "🔍 Check Access", text: "check_access", color: "#827717" },
       { label: "🟢 Line Clamped", text: "line_clamped", color: "#1B5E20" },
-      { label: "⚖️ Effluent Overload", text: "effluent_overload", color: "#E65100" },
+      { label: "⚖️ Effluent Scale Overload", text: "effluent_overload", color: "#E65100" },
       { label: "🩸 Return Blood", text: "return_blood", color: "#C62828" },
       { label: "💧 NSS Recirculation", text: "nss_recirculation", color: "#0277BD" },
       { label: "⚙️ Self-Test Failed", text: "self_test_failed", color: "#4527A0" },
@@ -494,10 +561,9 @@ function buildAlarmMenuFlex(idx) {
   const p = ALARM_PAGES[idx];
   const btns = p.items.map(item => ({
     type: "button",
-    action: { type: "message", label: item.label, text: item.text },
+    action: { type: "message", label: item.label.slice(0, 25), text: item.text },
     style: "primary", color: item.color, height: "sm", margin: "xs"
   }));
-
   const nav = [];
   if (p.prev) nav.push({ type: "button", action: { type: "message", label: "⬅️ หน้าก่อน", text: p.prev }, style: "secondary", height: "sm", flex: 1 });
   if (p.next) nav.push({ type: "button", action: { type: "message", label: "➡️ หน้าถัดไป", text: p.next }, style: "primary", color: p.color, height: "sm", flex: 1 });
@@ -508,8 +574,7 @@ function buildAlarmMenuFlex(idx) {
     contents: {
       type: "bubble",
       hero: {
-        type: "box", layout: "horizontal",
-        backgroundColor: p.color, paddingAll: "10px", spacing: "sm",
+        type: "box", layout: "horizontal", backgroundColor: p.color, paddingAll: "10px", spacing: "sm",
         contents: [
           { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "124:100" },
           {
@@ -535,39 +600,28 @@ function buildMainMenuFlex() {
       type: "bubble",
       hero: {
         type: "box", layout: "vertical", backgroundColor: "#030303", paddingAll: "14px",
-        contents: [
-          {
-            type: "box", layout: "horizontal", spacing: "sm",
-            contents: [
-              {
-                type: "image", url: LOGO_URL,
-                size: "xxs", flex: 0,
-                aspectMode: "fit", aspectRatio: "124:100"
-              },
-              {
-                type: "box", layout: "vertical", flex: 1, justifyContent: "center",
-                contents: [
-                  { type: "text", text: "RA5IC · RAMATHIBODI", color: "#FFC800", size: "xxs" },
-                  { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "md", weight: "bold" },
-                  { type: "text", text: "หอผู้ป่วยวิกฤตศัลยกรรม", color: "#FFECB3", size: "xxs" }
-                ]
-              },
-              {
-                type: "image", url: MACHINE_URL,
-                size: "xxs", flex: 0,
-                aspectMode: "fit", aspectRatio: "1:1"
-              }
-            ]
-          }
-        ]
+        contents: [{
+          type: "box", layout: "horizontal", spacing: "sm",
+          contents: [
+            { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "124:100" },
+            {
+              type: "box", layout: "vertical", flex: 1, justifyContent: "center",
+              contents: [
+                { type: "text", text: "RA5IC · RAMATHIBODI", color: "#FFC800", size: "xxs" },
+                { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "md", weight: "bold" },
+                { type: "text", text: "หอผู้ป่วยวิกฤตศัลยกรรม", color: "#FFECB3", size: "xxs" }
+              ]
+            },
+            { type: "image", url: MACHINE_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "1:1" }
+          ]
+        }]
       },
       body: {
         type: "box", layout: "vertical", paddingAll: "12px", spacing: "sm",
         contents: [
           { type: "text", text: "👋 สวัสดีครับ! ยินดีต้อนรับ", weight: "bold", size: "md", color: "#1A237E" },
           {
-            type: "box", layout: "vertical", margin: "sm",
-            backgroundColor: "#EEF2FF", cornerRadius: "8px", paddingAll: "10px",
+            type: "box", layout: "vertical", margin: "sm", backgroundColor: "#EEF2FF", cornerRadius: "8px", paddingAll: "10px",
             contents: [
               { type: "text", text: "📖 วิธีใช้งาน", weight: "bold", size: "xs", color: "#3F51B5" },
               { type: "text", text: "1. พิมพ์ชื่อ Alarm ที่เห็นบนหน้าจอ", size: "xs", color: "#555555", margin: "xs" },
@@ -576,8 +630,7 @@ function buildMainMenuFlex() {
             ]
           },
           {
-            type: "box", layout: "vertical", margin: "sm",
-            backgroundColor: "#FFF8E1", cornerRadius: "8px", paddingAll: "8px",
+            type: "box", layout: "vertical", margin: "sm", backgroundColor: "#FFF8E1", cornerRadius: "8px", paddingAll: "8px",
             contents: [{ type: "text", text: "⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกเสมอ", size: "xxs", color: "#795548", wrap: true }]
           }
         ]
@@ -634,10 +687,11 @@ ALARM_NAME: [ชื่อ alarm ภาษาอังกฤษ หรือ unkn
 ---
 เป้าหมาย
 1. [เป้าหมายหลัก]
-สาเหตุ
+สาเหตุที่พบบ่อย
 1. [สาเหตุ 1]
 2. [สาเหตุ 2]
-ขั้นตอน
+ขั้นตอนการแก้ไข
+▶️ ขั้นที่ 1:
 1. [ขั้นตอน 1]
 2. [ขั้นตอน 2]
 ข้อควรระวัง
@@ -686,8 +740,8 @@ async function handleEvent(event) {
       const result = await analyzeImage(b64);
       const name = extractAlarmName(result);
       const clean = result.replace(/^ALARM_NAME:.+\n*/i, "").trim();
-      await lineClient.pushMessage(uid, buildSubFlex([], "fallback")); // show as structured
-      const fakeAlarm = { alarm_title: "AI Analysis", instruction: clean };
+      // แสดงผลการวิเคราะห์เป็น Flex
+      const fakeAlarm = { alarm_title: "🤖 AI วิเคราะห์ Alarm", instruction: clean };
       await lineClient.pushMessage(uid, buildAlarmFlex(fakeAlarm, [], "fallback"));
       const alarmRow = name && name !== "unknown" ? findAlarm(name) : null;
       if (alarmRow) {
@@ -711,7 +765,7 @@ async function handleEvent(event) {
   }
 
   if (text === "main_menu")   { activate(uid); await lineClient.replyMessage(replyToken, buildMainMenuFlex()); return; }
-  if (text === "exit_crrt")   { deactivate(uid); await lineClient.replyMessage(replyToken, { type: "text", text: "👋 ออกจากระบบ CRRT Bot แล้วครับ\nกด Rich Menu เพื่อใช้งานอีกครั้งครับ" }); return; }
+  if (text === "exit_crrt")   { deactivate(uid); await lineClient.replyMessage(replyToken, { type: "text", text: "👋 ออกจาก CRRT Bot แล้วครับ กด Rich Menu เพื่อใช้งานอีกครั้งครับ" }); return; }
   if (text === "alarm_menu")  { activate(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(0)); return; }
   if (text === "alarm_menu_2"){ if (!isActive(uid)) return; touch(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(1)); return; }
   if (text === "alarm_menu_3"){ if (!isActive(uid)) return; touch(uid); await lineClient.replyMessage(replyToken, buildAlarmMenuFlex(2)); return; }
@@ -744,8 +798,8 @@ async function handleEvent(event) {
     const qr = nextSub.filter(r => r.next_step_label).slice(0, 13).map(r => ({
       type: "action",
       action: r.next_step_action?.startsWith("http")
-        ? { type: "uri", label: r.next_step_label, uri: r.next_step_action }
-        : { type: "message", label: r.next_step_label, text: r.next_step_action }
+        ? { type: "uri", label: r.next_step_label.slice(0, 20), uri: r.next_step_action }
+        : { type: "message", label: r.next_step_label.slice(0, 20), text: r.next_step_action }
     }));
     const msg = { type: "text", text: respText || "✅ ดำเนินการเรียบร้อยครับ" };
     if (qr.length > 0) msg.quickReply = { items: qr };
@@ -768,9 +822,9 @@ app.post("/webhook", line.middleware(LINE_CFG), async (req, res) => {
   catch (e) { console.error(e); res.status(500).end(); }
 });
 
-app.get("/", (_, res) => res.json({ status: "CRRT Bot RA5IC v9.0" }));
+app.get("/", (_, res) => res.json({ status: "CRRT Bot RA5IC v10.0" }));
 
 loadDB().then(() => {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`CRRT Bot v9.0 :${PORT}`));
+  app.listen(PORT, () => console.log(`CRRT Bot v10.0 :${PORT}`));
 });
