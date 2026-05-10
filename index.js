@@ -89,53 +89,68 @@ const NAV = new Set([
   "crrt_knowledge","crrt_mode_info","crrt_pressure_info",
 ]);
 
-// สีและ config แต่ละ alarm
 const ACFG = {
-  "cardiac_arrest":    { color:"#B71C1C", light:"#FFF5F5", emoji:"❤️",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#B71C1C" },
-  "blood_leak":        { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#C62828" },
-  "disconnect":        { color:"#880E4F", light:"#FFF0F5", emoji:"🔌",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#880E4F" },
-  "air_detected":      { color:"#1565C0", light:"#EFF7FF", emoji:"💨",  tag:"วิกฤต",    level:"🔴 CRITICAL", sectionColor:"#1565C0" },
-  "system_error":      { color:"#4527A0", light:"#F3F0FF", emoji:"⚙️",  tag:"ระบบ",     level:"🔴 CRITICAL", sectionColor:"#4527A0" },
-  "tmp_high":          { color:"#E65100", light:"#FFF8F0", emoji:"📊",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#E65100" },
-  "filter_clotted":    { color:"#BF360C", light:"#FFF3EE", emoji:"🔧",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#BF360C" },
-  "access_neg":        { color:"#1A237E", light:"#EEF0FF", emoji:"📉",  tag:"เตือน",    level:"🟡 WARNING",  sectionColor:"#1A237E" },
-  "return_pos":        { color:"#0D47A1", light:"#EEF5FF", emoji:"📈",  tag:"เตือน",    level:"🟡 WARNING",  sectionColor:"#0D47A1" },
-  "access_pos":        { color:"#006064", light:"#EEFFFE", emoji:"📈",  tag:"เตือน",    level:"🟡 WARNING",  sectionColor:"#006064" },
-  "hypotension":       { color:"#B71C1C", light:"#FFF5F5", emoji:"📉",  tag:"เร่งด่วน", level:"🔴 CRITICAL", sectionColor:"#B71C1C" },
-  "battery_low":       { color:"#E65100", light:"#FFF8F0", emoji:"⚡",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#E65100" },
-  "comm_loss":         { color:"#37474F", light:"#F4F6F7", emoji:"📡",  tag:"ระบบ",     level:"🟡 WARNING",  sectionColor:"#37474F" },
-  "bag_empty":         { color:"#00695C", light:"#EEFFFE", emoji:"💧",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#00695C" },
-  "flow_error":        { color:"#2E7D32", light:"#EEFFF2", emoji:"⚖️",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#2E7D32" },
-  "syringe_empty":     { color:"#6A1B9A", light:"#F6EEFF", emoji:"💉",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#6A1B9A" },
-  "scale_open":        { color:"#F57F17", light:"#FFFCEE", emoji:"⚖️",  tag:"ระวัง",    level:"🟢 ADVISORY", sectionColor:"#F57F17" },
-  "check_access":      { color:"#827717", light:"#FDFFF0", emoji:"🔍",  tag:"ระวัง",    level:"🟢 ADVISORY", sectionColor:"#827717" },
-  "line_clamped":      { color:"#1B5E20", light:"#EEFFF2", emoji:"🟢",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#1B5E20" },
-  "effluent_overload": { color:"#E65100", light:"#FFF8F0", emoji:"⚖️",  tag:"เร่งด่วน", level:"🟡 WARNING",  sectionColor:"#E65100" },
-  "return_blood":      { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  tag:"เร่งด่วน", level:"🟢 ADVISORY", sectionColor:"#C62828" },
-  "nss_recirculation": { color:"#0277BD", light:"#EEF7FF", emoji:"💧",  tag:"เตือน",    level:"🟢 ADVISORY", sectionColor:"#0277BD" },
-  "self_test_failed":  { color:"#4527A0", light:"#F3F0FF", emoji:"⚙️",  tag:"ระบบ",     level:"🟡 WARNING",  sectionColor:"#4527A0" },
+  "cardiac_arrest":    { color:"#B71C1C", light:"#FFF5F5", emoji:"❤️",  tag:"วิกฤต",    level:"🔴 CRITICAL" },
+  "blood_leak":        { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  tag:"วิกฤต",    level:"🔴 CRITICAL" },
+  "disconnect":        { color:"#880E4F", light:"#FFF0F5", emoji:"🔌",  tag:"วิกฤต",    level:"🔴 CRITICAL" },
+  "air_detected":      { color:"#1565C0", light:"#EFF7FF", emoji:"💨",  tag:"วิกฤต",    level:"🔴 CRITICAL" },
+  "system_error":      { color:"#4527A0", light:"#F3F0FF", emoji:"⚙️",  tag:"ระบบ",     level:"🔴 CRITICAL" },
+  "tmp_high":          { color:"#E65100", light:"#FFF8F0", emoji:"📊",  tag:"เร่งด่วน", level:"🟡 WARNING"  },
+  "filter_clotted":    { color:"#BF360C", light:"#FFF3EE", emoji:"🔧",  tag:"เร่งด่วน", level:"🟡 WARNING"  },
+  "access_neg":        { color:"#1A237E", light:"#EEF0FF", emoji:"📉",  tag:"เตือน",    level:"🟡 WARNING"  },
+  "return_pos":        { color:"#0D47A1", light:"#EEF5FF", emoji:"📈",  tag:"เตือน",    level:"🟡 WARNING"  },
+  "access_pos":        { color:"#006064", light:"#EEFFFE", emoji:"📈",  tag:"เตือน",    level:"🟡 WARNING"  },
+  "hypotension":       { color:"#B71C1C", light:"#FFF5F5", emoji:"📉",  tag:"เร่งด่วน", level:"🔴 CRITICAL" },
+  "battery_low":       { color:"#E65100", light:"#FFF8F0", emoji:"⚡",  tag:"เร่งด่วน", level:"🟡 WARNING"  },
+  "comm_loss":         { color:"#37474F", light:"#F4F6F7", emoji:"📡",  tag:"ระบบ",     level:"🟡 WARNING"  },
+  "bag_empty":         { color:"#00695C", light:"#EEFFFE", emoji:"💧",  tag:"เตือน",    level:"🟢 ADVISORY" },
+  "flow_error":        { color:"#2E7D32", light:"#EEFFF2", emoji:"⚖️",  tag:"เตือน",    level:"🟢 ADVISORY" },
+  "syringe_empty":     { color:"#6A1B9A", light:"#F6EEFF", emoji:"💉",  tag:"เตือน",    level:"🟢 ADVISORY" },
+  "scale_open":        { color:"#F57F17", light:"#FFFCEE", emoji:"⚖️",  tag:"ระวัง",    level:"🟢 ADVISORY" },
+  "check_access":      { color:"#827717", light:"#FDFFF0", emoji:"🔍",  tag:"ระวัง",    level:"🟢 ADVISORY" },
+  "line_clamped":      { color:"#1B5E20", light:"#EEFFF2", emoji:"🟢",  tag:"เตือน",    level:"🟢 ADVISORY" },
+  "effluent_overload": { color:"#E65100", light:"#FFF8F0", emoji:"⚖️",  tag:"เร่งด่วน", level:"🟡 WARNING"  },
+  "return_blood":      { color:"#C62828", light:"#FFF5F5", emoji:"🩸",  tag:"เร่งด่วน", level:"🟢 ADVISORY" },
+  "nss_recirculation": { color:"#0277BD", light:"#EEF7FF", emoji:"💧",  tag:"เตือน",    level:"🟢 ADVISORY" },
+  "self_test_failed":  { color:"#4527A0", light:"#F3F0FF", emoji:"⚙️",  tag:"ระบบ",     level:"🟡 WARNING"  },
 };
-function acfg(t) { return ACFG[t] || { color:"#1A237E", light:"#EEF0FF", emoji:"🚨", tag:"Alarm", level:"⚪ ALARM", sectionColor:"#1A237E" }; }
+function acfg(t) { return ACFG[t] || { color:"#1A237E", light:"#EEF0FF", emoji:"🚨", tag:"Alarm", level:"⚪ ALARM" }; }
 
 function driveUrl(u) {
   const m = u.match(/\/d\/([^/]+)/);
   return m ? `https://drive.google.com/uc?export=view&id=${m[1]}` : u;
 }
 
-// parse instruction เป็น sections แบบฉลาด
+// Section configs — สีแต่ละ part
+const SECTION_STYLES = [
+  { head_bg:"#E8F0FE", head_color:"#1A237E", bar:"#3F51B5", item_color:"#333333", num_bg:"#3F51B5", icon:"🎯" }, // เป้าหมาย — น้ำเงิน
+  { head_bg:"#FFF3E0", head_color:"#E65100", bar:"#FF6F00", item_color:"#333333", num_bg:"#FF6F00", icon:"🔍" }, // สาเหตุ — ส้ม
+  { head_bg:"#E8F5E9", head_color:"#1B5E20", bar:"#43A047", item_color:"#333333", num_bg:"#43A047", icon:"🚀" }, // ขั้นตอน — เขียว
+  { head_bg:"#FFEBEE", head_color:"#B71C1C", bar:"#E53935", item_color:"#333333", num_bg:"#E53935", icon:"⚠️" }, // ระวัง — แดง
+  { head_bg:"#F3E5F5", head_color:"#6A1B9A", bar:"#8E24AA", item_color:"#333333", num_bg:"#8E24AA", icon:"💡" }, // หมาย/อื่นๆ — ม่วง
+];
+
+function detectSectionType(head) {
+  if (!head) return 0;
+  const h = head.toLowerCase();
+  if (h.includes("เป้าหมาย") || h.includes("goal"))                    return 0;
+  if (h.includes("สาเหตุ") || h.includes("false") || h.includes("cause")) return 1;
+  if (h.includes("ขั้นตอน") || h.includes("จัดการ") || h.includes("step") || h.includes("วิธี")) return 2;
+  if (h.includes("ระวัง") || h.includes("ข้อควร") || h.includes("warn")) return 3;
+  return 4;
+}
+
 function parseInstruction(text) {
   if (!text) return [];
   const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
   const sections = [];
   let cur = null;
-
-  // keywords หัว section
-  const headKw = /^(เป้าหมาย|สาเหตุ|False Alarm|ขั้นตอน|จัดการ|ข้อควร|ระวัง|หมายเหตุ|วิธี|การ|ขั้น|step|note)/i;
+  const headKw = /^(เป้าหมาย|สาเหตุ|False Alarm|ขั้นตอน|จัดการ|ข้อควร|ระวัง|หมาย|วิธี|step|note|การ|ขั้น)/i;
 
   for (const line of lines) {
-    const isNum  = /^[\d]+[.)]\s/.test(line);
+    const isNum    = /^[\d]+[.)]\s/.test(line);
     const isBullet = /^[•\-]\s/.test(line);
-    const isHead = headKw.test(line) && !isNum && !isBullet && line.length < 60;
+    const isHead   = headKw.test(line) && !isNum && !isBullet && line.length < 60;
 
     if (isHead) {
       cur = { head: line, items: [] };
@@ -144,7 +159,6 @@ function parseInstruction(text) {
       if (!cur) { cur = { head: null, items: [] }; sections.push(cur); }
       cur.items.push(line.replace(/^[\d•\-.)]+\s*/, "").trim());
     } else {
-      // ข้อความธรรมดา — ถ้าไม่มี section ให้ใส่ใน section ว่าง
       if (!cur) { cur = { head: null, items: [] }; sections.push(cur); }
       cur.items.push(line);
     }
@@ -152,41 +166,75 @@ function parseInstruction(text) {
   return sections;
 }
 
-// section block สีสวย
-function sectionBlock(head, items, sectionColor, bgColor) {
-  const blocks = [];
-
-  if (head) {
-    blocks.push({
-      type: "box", layout: "horizontal", margin: "md", spacing: "sm",
-      backgroundColor: sectionColor + "22",
-      paddingAll: "8px", cornerRadius: "8px",
-      contents: [
-        { type: "box", layout: "vertical", width: "4px", backgroundColor: sectionColor, cornerRadius: "4px", contents: [] },
-        { type: "text", text: head, weight: "bold", size: "sm", color: sectionColor, wrap: true, flex: 1, margin: "sm" }
-      ]
-    });
+// highlight คำสำคัญใน text
+function highlightText(text, accentColor) {
+  // คำที่ต้อง highlight
+  const keywords = ["ด่วน","ทันที","ห้าม","วิกฤต","หยุด","เร่งด่วน","critical","stop","emergency","สำคัญ","2 นาที","5 นาที"];
+  let hasHighlight = false;
+  for (const kw of keywords) {
+    if (text.toLowerCase().includes(kw.toLowerCase())) { hasHighlight = true; break; }
   }
 
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    blocks.push({
-      type: "box", layout: "horizontal", margin: "xs", spacing: "sm",
-      paddingStart: head ? "8px" : "0px",
-      contents: [
-        {
-          type: "box", layout: "vertical", flex: 0, justifyContent: "flex-start",
-          paddingTop: "2px",
-          contents: [{
-            type: "box", layout: "vertical", width: "20px", height: "20px",
-            backgroundColor: sectionColor, cornerRadius: "10px",
-            justifyContent: "center", alignItems: "center",
-            contents: [{ type: "text", text: String(i + 1), color: "#FFFFFF", size: "xxs", weight: "bold", align: "center" }]
-          }]
-        },
-        { type: "text", text: item, size: "sm", color: "#333333", wrap: true, flex: 1 }
-      ]
-    });
+  if (!hasHighlight) {
+    return { type: "text", text, size: "sm", color: "#333333", wrap: true, flex: 1 };
+  }
+
+  // ถ้ามี keyword ให้ text สีเข้มขึ้น
+  return { type: "text", text, size: "sm", color: accentColor, weight: "bold", wrap: true, flex: 1 };
+}
+
+function buildSectionBlocks(sections, mainColor) {
+  const blocks = [];
+
+  if (sections.length === 0) return blocks;
+
+  let secIdx = 0;
+  for (const sec of sections) {
+    const styleIdx = sec.head ? detectSectionType(sec.head) : secIdx;
+    const style = SECTION_STYLES[styleIdx % SECTION_STYLES.length];
+    secIdx++;
+
+    if (sec.head) {
+      // หัว section — กล่องสี
+      blocks.push({
+        type: "box", layout: "horizontal", margin: "md", spacing: "sm",
+        backgroundColor: style.head_bg,
+        paddingAll: "8px", cornerRadius: "8px",
+        contents: [
+          {
+            type: "box", layout: "vertical", width: "4px",
+            backgroundColor: style.bar, cornerRadius: "4px", contents: []
+          },
+          {
+            type: "text",
+            text: style.icon + " " + sec.head,
+            weight: "bold", size: "sm", color: style.head_color,
+            wrap: true, flex: 1, margin: "sm"
+          }
+        ]
+      });
+    }
+
+    // items
+    for (let i = 0; i < sec.items.length; i++) {
+      const item = sec.items[i];
+      const numBox = {
+        type: "box", layout: "vertical", flex: 0, justifyContent: "flex-start",
+        paddingTop: "1px",
+        contents: [{
+          type: "box", layout: "vertical",
+          width: "20px", height: "20px",
+          backgroundColor: style.num_bg, cornerRadius: "10px",
+          justifyContent: "center", alignItems: "center",
+          contents: [{ type: "text", text: String(i + 1), color: "#FFFFFF", size: "xxs", weight: "bold", align: "center" }]
+        }]
+      };
+      blocks.push({
+        type: "box", layout: "horizontal", margin: "xs", spacing: "sm",
+        paddingStart: sec.head ? "8px" : "0px",
+        contents: [numBox, highlightText(item, style.head_color)]
+      });
+    }
   }
   return blocks;
 }
@@ -214,31 +262,15 @@ function buildAlarmFlex(alarm, subRows, trigger) {
   });
 
   // Title
-  body.push({
-    type: "text", text: alarm.alarm_title || "Alarm",
-    weight: "bold", size: "xl", color: c.color, wrap: true, margin: "sm"
-  });
+  body.push({ type: "text", text: alarm.alarm_title || "Alarm", weight: "bold", size: "xl", color: c.color, wrap: true, margin: "sm" });
   body.push({ type: "separator", margin: "sm", color: c.color });
 
-  // Sections — สีสวยแยกแต่ละ part
-  if (sections.length > 0) {
-    // กำหนดสีแต่ละ section ตาม pattern
-    const SECTION_COLORS = [
-      { color: c.color,   bg: c.light },   // section 1 — สีหลัก
-      { color: "#E65100", bg: "#FFF8F0" }, // section 2 — ส้ม (สาเหตุ)
-      { color: "#1565C0", bg: "#EFF7FF" }, // section 3 — น้ำเงิน (ขั้นตอน)
-      { color: "#B71C1C", bg: "#FFF5F5" }, // section 4 — แดง (ระวัง)
-      { color: "#2E7D32", bg: "#EEFFF2" }, // section 5 — เขียว
-    ];
-
-    for (let si = 0; si < sections.length; si++) {
-      const sec = sections[si];
-      const sc = SECTION_COLORS[si % SECTION_COLORS.length];
-      const blocks = sectionBlock(sec.head, sec.items, sc.color, sc.bg);
-      blocks.forEach(b => body.push(b));
-    }
+  // Section blocks — แยกสีแต่ละ part
+  const secBlocks = buildSectionBlocks(sections, c.color);
+  if (secBlocks.length > 0) {
+    secBlocks.forEach(b => body.push(b));
   } else {
-    // fallback — แสดงข้อความตรง
+    // fallback
     const raw = (alarm.instruction || "").split("\n").filter(l => l.trim());
     for (const l of raw) {
       body.push({ type: "text", text: l.trim(), size: "sm", color: "#333333", wrap: true, margin: "xs" });
@@ -265,8 +297,8 @@ function buildAlarmFlex(alarm, subRows, trigger) {
     btns.push({
       type: "button",
       action: act.startsWith("http")
-        ? { type: "uri", label: lbl.slice(0, 20), uri: act }
-        : { type: "message", label: lbl.slice(0, 20), text: act },
+        ? { type: "uri", label: lbl, uri: act }
+        : { type: "message", label: lbl, text: act },
       style: btns.length === 0 ? "primary" : "secondary",
       color: btns.length === 0 ? c.color : undefined,
       height: "sm", margin: "xs"
@@ -277,8 +309,8 @@ function buildAlarmFlex(alarm, subRows, trigger) {
       btns.push({
         type: "button",
         action: r.next_step_action?.startsWith("http")
-          ? { type: "uri", label: r.next_step_label.slice(0, 20), uri: r.next_step_action }
-          : { type: "message", label: r.next_step_label.slice(0, 20), text: r.next_step_action },
+          ? { type: "uri", label: r.next_step_label, uri: r.next_step_action }
+          : { type: "message", label: r.next_step_label, text: r.next_step_action },
         style: i === 0 ? "primary" : "secondary",
         color: i === 0 ? c.color : undefined,
         height: "sm", margin: "xs"
@@ -293,14 +325,13 @@ function buildAlarmFlex(alarm, subRows, trigger) {
     type: "flex", altText: alarm.alarm_title || "CRRT Alarm",
     contents: {
       type: "bubble",
-      // Hero = header ที่มีโลโก้ + emoji ใหญ่
       hero: {
         type: "box", layout: "horizontal",
-        backgroundColor: c.color, paddingAll: "14px", spacing: "md",
+        backgroundColor: c.color, paddingAll: "12px", spacing: "sm",
         contents: [
           {
             type: "image", url: LOGO_URL, size: "xxs", flex: 0,
-            aspectMode: "fit", aspectRatio: "1:1"
+            aspectMode: "fit", aspectRatio: "124:100"
           },
           {
             type: "box", layout: "vertical", flex: 1, justifyContent: "center",
@@ -310,8 +341,8 @@ function buildAlarmFlex(alarm, subRows, trigger) {
             ]
           },
           {
-            type: "box", layout: "vertical", flex: 0, justifyContent: "center",
-            contents: [{ type: "text", text: c.emoji, size: "3xl", align: "center" }]
+            type: "text", text: c.emoji, size: "xxl", flex: 0,
+            align: "center", gravity: "center"
           }
         ]
       },
@@ -355,25 +386,15 @@ function buildSubFlex(subRows, trigger) {
   };
   const m = MAP[trigger] || { color:"#1A237E", emoji:"📋", title:"CRRT Bot", bg:"#EEF0FF" };
 
+  // parse และแสดงด้วย section blocks
   const sections = parseInstruction(msgText);
   const body = [];
 
   if (sections.length > 0) {
-    const SCOLS = [
-      { color: m.color },
-      { color: "#E65100" },
-      { color: "#1565C0" },
-      { color: "#B71C1C" },
-      { color: "#2E7D32" },
-    ];
-    for (let si = 0; si < sections.length; si++) {
-      const sec = sections[si];
-      const sc = SCOLS[si % SCOLS.length];
-      const blocks = sectionBlock(sec.head, sec.items, sc.color, m.bg);
-      blocks.forEach(b => body.push(b));
-    }
+    const secBlocks = buildSectionBlocks(sections, m.color);
+    secBlocks.forEach(b => body.push(b));
   } else {
-    // fallback plain text
+    // plain text
     for (const line of msgText.split("\n").filter(l => l.trim())) {
       body.push({ type: "text", text: line.trim(), size: "sm", color: "#333333", wrap: true, margin: "xs" });
     }
@@ -382,8 +403,8 @@ function buildSubFlex(subRows, trigger) {
   const btns = subRows.filter(r => r.next_step_label).slice(0, 5).map((r, i) => ({
     type: "button",
     action: r.next_step_action?.startsWith("http")
-      ? { type: "uri", label: r.next_step_label.slice(0, 20), uri: r.next_step_action }
-      : { type: "message", label: r.next_step_label.slice(0, 20), text: r.next_step_action },
+      ? { type: "uri", label: r.next_step_label, uri: r.next_step_action }
+      : { type: "message", label: r.next_step_label, text: r.next_step_action },
     style: i === 0 ? "primary" : "secondary",
     color: i === 0 ? m.color : undefined,
     height: "sm", margin: "xs"
@@ -399,9 +420,9 @@ function buildSubFlex(subRows, trigger) {
       type: "bubble",
       hero: {
         type: "box", layout: "horizontal",
-        backgroundColor: m.color, paddingAll: "12px", spacing: "md",
+        backgroundColor: m.color, paddingAll: "10px", spacing: "sm",
         contents: [
-          { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "1:1" },
+          { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "124:100" },
           {
             type: "box", layout: "vertical", flex: 1, justifyContent: "center",
             contents: [
@@ -430,9 +451,9 @@ const ALARM_PAGES = [
     title: "🚨 เมนู Alarm (1/3)", sub: "วิกฤต / เร่งด่วน", color: "#B71C1C",
     items: [
       { label: "❤️ Cardiac Arrest", text: "cardiac_arrest", color: "#B71C1C" },
-      { label: "🩸 Blood Leak", text: "blood_leak", color: "#C62828" },
+      { label: "🩸 Blood Leak Detected", text: "blood_leak", color: "#C62828" },
       { label: "💨 Air Detected", text: "air_detected", color: "#1565C0" },
-      { label: "🔌 Disconnect", text: "disconnect", color: "#880E4F" },
+      { label: "🔌 Disconnect Detected", text: "disconnect", color: "#880E4F" },
       { label: "📉 Hypotension", text: "hypotension", color: "#B71C1C" },
       { label: "📊 TMP Too High", text: "tmp_high", color: "#E65100" },
       { label: "🔧 Filter Clotted", text: "filter_clotted", color: "#BF360C" },
@@ -460,10 +481,10 @@ const ALARM_PAGES = [
       { label: "⚖️ Scale Open", text: "scale_open", color: "#F57F17" },
       { label: "🔍 Check Access", text: "check_access", color: "#827717" },
       { label: "🟢 Line Clamped", text: "line_clamped", color: "#1B5E20" },
-      { label: "⚖️ Effluent OL", text: "effluent_overload", color: "#E65100" },
+      { label: "⚖️ Effluent Overload", text: "effluent_overload", color: "#E65100" },
       { label: "🩸 Return Blood", text: "return_blood", color: "#C62828" },
-      { label: "💧 NSS Recirc.", text: "nss_recirculation", color: "#0277BD" },
-      { label: "⚙️ Self-Test", text: "self_test_failed", color: "#4527A0" },
+      { label: "💧 NSS Recirculation", text: "nss_recirculation", color: "#0277BD" },
+      { label: "⚙️ Self-Test Failed", text: "self_test_failed", color: "#4527A0" },
     ],
     prev: "alarm_menu_2"
   }
@@ -473,14 +494,14 @@ function buildAlarmMenuFlex(idx) {
   const p = ALARM_PAGES[idx];
   const btns = p.items.map(item => ({
     type: "button",
-    action: { type: "message", label: item.label.slice(0, 20), text: item.text },
+    action: { type: "message", label: item.label, text: item.text },
     style: "primary", color: item.color, height: "sm", margin: "xs"
   }));
 
   const nav = [];
-  if (p.prev) nav.push({ type: "button", action: { type: "message", label: "⬅️ ก่อน", text: p.prev }, style: "secondary", height: "sm", flex: 1 });
-  if (p.next) nav.push({ type: "button", action: { type: "message", label: "➡️ ถัดไป", text: p.next }, style: "primary", color: p.color, height: "sm", flex: 1 });
-  nav.push({ type: "button", action: { type: "message", label: "🏠 หลัก", text: "main_menu" }, style: "secondary", height: "sm", flex: 1 });
+  if (p.prev) nav.push({ type: "button", action: { type: "message", label: "⬅️ หน้าก่อน", text: p.prev }, style: "secondary", height: "sm", flex: 1 });
+  if (p.next) nav.push({ type: "button", action: { type: "message", label: "➡️ หน้าถัดไป", text: p.next }, style: "primary", color: p.color, height: "sm", flex: 1 });
+  nav.push({ type: "button", action: { type: "message", label: "🏠 Main Menu", text: "main_menu" }, style: "secondary", height: "sm", flex: 1 });
 
   return {
     type: "flex", altText: p.title,
@@ -488,9 +509,9 @@ function buildAlarmMenuFlex(idx) {
       type: "bubble",
       hero: {
         type: "box", layout: "horizontal",
-        backgroundColor: p.color, paddingAll: "12px", spacing: "md",
+        backgroundColor: p.color, paddingAll: "10px", spacing: "sm",
         contents: [
-          { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "1:1" },
+          { type: "image", url: LOGO_URL, size: "xxs", flex: 0, aspectMode: "fit", aspectRatio: "124:100" },
           {
             type: "box", layout: "vertical", flex: 1,
             contents: [
@@ -513,21 +534,29 @@ function buildMainMenuFlex() {
     contents: {
       type: "bubble",
       hero: {
-        type: "box", layout: "vertical", backgroundColor: "#030303", paddingAll: "16px",
+        type: "box", layout: "vertical", backgroundColor: "#030303", paddingAll: "14px",
         contents: [
           {
-            type: "box", layout: "horizontal", spacing: "md",
+            type: "box", layout: "horizontal", spacing: "sm",
             contents: [
-              { type: "image", url: LOGO_URL, size: "sm", flex: 0, aspectMode: "fit", aspectRatio: "1:1" },
+              {
+                type: "image", url: LOGO_URL,
+                size: "xxs", flex: 0,
+                aspectMode: "fit", aspectRatio: "124:100"
+              },
               {
                 type: "box", layout: "vertical", flex: 1, justifyContent: "center",
                 contents: [
-                  { type: "text", text: "● RA5IC · RAMATHIBODI", color: "#FFC800", size: "xxs" },
-                  { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "lg", weight: "bold" },
-                  { type: "text", text: "หอผู้ป่วยวิกฤตศัลยกรรม", color: "#FFECB3", size: "xs" }
+                  { type: "text", text: "RA5IC · RAMATHIBODI", color: "#FFC800", size: "xxs" },
+                  { type: "text", text: "CRRT ALARM BOT", color: "#FFD700", size: "md", weight: "bold" },
+                  { type: "text", text: "หอผู้ป่วยวิกฤตศัลยกรรม", color: "#FFECB3", size: "xxs" }
                 ]
               },
-              { type: "image", url: MACHINE_URL, size: "sm", flex: 0, aspectMode: "fit", aspectRatio: "1:1" }
+              {
+                type: "image", url: MACHINE_URL,
+                size: "xxs", flex: 0,
+                aspectMode: "fit", aspectRatio: "1:1"
+              }
             ]
           }
         ]
@@ -603,15 +632,15 @@ function buildMainMenuFlex() {
 const IMG_PROMPT = `คุณคือผู้เชี่ยวชาญ CRRT วิเคราะห์รูปภาพนี้:
 ALARM_NAME: [ชื่อ alarm ภาษาอังกฤษ หรือ unknown]
 ---
-🚨 Alarm: [ชื่อ + ค่า]
-ระดับ: [Critical / Warning / Advisory]
-สาเหตุ:
+เป้าหมาย
+1. [เป้าหมายหลัก]
+สาเหตุ
 1. [สาเหตุ 1]
 2. [สาเหตุ 2]
-ขั้นตอน:
+ขั้นตอน
 1. [ขั้นตอน 1]
 2. [ขั้นตอน 2]
-ข้อควรระวัง:
+ข้อควรระวัง
 1. [ระวัง 1]
 ⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น`;
 
@@ -657,13 +686,13 @@ async function handleEvent(event) {
       const result = await analyzeImage(b64);
       const name = extractAlarmName(result);
       const clean = result.replace(/^ALARM_NAME:.+\n*/i, "").trim();
-      await lineClient.pushMessage(uid, { type: "text", text: clean });
+      await lineClient.pushMessage(uid, buildSubFlex([], "fallback")); // show as structured
+      const fakeAlarm = { alarm_title: "AI Analysis", instruction: clean };
+      await lineClient.pushMessage(uid, buildAlarmFlex(fakeAlarm, [], "fallback"));
       const alarmRow = name && name !== "unknown" ? findAlarm(name) : null;
       if (alarmRow) {
         const trigger = T2T[alarmRow.alarm_title];
         await lineClient.pushMessage(uid, buildAlarmFlex(alarmRow, trigger ? getSubRows(trigger) : [], trigger));
-      } else {
-        await lineClient.pushMessage(uid, buildSubFlex(getSubRows("fallback"), "fallback"));
       }
     } catch (e) {
       console.error("Image error:", e.message);
@@ -715,8 +744,8 @@ async function handleEvent(event) {
     const qr = nextSub.filter(r => r.next_step_label).slice(0, 13).map(r => ({
       type: "action",
       action: r.next_step_action?.startsWith("http")
-        ? { type: "uri", label: r.next_step_label.slice(0, 20), uri: r.next_step_action }
-        : { type: "message", label: r.next_step_label.slice(0, 20), text: r.next_step_action }
+        ? { type: "uri", label: r.next_step_label, uri: r.next_step_action }
+        : { type: "message", label: r.next_step_label, text: r.next_step_action }
     }));
     const msg = { type: "text", text: respText || "✅ ดำเนินการเรียบร้อยครับ" };
     if (qr.length > 0) msg.quickReply = { items: qr };
@@ -739,9 +768,9 @@ app.post("/webhook", line.middleware(LINE_CFG), async (req, res) => {
   catch (e) { console.error(e); res.status(500).end(); }
 });
 
-app.get("/", (_, res) => res.json({ status: "CRRT Bot RA5IC v8.0" }));
+app.get("/", (_, res) => res.json({ status: "CRRT Bot RA5IC v9.0" }));
 
 loadDB().then(() => {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`CRRT Bot v8.0 :${PORT}`));
+  app.listen(PORT, () => console.log(`CRRT Bot v9.0 :${PORT}`));
 });
