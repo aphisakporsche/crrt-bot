@@ -41,17 +41,6 @@ const _push = client.pushMessage.bind(client);
 client.pushMessage = (uid, msg) => _push(uid, _san(msg));
 
 
-// ── SMART LABEL — ย่อ label ปุ่มไม่เกิน 20 chars โดยไม่ตัดกลางคำ ─────────────
-function _lbl(s, max = 20) {
-  if (!s) return String(s || '');
-  const str = _san(String(s));
-  if (str.length <= max) return str;
-  // หา word break ที่ใกล้สุด
-  let cut = str.slice(0, max - 2);
-  const sp = Math.max(cut.lastIndexOf(' '), cut.lastIndexOf('/'), cut.lastIndexOf('('));
-  if (sp > max * 0.5) cut = cut.slice(0, sp);
-  return cut.trim() + '..';
-}
 
 const GEMINI_KEY  = process.env.GEMINI_API_KEY;
 const SHEET_ID    = process.env.GOOGLE_SHEET_ID;
@@ -316,19 +305,19 @@ function alarmFlex(alarm, subRows, trigger) {
     const act = (alarm[`btn_${n}_action`]||"").trim();
     if (!lbl||lbl==="nan"||!act||act==="nan") continue;
     btns.push({type:"button",
-      action:act.startsWith("http")?{type:"uri",label:_lbl(lbl),uri:act}:{type:"message",label:_lbl(lbl),text:act},
-      style:btns.length===0?"primary":"secondary",color:btns.length===0?c.color:undefined,height:"sm",margin:"xs"});
+      action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
+      style:btns.length===0?"primary":"secondary",color:btns.length===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   }
   if (btns.length===0) {
     subRows.filter(r=>r.next_step_label).slice(0,4).forEach((r,i)=>{
       const lbl=F(r.next_step_label||"");
       btns.push({type:"button",
-        action:r.next_step_action?.startsWith("http")?{type:"uri",label:_lbl(lbl),uri:r.next_step_action}:{type:"message",label:_lbl(lbl),text:r.next_step_action},
-        style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",margin:"xs"});
+        action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
+        style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
     });
   }
   if (!btns.some(b=>b.action?.text==="main_menu"))
-    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs"});
+    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
 
   return {type:"flex",altText:alarm.alarm_title||"CRRT Alarm",contents:{type:"bubble",
     hero:{type:"box",layout:"horizontal",backgroundColor:c.color,paddingAll:"12px",spacing:"sm",contents:[
@@ -383,11 +372,11 @@ function subFlex(subRows, trigger) {
   const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
     const lbl=F(r.next_step_label||"");
     return {type:"button",
-      action:r.next_step_action?.startsWith("http")?{type:"uri",label:_lbl(lbl),uri:r.next_step_action}:{type:"message",label:_lbl(lbl),text:r.next_step_action},
-      style:i===0?"primary":"secondary",color:i===0?m.color:undefined,height:"sm",margin:"xs"};
+      action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
+      style:i===0?"primary":"secondary",color:i===0?m.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
   });
   if (!["main_menu","exit_crrt"].includes(trigger)&&!btns.some(b=>b.action?.text==="main_menu"))
-    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs"});
+    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
 
   return {type:"flex",altText:m.emoji+" "+m.title,contents:{type:"bubble",
     hero:{type:"box",layout:"horizontal",backgroundColor:m.color,paddingAll:"10px",spacing:"sm",contents:[
@@ -441,11 +430,11 @@ const PAGES=[
 
 function menuFlex(idx){
   const p=PAGES[idx];
-  const btns=p.items.map(item=>({type:"button",action:{type:"message",label:_lbl(item.label),text:item.text},style:"primary",color:item.color,height:"sm",margin:"xs"}));
+  const btns=p.items.map(item=>({type:"button",action:{type:"message",label:_san(item.label),text:item.text},style:"primary",color:item.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}));
   const nav=[];
-  if(p.prev)nav.push({type:"button",action:{type:"message",label:"⬅️ หน้าก่อน",text:p.prev},style:"secondary",height:"sm",flex:1});
-  if(p.next)nav.push({type:"button",action:{type:"message",label:"➡️ หน้าถัดไป",text:p.next},style:"primary",color:p.color,height:"sm",flex:1});
-  nav.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",flex:1});
+  if(p.prev)nav.push({type:"button",action:{type:"message",label:"⬅️ หน้าก่อน",text:p.prev},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1});
+  if(p.next)nav.push({type:"button",action:{type:"message",label:"➡️ หน้าถัดไป",text:p.next},style:"primary",color:p.color,height:"sm",adjustMode:"shrink-to-fit",flex:1});
+  nav.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1});
   return {type:"flex",altText:p.title,contents:{type:"bubble",
     hero:{type:"box",layout:"horizontal",backgroundColor:p.color,paddingAll:"10px",spacing:"sm",contents:[
       {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
@@ -486,29 +475,29 @@ function mainMenu(){
     ]},
     footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
       {type:"box",layout:"horizontal",spacing:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🚨 แก้ Alarm",text:"alarm_menu"},style:"primary",color:"#B71C1C",height:"sm",flex:1},
-        {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#1B5E20",height:"sm",flex:1}
+        {type:"button",action:{type:"message",label:"🚨 แก้ Alarm",text:"alarm_menu"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#1B5E20",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"❤️ CPR",text:"cardiac_arrest"},style:"primary",color:"#B71C1C",height:"sm",flex:1},
-        {type:"button",action:{type:"message",label:"📉 Hypotension",text:"hypotension"},style:"primary",color:"#C62828",height:"sm",flex:1}
+        {type:"button",action:{type:"message",label:"❤️ CPR",text:"cardiac_arrest"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"📉 Hypotension",text:"hypotension"},style:"primary",color:"#C62828",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🔵 No Citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",flex:1},
-        {type:"button",action:{type:"message",label:"🟠 Citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",flex:1}
+        {type:"button",action:{type:"message",label:"🔵 No Citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🟠 Citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"secondary",height:"sm",flex:1},
-        {type:"button",action:{type:"message",label:"💧 NSS Recirc",text:"nss_recirculation"},style:"secondary",height:"sm",flex:1}
+        {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"💧 NSS Recirc",text:"nss_recirculation"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"💉 หล่อเส้น DLC",text:"how_to_flush_dlc"},style:"secondary",height:"sm",flex:1},
-        {type:"button",action:{type:"message",label:"✅ เก็บเครื่อง",text:"show_cleanup"},style:"secondary",height:"sm",flex:1}
+        {type:"button",action:{type:"message",label:"💉 หล่อเส้น DLC",text:"how_to_flush_dlc"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"✅ เก็บเครื่อง",text:"show_cleanup"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",flex:1},
-        {type:"button",action:{type:"message",label:"📋 สถานะ",text:"update_status"},style:"secondary",height:"sm",flex:1},
-        {type:"button",action:{type:"message",label:"🚪 ออก",text:"exit_crrt"},style:"secondary",height:"sm",flex:1}
+        {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"📋 สถานะ",text:"update_status"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🚪 ออก",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]}
     ]}
   }};
@@ -612,7 +601,7 @@ async function handleEvent(event) {
     for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
     const t=T2T[respRow.alarm_title];
     const ns=t?getSub(t):getSub("main_menu");
-    const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_lbl(F(r.next_step_label)),uri:r.next_step_action}:{type:"message",label:_lbl(F(r.next_step_label)),text:r.next_step_action}}));
+    const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(F(r.next_step_label)),uri:r.next_step_action}:{type:"message",label:_san(F(r.next_step_label)),text:r.next_step_action}}));
     const msg={type:"text",text:F(rt)||"✅ ดำเนินการเรียบร้อยครับ"};
     if(qr.length>0)msg.quickReply={items:qr};
     await client.replyMessage(replyToken,msg);
