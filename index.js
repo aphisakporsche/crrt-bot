@@ -40,6 +40,19 @@ client.replyMessage = (token, msg) => _reply(token, _san(msg));
 const _push = client.pushMessage.bind(client);
 client.pushMessage = (uid, msg) => _push(uid, _san(msg));
 
+
+// ── SMART LABEL — ย่อ label ปุ่มไม่เกิน 20 chars โดยไม่ตัดกลางคำ ─────────────
+function _lbl(s, max = 20) {
+  if (!s) return String(s || '');
+  const str = _san(String(s));
+  if (str.length <= max) return str;
+  // หา word break ที่ใกล้สุด
+  let cut = str.slice(0, max - 2);
+  const sp = Math.max(cut.lastIndexOf(' '), cut.lastIndexOf('/'), cut.lastIndexOf('('));
+  if (sp > max * 0.5) cut = cut.slice(0, sp);
+  return cut.trim() + '..';
+}
+
 const GEMINI_KEY  = process.env.GEMINI_API_KEY;
 const SHEET_ID    = process.env.GOOGLE_SHEET_ID;
 const SHEET_KEY   = process.env.GOOGLE_API_KEY;
@@ -222,7 +235,7 @@ function parse(rawInput) {
     if (items.length===0 && head.length>100) {
       // แยกด้วยเครื่องหมายจุลภาคหรือช่องว่างหลายอัน
       const subItems = head.split(/[,，]\s*|\s{2,}/).filter(s=>s.length>3).slice(0,6);
-      sections.push({s:SS[skey], head: head.slice(0,80)+"...", items: subItems.length>1?subItems.slice(1):[]});
+      sections.push({s:SS[skey], head: head, items: subItems.length>1?subItems.slice(1):[]});
     } else {
       sections.push({s:SS[skey], head, items});
     }
@@ -234,7 +247,7 @@ function parse(rawInput) {
       .split(/▶️\s*[^1️⃣2️⃣3️⃣]*|[1-9]️⃣\s*/)
       .map(s=>s.trim())
       .filter(s=>s.length>3 && !/^⚠️\s*ข้อมูลนี้/.test(s))
-      .slice(0,10);
+      ;
     return [{s:SS.step, head:"ขั้นตอน", items: items.length>0?items:[text.slice(0,200)]}];
   }
   return sections;
@@ -303,14 +316,14 @@ function alarmFlex(alarm, subRows, trigger) {
     const act = (alarm[`btn_${n}_action`]||"").trim();
     if (!lbl||lbl==="nan"||!act||act==="nan") continue;
     btns.push({type:"button",
-      action:act.startsWith("http")?{type:"uri",label:lbl.slice(0,30),uri:act}:{type:"message",label:lbl.slice(0,30),text:act},
+      action:act.startsWith("http")?{type:"uri",label:_lbl(lbl),uri:act}:{type:"message",label:_lbl(lbl),text:act},
       style:btns.length===0?"primary":"secondary",color:btns.length===0?c.color:undefined,height:"sm",margin:"xs"});
   }
   if (btns.length===0) {
     subRows.filter(r=>r.next_step_label).slice(0,4).forEach((r,i)=>{
       const lbl=F(r.next_step_label||"");
       btns.push({type:"button",
-        action:r.next_step_action?.startsWith("http")?{type:"uri",label:lbl.slice(0,30),uri:r.next_step_action}:{type:"message",label:lbl.slice(0,30),text:r.next_step_action},
+        action:r.next_step_action?.startsWith("http")?{type:"uri",label:_lbl(lbl),uri:r.next_step_action}:{type:"message",label:_lbl(lbl),text:r.next_step_action},
         style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",margin:"xs"});
     });
   }
@@ -365,12 +378,12 @@ function subFlex(subRows, trigger) {
 
   const secs = parse(msg);
   const bs = mkBlocks(secs);
-  const body = bs.length>0 ? bs : F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2).slice(0,12).map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
+  const body = bs.length>0 ? bs : F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2).map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
 
   const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
     const lbl=F(r.next_step_label||"");
     return {type:"button",
-      action:r.next_step_action?.startsWith("http")?{type:"uri",label:lbl.slice(0,30),uri:r.next_step_action}:{type:"message",label:lbl.slice(0,30),text:r.next_step_action},
+      action:r.next_step_action?.startsWith("http")?{type:"uri",label:_lbl(lbl),uri:r.next_step_action}:{type:"message",label:_lbl(lbl),text:r.next_step_action},
       style:i===0?"primary":"secondary",color:i===0?m.color:undefined,height:"sm",margin:"xs"};
   });
   if (!["main_menu","exit_crrt"].includes(trigger)&&!btns.some(b=>b.action?.text==="main_menu"))
@@ -428,7 +441,7 @@ const PAGES=[
 
 function menuFlex(idx){
   const p=PAGES[idx];
-  const btns=p.items.map(item=>({type:"button",action:{type:"message",label:item.label.slice(0,30),text:item.text},style:"primary",color:item.color,height:"sm",margin:"xs"}));
+  const btns=p.items.map(item=>({type:"button",action:{type:"message",label:_lbl(item.label),text:item.text},style:"primary",color:item.color,height:"sm",margin:"xs"}));
   const nav=[];
   if(p.prev)nav.push({type:"button",action:{type:"message",label:"⬅️ หน้าก่อน",text:p.prev},style:"secondary",height:"sm",flex:1});
   if(p.next)nav.push({type:"button",action:{type:"message",label:"➡️ หน้าถัดไป",text:p.next},style:"primary",color:p.color,height:"sm",flex:1});
@@ -599,7 +612,7 @@ async function handleEvent(event) {
     for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
     const t=T2T[respRow.alarm_title];
     const ns=t?getSub(t):getSub("main_menu");
-    const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:F(r.next_step_label).slice(0,20),uri:r.next_step_action}:{type:"message",label:F(r.next_step_label).slice(0,20),text:r.next_step_action}}));
+    const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_lbl(F(r.next_step_label)),uri:r.next_step_action}:{type:"message",label:_lbl(F(r.next_step_label)),text:r.next_step_action}}));
     const msg={type:"text",text:F(rt)||"✅ ดำเนินการเรียบร้อยครับ"};
     if(qr.length>0)msg.quickReply={items:qr};
     await client.replyMessage(replyToken,msg);
