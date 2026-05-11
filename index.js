@@ -17,7 +17,7 @@ const OLD_WEBHOOK = process.env.OLD_WEBHOOK_URL || "";
 const LOGO_URL    = "https://drive.google.com/uc?export=view&id=1Iiih5zuOol80ZfhUEJZaBXzDODDgVlsY";
 const MACHINE_URL = "https://drive.google.com/uc?export=view&id=14s4gUf4HPN-8ge9sUqiOfkDsZzBxUcTq";
 
-// ── FIX EMOJI ที่ encode แปลกจาก Google Sheet ────────────────────────────────
+// ── FIX EMOJI encode แปลกจาก Google Sheet ────────────────────────────────────
 function F(s) {
   if (!s) return "";
   return String(s)
@@ -45,13 +45,13 @@ function F(s) {
     .replace(/ð\u009f\u008f\u0020/g,"🏠 ").replace(/ð\u009f\u0093\u009d/g,"📝")
     .replace(/ð\u009f\u0093¸/g,"📸").replace(/ð\u009f\u0094¬/g,"🔬")
     .replace(/ð\u009f\u009a\u0082/g,"🚂").replace(/ð\u009f\u0094\u008a/g,"🔊")
-    .replace(/ð\u009f\u009b\u0086/g,"🛆").replace(/ð\u009f\u0089¼/g,"🉼")
-    .replace(/ð\u009f\u0092\u009a/g,"💚").replace(/ð\u009f\u0093\u009e/g,"📞")
+    .replace(/ð\u009f\u009b\u0086/g,"🛆").replace(/ð\u009f\u0092\u009a/g,"💚")
     .replace(/ð\u009f\u009f©ï¸/g,"🟩").replace(/ð\u009f\u0094°/g,"🔰")
-    .replace(/ð\u009f\u0093\u009d/g,"📝").replace(/ð\u009f\u0089\u008e/g,"🉎")
     .replace(/ð\u009f\u0091¤/g,"👤").replace(/ð\u009f\u0092\u0088/g,"💈")
-    .replace(/ð\u009f\u009a¹/g,"🚹").replace(/ð\u009f\u009f\u009f/g,"🟟")
-    .replace(/ð[\u0080-\u00bf][\u0080-\u00bf][\u0080-\u00bf]/g,"")  // ลบ broken emoji ที่เหลือ
+    .replace(/ð\u009f\u009a¹/g,"🚹").replace(/ð\u009f\u009b¢ï¸/g,"🛢")
+    .replace(/ð\u009f\u0093¦/g,"📦").replace(/ð\u009f\u0091\u008b/g,"👋")
+    .replace(/ð\u009f\u009f\u009f/g,"").replace(/ð\u009f\u008f\u0000/g,"🏠")
+    .replace(/ð[\u0080-\u00bf][\u0080-\u00bf][\u0080-\u00bf]/g,"")
     .replace(/ð[\u0080-\u00bf][\u0080-\u00bf]/g,"")
     .replace(/ð[\u0080-\u00bf]/g,"");
 }
@@ -66,8 +66,8 @@ async function loadDB() {
     const get = async (sheet) => {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheet)}?key=${SHEET_KEY}`;
       const r = await axios.get(url);
-      const rows = r.data.values || [];
-      if (rows.length < 2) return [];
+      const rows = r.data.values||[];
+      if (rows.length<2) return [];
       const h = rows[0].map(x=>x.trim());
       return rows.slice(1).map(row=>{const o={};h.forEach((k,i)=>{o[k]=(row[i]||"").trim()});return o});
     };
@@ -80,62 +80,35 @@ async function loadDB() {
 // ── SESSION ───────────────────────────────────────────────────────────────────
 const sessions = new Map();
 const S_TTL = 30*60*1000;
-function isActive(uid) {
-  const s=sessions.get(uid);
-  if (!s?.crrtActive) return false;
-  if (Date.now()-s.lastActive>S_TTL){sessions.delete(uid);return false;}
-  return true;
-}
+function isActive(uid){const s=sessions.get(uid);if(!s?.crrtActive)return false;if(Date.now()-s.lastActive>S_TTL){sessions.delete(uid);return false;}return true;}
 function activate(uid){sessions.set(uid,{crrtActive:true,lastActive:Date.now()});}
 function touch(uid){const s=sessions.get(uid);if(s)s.lastActive=Date.now();}
 function deactivate(uid){sessions.delete(uid);}
 
-// ── LOOKUP ────────────────────────────────────────────────────────────────────
-function findAlarm(text) {
-  const q = text.toLowerCase().trim();
-  return DB_MAIN.find(r=>r.alarm_title?.toLowerCase()===q) ||
-    DB_MAIN.find(r=>r.keywords?.toLowerCase().split(",").some(k=>{
-      const kw=k.trim(); return q.includes(kw)||kw.includes(q);
-    })) || null;
+function findAlarm(text){
+  const q=text.toLowerCase().trim();
+  return DB_MAIN.find(r=>r.alarm_title?.toLowerCase()===q)||
+    DB_MAIN.find(r=>r.keywords?.toLowerCase().split(",").some(k=>{const kw=k.trim();return q.includes(kw)||kw.includes(q)}))||null;
 }
-function getSub(trigger){ return DB_SUB.filter(r=>r.trigger_word===trigger); }
+function getSub(trigger){return DB_SUB.filter(r=>r.trigger_word===trigger);}
 
-// ── T2T MAP ───────────────────────────────────────────────────────────────────
 const T2T = {
-  "Return Blood":"return_blood",
-  "Blood Recirculation":"nss_recirculation",
-  "NSS Recirculation":"nss_recirculation",
-  "Cardiac Arrest":"cardiac_arrest",
-  "Hypotension":"hypotension",
-  "Air Detected":"air_detected",
-  "Access Extremely Negative":"access_neg",
-  "Return Extremely Positive":"return_pos",
-  "Blood Leak Detected":"blood_leak",
-  "Filter Clotted / Filter Pressure High":"filter_clotted",
-  "System Error / Self-Test Failed":"system_error",
-  "TMP Too High":"tmp_high",
-  "Bag Empty / Effluent Bag Full":"bag_empty",
-  "Flow Error / Weight Incorrect":"flow_error",
-  "Syringe Empty / Syringe not loaded":"syringe_empty",
-  "Battery Low / No AC Power":"battery_low",
-  "Access Extremely Positive":"access_pos",
-  "Disconnect Detected":"disconnect",
-  "Check Access":"check_access",
-  "Scale Open":"scale_open",
-  "Self-Test Failed":"self_test_failed",
-  "Communication Loss":"comm_loss",
-  "PBP / Replacement / Dialysate Line Clamped":"line_clamped",
+  "Return Blood":"return_blood","Blood Recirculation":"nss_recirculation",
+  "NSS Recirculation":"nss_recirculation","Cardiac Arrest":"cardiac_arrest",
+  "Hypotension":"hypotension","Air Detected":"air_detected",
+  "Access Extremely Negative":"access_neg","Return Extremely Positive":"return_pos",
+  "Blood Leak Detected":"blood_leak","Filter Clotted / Filter Pressure High":"filter_clotted",
+  "System Error / Self-Test Failed":"system_error","TMP Too High":"tmp_high",
+  "Bag Empty / Effluent Bag Full":"bag_empty","Flow Error / Weight Incorrect":"flow_error",
+  "Syringe Empty / Syringe not loaded":"syringe_empty","Battery Low / No AC Power":"battery_low",
+  "Access Extremely Positive":"access_pos","Disconnect Detected":"disconnect",
+  "Check Access":"check_access","Scale Open":"scale_open","Self-Test Failed":"self_test_failed",
+  "Communication Loss":"comm_loss","PBP / Replacement / Dialysate Line Clamped":"line_clamped",
   "Effluent Scale Overload":"effluent_overload",
 };
 
-const NAV = new Set(["main_menu","alarm_menu","alarm_menu_2","alarm_menu_3",
-  "how_to_use","show_hotline","fallback","update_status","exit_crrt",
-  "how_to_return","how_to_closeloop","how_to_swap_dlc","how_to_swap_dlc_2",
-  "how_to_flush_dlc","restart_crrt_flow","end_crrt_flow","ask_doctor_plan",
-  "show_cleanup","show_non_citrate","show_with_citrate","crrt_knowledge",
-  "crrt_mode_info","crrt_pressure_info"]);
+const NAV = new Set(["main_menu","alarm_menu","alarm_menu_2","alarm_menu_3","how_to_use","show_hotline","fallback","update_status","exit_crrt","how_to_return","how_to_closeloop","how_to_swap_dlc","how_to_swap_dlc_2","how_to_flush_dlc","restart_crrt_flow","end_crrt_flow","ask_doctor_plan","show_cleanup","show_non_citrate","show_with_citrate","crrt_knowledge","crrt_mode_info","crrt_pressure_info"]);
 
-// ── ALARM CONFIGS ─────────────────────────────────────────────────────────────
 const AC = {
   "cardiac_arrest":    {color:"#B71C1C",light:"#FFF5F5",emoji:"❤️", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
   "blood_leak":        {color:"#C62828",light:"#FFF5F5",emoji:"🩸", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
@@ -163,19 +136,21 @@ const AC = {
 };
 function ac(t){return AC[t]||{color:"#1A237E",light:"#EEF0FF",emoji:"🚨",tag:"Alarm",lv:"⚪ ALARM"};}
 
-// ── SECTION STYLES (สีกล่องแต่ละ part) ───────────────────────────────────────
+// ── SECTION STYLES ────────────────────────────────────────────────────────────
 const SS = {
-  goal:  {bar:"#1565C0",bg:"#E3F2FD",hc:"#1A237E",icon:"🎯"},  // น้ำเงิน
-  cause: {bar:"#E65100",bg:"#FFF3E0",hc:"#BF360C",icon:"🔍"},  // ส้ม
-  step:  {bar:"#2E7D32",bg:"#E8F5E9",hc:"#1B5E20",icon:"🚀"},  // เขียว
-  warn:  {bar:"#C62828",bg:"#FFEBEE",hc:"#B71C1C",icon:"⚠️"},  // แดง
-  info:  {bar:"#6A1B9A",bg:"#F3E5F5",hc:"#4A148C",icon:"💡"},  // ม่วง
+  goal:  {bar:"#1565C0", bg:"#E3F2FD", hc:"#0D47A1", icon:"🎯"},
+  cause: {bar:"#E65100", bg:"#FFF3E0", hc:"#BF360C", icon:"🔍"},
+  step:  {bar:"#2E7D32", bg:"#E8F5E9", hc:"#1B5E20", icon:"🚀"},
+  warn:  {bar:"#C62828", bg:"#FFEBEE", hc:"#B71C1C", icon:"⚠️"},
+  info:  {bar:"#6A1B9A", bg:"#F3E5F5", hc:"#4A148C", icon:"💡"},
 };
 
-// ── PARSER (ทำงานหลัง fixEmoji แล้ว) ─────────────────────────────────────────
+// ── PARSER ────────────────────────────────────────────────────────────────────
+// instruction ใน Sheet เป็น 1 บรรทัดยาว แยก section ด้วย emoji headers
 function parse(rawInput) {
-  if (!rawInput) return [{s:SS.step, head:"", items:["ไม่มีข้อมูล"]}];
+  if (!rawInput) return [{s:SS.step, head:"ไม่มีข้อมูลขั้นตอน", items:[]}];
 
+  // Fix emoji + clean
   const text = F(rawInput)
     .replace(/【[^】]*】/g,"")
     .replace(/\\\[/g,"[").replace(/\\\]/g,"]")
@@ -183,63 +158,79 @@ function parse(rawInput) {
     .replace(/\\!/g,"!").replace(/\\_/g,"_")
     .trim();
 
-  // แยก sections ด้วย emoji headers
-  const SECTION_RE = /(?=🔍[^\n]|⏱️[^\n]|🚀[^\n]|▶️\s*(?:ขั้น|Step)|⚠️\s*(?:ข้อ|Nursing))/g;
-  const parts = text.split(SECTION_RE).map(s=>s.trim()).filter(Boolean);
+  if (!text) return [{s:SS.step, head:"ไม่มีข้อมูลขั้นตอน", items:[]}];
+
+  // แยก sections ด้วย lookahead ก่อน section emoji
+  const parts = text.split(/(?=🔍\s|⏱️\s|🚀\s|▶️\s*(?:ขั้น|Step)|⚠️\s*(?:ข้อ|Nursing))/)
+    .map(s=>s.trim()).filter(Boolean);
 
   const sections = [];
   for (const part of parts) {
     if (/^⚠️\s*(ข้อมูลนี้|ข้อมูล นี้)/.test(part)) continue;
 
     let skey = "step";
-    if (/^🔍/.test(part))       skey = "cause";
-    else if (/^⏱️/.test(part))  skey = "goal";
-    else if (/^🚀/.test(part))  skey = "step";
-    else if (/^▶️/.test(part))  skey = "step";
-    else if (/^⚠️/.test(part))  skey = "warn";
+    if (/^🔍/.test(part))      skey = "cause";
+    else if (/^⏱️/.test(part)) skey = "goal";
+    else if (/^🚀/.test(part)) skey = "step";
+    else if (/^▶️/.test(part)) skey = "step";
+    else if (/^⚠️/.test(part)) skey = "warn";
 
-    // แยก items ด้วย emoji number
-    const ITEM_RE = /(?=1️⃣|2️⃣|3️⃣|4️⃣|5️⃣|6️⃣|7️⃣|8️⃣|9️⃣)/g;
-    const sub = part.split(ITEM_RE).map(s=>s.trim()).filter(Boolean);
-    const head = (sub[0]||"").replace(/^[🔍⏱️🚀⚠️💡🔄]\s*/,"").replace(/^▶️\s*/,"").trim();
-    const items = sub.slice(1).map(x=>x.replace(/^[1-9]️⃣\s*/,"").trim()).filter(Boolean);
+    // แยก items ด้วย emoji number 1️⃣2️⃣3️⃣
+    const sub = part.split(/(?=1️⃣|2️⃣|3️⃣|4️⃣|5️⃣|6️⃣|7️⃣|8️⃣|9️⃣)/)
+      .map(s=>s.trim()).filter(Boolean);
 
-    sections.push({s:SS[skey], head, items});
+    const head = (sub[0]||"")
+      .replace(/^[🔍⏱️🚀⚠️💡🔄📌]\s*/,"")
+      .replace(/^▶️\s*/,"")
+      .trim();
+
+    const items = sub.slice(1)
+      .map(x=>x.replace(/^[1-9]️⃣\s*/,"").trim())
+      .filter(Boolean);
+
+    // ถ้า head ยาวมาก (ข้อมูลฝังใน head) ให้แสดงเป็น item
+    if (items.length===0 && head.length>100) {
+      // แยกด้วยเครื่องหมายจุลภาคหรือช่องว่างหลายอัน
+      const subItems = head.split(/[,，]\s*|\s{2,}/).filter(s=>s.length>3).slice(0,6);
+      sections.push({s:SS[skey], head: head.slice(0,80)+"...", items: subItems.length>1?subItems.slice(1):[]});
+    } else {
+      sections.push({s:SS[skey], head, items});
+    }
   }
 
-  // Fallback: ถ้า parse ไม่ได้ ใช้ raw text แยกด้วย ▶️ และ 1️⃣
-  if (sections.length === 0) {
+  // Fallback
+  if (sections.length===0) {
     const items = text
-      .split(/▶️\s*[^1-9]*|[1-9]️⃣\s*/)
+      .split(/▶️\s*[^1️⃣2️⃣3️⃣]*|[1-9]️⃣\s*/)
       .map(s=>s.trim())
       .filter(s=>s.length>3 && !/^⚠️\s*ข้อมูลนี้/.test(s))
-      .slice(0,12);
-    return [{s:SS.step, head:"", items: items.length>0 ? items : [text.slice(0,200)]}];
+      .slice(0,10);
+    return [{s:SS.step, head:"ขั้นตอน", items: items.length>0?items:[text.slice(0,200)]}];
   }
   return sections;
 }
 
-// สร้าง Flex blocks จาก sections
-function blocks(sections) {
+// สร้าง Flex blocks สีสวยแยก Part
+function mkBlocks(sections) {
   const out = [];
   for (const sec of sections) {
     const s = sec.s;
-    // Head box
+    // Head box พร้อมสี
     if (sec.head) {
       out.push({
-        type:"box",layout:"horizontal",margin:"md",spacing:"sm",
-        backgroundColor:s.bg,paddingAll:"8px",cornerRadius:"8px",
+        type:"box", layout:"horizontal", margin:"md", spacing:"sm",
+        backgroundColor:s.bg, paddingAll:"8px", cornerRadius:"8px",
         contents:[
           {type:"box",layout:"vertical",width:"4px",backgroundColor:s.bar,cornerRadius:"4px",contents:[]},
           {type:"text",text:s.icon+" "+sec.head,weight:"bold",size:"sm",color:s.hc,wrap:true,flex:1,margin:"sm"}
         ]
       });
     }
-    // Items — bullet แทนเลข
+    // Items ด้วย bullet ▶ ไม่มีเลข
     for (const item of sec.items) {
-      const warn = ["ห้าม","ทันที","วิกฤต","เด็ดขาด","ห้ามรอ","ห้ามฝืน","ห้ามกด","ห้ามคืน"].some(w=>item.includes(w));
+      const warn = ["ห้าม","ทันที","วิกฤต","เด็ดขาด","ห้ามรอ","ห้ามฝืน","ห้ามกด","ห้ามคืน","ห้ามต่อ","ห้ามให้"].some(w=>item.includes(w));
       out.push({
-        type:"box",layout:"horizontal",margin:"xs",spacing:"sm",
+        type:"box", layout:"horizontal", margin:"xs", spacing:"sm",
         paddingStart:sec.head?"8px":"0px",
         contents:[
           {type:"text",text:"▶",color:s.bar,size:"xxs",flex:0,gravity:"top",margin:"xs"},
@@ -255,23 +246,18 @@ function blocks(sections) {
 function alarmFlex(alarm, subRows, trigger) {
   const c = ac(trigger);
   const secs = parse(alarm.instruction);
-  const bs = blocks(secs);
+  const bs = mkBlocks(secs);
 
   const body = [
-    // Badge
     {type:"box",layout:"horizontal",spacing:"sm",contents:[
-      {type:"box",layout:"baseline",flex:0,paddingAll:"4px",paddingStart:"10px",paddingEnd:"10px",
-       backgroundColor:c.color,cornerRadius:"20px",
+      {type:"box",layout:"baseline",flex:0,paddingAll:"4px",paddingStart:"10px",paddingEnd:"10px",backgroundColor:c.color,cornerRadius:"20px",
        contents:[{type:"text",text:c.lv+" • ALARM",color:"#FFFFFF",size:"xxs",weight:"bold"}]},
       {type:"filler"},
       {type:"text",text:c.tag,color:c.color,size:"xs",weight:"bold",flex:0}
     ]},
-    // Title
     {type:"text",text:alarm.alarm_title||"Alarm",weight:"bold",size:"xl",color:c.color,wrap:true,margin:"sm"},
     {type:"separator",margin:"sm",color:c.color},
-    // Content
     ...(bs.length>0 ? bs : [{type:"text",text:"กรุณาดูข้อมูลในระบบครับ",size:"sm",color:"#555555",wrap:true,margin:"sm"}]),
-    // Warning
     {type:"separator",margin:"lg",color:"#EEEEEE"},
     {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF8E1",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",
      contents:[
@@ -342,11 +328,13 @@ function subFlex(subRows, trigger) {
     "how_to_swap_dlc":   {color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",      bg:"#EEFFFE"},
     "how_to_swap_dlc_2": {color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",      bg:"#EEFFFE"},
     "flow_air_fail":     {color:"#1565C0",emoji:"💨",title:"Air Detected",     bg:"#EFF7FF"},
+    "how_to_use":        {color:"#37474F",emoji:"📖",title:"วิธีใช้งาน",        bg:"#F4F6F7"},
+    "exit_crrt":         {color:"#546E7A",emoji:"🚪",title:"ออกจากระบบ",       bg:"#F4F6F7"},
   };
   const m=MAP[trigger]||{color:"#1A237E",emoji:"📋",title:"CRRT Bot",bg:"#EEF0FF"};
 
   const secs = parse(msg);
-  const bs = blocks(secs);
+  const bs = mkBlocks(secs);
   const body = bs.length>0 ? bs : F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2).slice(0,12).map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
 
   const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
@@ -408,7 +396,7 @@ const PAGES=[
    ],prev:"alarm_menu_2"}
 ];
 
-function menuFlex(idx) {
+function menuFlex(idx){
   const p=PAGES[idx];
   const btns=p.items.map(item=>({type:"button",action:{type:"message",label:item.label.slice(0,30),text:item.text},style:"primary",color:item.color,height:"sm",margin:"xs"}));
   const nav=[];
@@ -429,7 +417,7 @@ function menuFlex(idx) {
 }
 
 // ── MAIN MENU ─────────────────────────────────────────────────────────────────
-function mainMenu() {
+function mainMenu(){
   return {type:"flex",altText:"🏥 CRRT Bot RA5IC",contents:{type:"bubble",
     hero:{type:"box",layout:"vertical",backgroundColor:"#030303",paddingAll:"14px",
       contents:[{type:"box",layout:"horizontal",spacing:"sm",contents:[
@@ -499,16 +487,15 @@ ALARM_NAME: [ชื่อ alarm ภาษาอังกฤษ หรือ unkn
 1️⃣[ระวัง 1]
 ⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น`;
 
-async function analyzeImg(b64) {
+async function analyzeImg(b64){
   const r=await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
     {contents:[{parts:[{text:GPROMPT},{inline_data:{mime_type:"image/jpeg",data:b64}}]}]},
     {headers:{"Content-Type":"application/json"}});
   return r.data.candidates[0].content.parts[0].text;
 }
-async function imgB64(msgId) {
+async function imgB64(msgId){
   const stream=await client.getMessageContent(msgId);
-  const chunks=[];
-  for await(const c of stream)chunks.push(c);
+  const chunks=[];for await(const c of stream)chunks.push(c);
   return Buffer.concat(chunks).toString("base64");
 }
 function extractName(text){const m=text.match(/ALARM_NAME:\s*(.+)/i);return m?m[1].trim():null;}
@@ -518,68 +505,58 @@ async function handleEvent(event) {
   await loadDB();
   if (OLD_WEBHOOK) axios.post(OLD_WEBHOOK,{events:[event]}).catch(()=>{});
 
-  if (event.source?.type==="group"||event.source?.type==="room") return;
+  if(event.source?.type==="group"||event.source?.type==="room") return;
   const uid=event.source?.userId;
-  if (event.type==="follow") return;
-  if (event.type!=="message") return;
+  if(event.type==="follow") return;
+  if(event.type!=="message") return;
 
-  const {replyToken,message}=event;
+  const{replyToken,message}=event;
 
   // Image
-  if (message.type==="image") {
-    if (!isActive(uid)) return;
+  if(message.type==="image"){
+    if(!isActive(uid))return;
     touch(uid);
     await client.replyMessage(replyToken,{type:"text",text:"🔍 กำลังวิเคราะห์ภาพ Alarm...\nรอสักครู่ครับ ⏳"});
-    try {
+    try{
       const b64=await imgB64(message.id);
       const result=await analyzeImg(b64);
       const name=extractName(result);
       const clean=result.replace(/^ALARM_NAME:.+\n*/i,"").trim();
-      await client.pushMessage(uid,alarmFlex({alarm_title:"🤖 AI วิเคราะห์ Alarm",instruction:clean},[],name&&T2T[name]?T2T[name]:"fallback"));
-      if (name&&name!=="unknown") {
+      const fakeT = name&&T2T[name]?T2T[name]:"fallback";
+      await client.pushMessage(uid,alarmFlex({alarm_title:"🤖 AI วิเคราะห์ Alarm",instruction:clean},[],fakeT));
+      if(name&&name!=="unknown"){
         const row=findAlarm(name);
-        if (row) {
-          const t=T2T[row.alarm_title];
-          await client.pushMessage(uid,alarmFlex(row,t?getSub(t):[],t));
-        }
+        if(row){const t=T2T[row.alarm_title];await client.pushMessage(uid,alarmFlex(row,t?getSub(t):[],t));}
       }
-    } catch(e) {
+    }catch(e){
       console.error("img err",e.message);
       await client.pushMessage(uid,{type:"text",text:"❌ วิเคราะห์รูปไม่ได้ กรุณาพิมพ์ชื่อ Alarm ครับ"});
     }
     return;
   }
 
-  if (message.type!=="text") return;
+  if(message.type!=="text") return;
   const text=message.text.trim();
 
   // Reset
-  if (["รีเซ็ต","/reset"].includes(text.toLowerCase())) {
-    deactivate(uid);
-    await client.replyMessage(replyToken,{type:"text",text:"✅ ล้างประวัติแล้วครับ"});
-    return;
-  }
+  if(["รีเซ็ต","/reset"].includes(text.toLowerCase())){deactivate(uid);await client.replyMessage(replyToken,{type:"text",text:"✅ ล้างประวัติแล้วครับ"});return;}
 
-  // Fixed commands
-  if (text==="main_menu")    {activate(uid);  await client.replyMessage(replyToken,mainMenu()); return;}
-  if (text==="exit_crrt")    {deactivate(uid);await client.replyMessage(replyToken,{type:"text",text:"👋 ออกจาก CRRT Bot แล้วครับ กด Rich Menu เพื่อใช้งานอีกครั้งครับ"}); return;}
-  if (text==="alarm_menu")   {activate(uid);  await client.replyMessage(replyToken,menuFlex(0)); return;}
-  if (text==="alarm_menu_2") {if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(1)); return;}
-  if (text==="alarm_menu_3") {if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(2)); return;}
+  // Fixed nav
+  if(text==="main_menu")   {activate(uid);  await client.replyMessage(replyToken,mainMenu());return;}
+  if(text==="exit_crrt")   {deactivate(uid);await client.replyMessage(replyToken,{type:"text",text:"👋 ออกจาก CRRT Bot แล้วครับ กด Rich Menu เพื่อใช้งานอีกครั้งครับ"});return;}
+  if(text==="alarm_menu")  {activate(uid);  await client.replyMessage(replyToken,menuFlex(0));return;}
+  if(text==="alarm_menu_2"){if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(1));return;}
+  if(text==="alarm_menu_3"){if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(2));return;}
 
-  if (!isActive(uid)) return;
+  if(!isActive(uid))return;
   touch(uid);
 
   // Sub flows
   const subRows=getSub(text);
-  if (subRows.length>0) {
-    if (!NAV.has(text)) {
+  if(subRows.length>0){
+    if(!NAV.has(text)){
       const row=DB_MAIN.find(r=>T2T[r.alarm_title]===text||r.alarm_title?.toLowerCase()===text.toLowerCase());
-      if (row) {
-        const t=T2T[row.alarm_title]||text;
-        await client.replyMessage(replyToken,alarmFlex(row,subRows,t));
-        return;
-      }
+      if(row){const t=T2T[row.alarm_title]||text;await client.replyMessage(replyToken,alarmFlex(row,subRows,t));return;}
     }
     await client.replyMessage(replyToken,subFlex(subRows,text));
     return;
@@ -587,7 +564,7 @@ async function handleEvent(event) {
 
   // Button responses
   const respRow=DB_MAIN.find(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text));
-  if (respRow) {
+  if(respRow){
     let rt="";
     for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
     const t=T2T[respRow.alarm_title];
@@ -601,11 +578,7 @@ async function handleEvent(event) {
 
   // Keyword search
   const row=findAlarm(text);
-  if (row) {
-    const t=T2T[row.alarm_title];
-    await client.replyMessage(replyToken,alarmFlex(row,t?getSub(t):[],t));
-    return;
-  }
+  if(row){const t=T2T[row.alarm_title];await client.replyMessage(replyToken,alarmFlex(row,t?getSub(t):[],t));return;}
 
   // Fallback
   await client.replyMessage(replyToken,subFlex(getSub("fallback"),"fallback"));
@@ -616,9 +589,9 @@ app.post("/webhook",line.middleware(LINE_CFG),async(req,res)=>{
   catch(e){console.error(e);res.status(500).end();}
 });
 
-app.get("/",(_, res)=>res.json({status:"CRRT Bot v12.0",alarms:Object.keys(T2T).length}));
+app.get("/",(_, res)=>res.json({status:"CRRT Bot v13.0 — RA5IC",alarms:Object.keys(T2T).length}));
 
 loadDB().then(()=>{
   const PORT=process.env.PORT||3000;
-  app.listen(PORT,()=>console.log(`CRRT Bot v12.0 :${PORT}`));
+  app.listen(PORT,()=>console.log(`CRRT Bot v13.0 :${PORT}`));
 });
