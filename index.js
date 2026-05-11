@@ -10,6 +10,36 @@ const LINE_CFG = {
 };
 const client = new line.Client(LINE_CFG);
 
+// ── SANITIZE lone surrogates — ป้องกัน 400 Bad Request จาก LINE ──────────────
+// สาเหตุ: emoji surrogate pair ที่ถูก split กลางคัน ทำให้ JSON invalid
+function _san(obj) {
+  if (typeof obj === 'string') {
+    return obj.replace(/[\uD800-\uDFFF]/g, function(ch, offset, str) {
+      const code = ch.charCodeAt(0);
+      if (code >= 0xD800 && code <= 0xDBFF) {
+        const next = str.charCodeAt(offset + 1);
+        if (next >= 0xDC00 && next <= 0xDFFF) return ch;
+        return '';
+      } else {
+        const prev = str.charCodeAt(offset - 1);
+        if (prev >= 0xD800 && prev <= 0xDBFF) return ch;
+        return '';
+      }
+    });
+  }
+  if (Array.isArray(obj)) return obj.map(_san);
+  if (obj && typeof obj === 'object') {
+    const r = {};
+    for (const [k, v] of Object.entries(obj)) r[k] = _san(v);
+    return r;
+  }
+  return obj;
+}
+const _reply = client.replyMessage.bind(client);
+client.replyMessage = (token, msg) => _reply(token, _san(msg));
+const _push = client.pushMessage.bind(client);
+client.pushMessage = (uid, msg) => _push(uid, _san(msg));
+
 const GEMINI_KEY  = process.env.GEMINI_API_KEY;
 const SHEET_ID    = process.env.GOOGLE_SHEET_ID;
 const SHEET_KEY   = process.env.GOOGLE_API_KEY;
