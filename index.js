@@ -199,8 +199,8 @@ function parse(rawInput) {
   const sections = [];
   for (const part of parts) {
     if (/^⚠️\s*(ข้อมูลนี้|ข้อมูล นี้)/.test(part)) continue;
-    // ข้าม section ที่เป็นแค่เวลา เช่น "⏱️ 2 นาที" หรือ "⏱️ 1 นาที"
-    if (/^⏱️\s*\d+\s*นาที/.test(part.trim())) continue;
+    // ข้าม section ที่เป็นแค่เวลาโดด ⏱️ 2 นาที (head สั้น < 15 chars, ไม่มี items)
+    if (/^⏱️\s*\d+\s*นาที\s*$/.test(part.trim())) continue;
     // ข้าม section ที่เป็นแค่ "กดปุ่มด้านล่าง" ซ้ำกับปุ่ม "กดปุ่มด้านล่าง" ซ้ำกับปุ่ม
     if (/กดปุ่มด้านล่าง|กรุณาถามแพทย์/.test(part) && part.length < 60) continue;
 
@@ -230,7 +230,12 @@ function parse(rawInput) {
       const subItems = head.split(/[,，]\s*|\s{2,}/).filter(s=>s.length>3).slice(0,6);
       sections.push({s:SS[skey], head: head, items: subItems.length>1?subItems.slice(1):[]});
     } else {
-      sections.push({s:SS[skey], head, items});
+      // Merge ⏱️ timestamp section เข้ากับ goal section ก่อนหน้า
+      if (skey==="goal" && head.match(/^\d+\s*นาที/) && sections.length>0 && sections[sections.length-1].s===SS.goal) {
+        sections[sections.length-1].head += " ภายใน " + head;
+      } else {
+        sections.push({s:SS[skey], head, items});
+      }
     }
   }
 
@@ -528,18 +533,6 @@ function mainMenu(){
        ]},
       {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#FFF8E1",cornerRadius:"8px",paddingAll:"8px",
        contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกเสมอ",size:"xxs",color:"#795548",wrap:true}]},
-      {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",cornerRadius:"10px",paddingAll:"10px",spacing:"sm",
-       contents:[
-         {type:"text",text:"📞",size:"xl",flex:0},
-         {type:"box",layout:"vertical",flex:1,
-           contents:[
-             {type:"text",text:"Hotline CRRT · 24 ชม.",weight:"bold",size:"xs",color:"#C62828"},
-             {type:"text",text:"086-341-7250",weight:"bold",size:"lg",color:"#B71C1C"}
-           ]},
-         {type:"button",action:{type:"uri",label:"โทรเลย",uri:"tel:0863417250"},style:"primary",color:"#B71C1C",height:"sm",flex:0,adjustMode:"shrink-to-fit"}
-       ]}
-    ]},
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
       {type:"box",layout:"horizontal",spacing:"xs",contents:[
         {type:"button",action:{type:"message",label:"🚨 แก้ไข Alarm",text:"alarm_menu"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#1B5E20",height:"sm",adjustMode:"shrink-to-fit",flex:1}
@@ -744,45 +737,23 @@ async function handleEvent(event) {
   if(text==="main_menu")   {activate(uid);  await client.replyMessage(replyToken,mainMenu());return;}
   if(text==="exit_crrt"){
     deactivate(uid);
-    await client.replyMessage(replyToken,{
-      type:"flex",altText:"👋 ออกจากระบบ CRRT Bot",
-      contents:{type:"bubble",
-        hero:{type:"box",layout:"vertical",backgroundColor:"#1B5E20",paddingAll:"20px",
-          contents:[
-            {type:"text",text:"👋",size:"5xl",align:"center"},
-            {type:"text",text:"ออกจากระบบแล้วครับ",weight:"bold",size:"lg",color:"#FFFFFF",align:"center",margin:"sm"},
-            {type:"text",text:"ขอบคุณที่ใช้งาน CRRT Bot 🙏",size:"sm",color:"#C8E6C9",align:"center",margin:"xs"}
-          ]},
-        body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"sm",
-          contents:[
-            {type:"box",layout:"horizontal",backgroundColor:"#F1F8E9",cornerRadius:"10px",paddingAll:"12px",spacing:"sm",
-              contents:[
-                {type:"text",text:"🏥",size:"xl",flex:0},
-                {type:"box",layout:"vertical",flex:1,
-                  contents:[
-                    {type:"text",text:"RA5IC · Ramathibodi",weight:"bold",size:"sm",color:"#1B5E20"},
-                    {type:"text",text:"หอผู้ป่วยวิกฤตศัลยกรรม",size:"xs",color:"#558B2F"}
-                  ]}
-              ]},
-            {type:"separator",margin:"sm"},
-            {type:"box",layout:"horizontal",backgroundColor:"#FFF8E1",cornerRadius:"10px",paddingAll:"12px",spacing:"sm",margin:"sm",
-              contents:[
-                {type:"text",text:"📞",size:"xl",flex:0},
-                {type:"box",layout:"vertical",flex:1,
-                  contents:[
-                    {type:"text",text:"Hotline CRRT ตลอด 24 ชม.",weight:"bold",size:"sm",color:"#E65100"},
-                    {type:"text",text:"086-341-7250",size:"xl",weight:"bold",color:"#B71C1C"}
-                  ]}
-              ]},
-            {type:"text",text:"หากต้องการใช้งานอีกครั้ง กด Rich Menu ด้านล่างได้เลยครับ",size:"xs",color:"#888888",align:"center",wrap:true,margin:"sm"}
-          ]},
-        footer:{type:"box",layout:"vertical",paddingAll:"12px",
-          contents:[
-            {type:"button",action:{type:"message",label:"🏠 กลับหน้าแรก",text:"main_menu"},style:"primary",color:"#1B5E20",height:"sm",adjustMode:"shrink-to-fit"},
-            {type:"button",action:{type:"uri",label:"📞 โทร 086-341-7250",uri:"tel:0863417250"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
-          ]}
-      }
-    });
+    await client.replyMessage(replyToken,{type:"flex",altText:"👋 ออกจากระบบ CRRT Bot",contents:{type:"bubble",
+      hero:{type:"box",layout:"vertical",backgroundColor:"#1A237E",paddingAll:"24px",
+        contents:[
+          {type:"text",text:"👋",size:"5xl",align:"center"},
+          {type:"text",text:"ขอบคุณที่ใช้งาน CRRT Bot ครับ",color:"#FFFFFF",size:"md",weight:"bold",align:"center",margin:"md"},
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFECB3",size:"xs",align:"center",margin:"sm"}
+        ]},
+      body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"md",
+        contents:[
+          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้วครับ",weight:"bold",size:"sm",color:"#1B5E20",align:"center"},
+          {type:"text",text:"หากต้องการใช้งานอีกครั้ง\nกด Rich Menu ด้านล่างได้เลยครับ 👇",size:"sm",color:"#555555",wrap:true,align:"center",margin:"sm"}
+        ]},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",
+        contents:[
+          {type:"button",action:{type:"message",label:"🏠 กลับหน้าแรก",text:"main_menu"},style:"primary",color:"#1A237E",height:"sm",adjustMode:"shrink-to-fit"}
+        ]}
+    }});
     return;
   }
   if(text==="alarm_menu")  {activate(uid);  await client.replyMessage(replyToken,menuFlex(0));return;}
@@ -820,7 +791,13 @@ async function handleEvent(event) {
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"อัปเดต Flow Sheet CRRT ทุก 1 ชั่วโมง + บันทึกใน EMR",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},{type:"text",text:"⚠️ หมายเหตุสำคัญ",weight:"bold",size:"sm",color:"#BF360C",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ต้องขออนุมัติแพทย์เจ้าของไข้ก่อนทุกครั้ง ห้ามเริ่มโดยไม่มี Order",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สอบถามเพิ่มเติมที่ฝ่ายการเงิน หรืองานเวชระเบียนโรงพยาบาล",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สอบถามเพิ่มเติมที่ฝ่ายการเงิน หรืองานเวชระเบียนโรงพยาบาล",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EEF0FF",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#1A237E","cornerRadius":"4px","contents":[]},{"type":"text","text":"📋 ขั้นตอนเตรียมเอกสารเบิก CRRT","weight":"bold","size":"sm","color":"#1A237E","wrap":true,"flex":1,"margin":"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1A237E","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"เตรียม: ใบสั่งยา (Drug Order) ระบุชื่อยา ขนาด ความถี่ ลงนามแพทย์","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1A237E","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"เตรียม: ใบเบิกเวชภัณฑ์ระบุ Lot Number ของ CRRT Set และ Filter ทุก Set","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1A237E","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"เตรียม: Informed Consent ผู้ป่วย/ญาติลงนาม (ต้องครบก่อนเริ่ม CRRT)","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1A237E","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"เตรียม: บันทึก Nursing Note ระบุเวลาเริ่ม mode dose anticoagulant","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1A237E","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ส่งคืน: ถุงน้ำยาที่ใช้แล้ว + ใบเบิก ให้ฝ่ายการเงินตรวจสอบตาม Cycle รายวัน","size":"sm","color":"#333333","wrap":true,"flex":1}]}
         ]},
             footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
@@ -854,7 +831,14 @@ async function handleEvent(event) {
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"DLC Catheter 11.5Fr x15cm: Femoral / IJV / Subclavian ผู้ป่วยทั่วไป",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"DLC Catheter 13.5Fr x20cm: ผู้ป่วยตัวใหญ่หรือต้องการ BFR สูง > 150 ml/min",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},{type:"text",text:"📝 หมายเหตุ",weight:"bold",size:"sm",color:"#BF360C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"รหัสเบิกเปลี่ยนได้ตาม Batch กรุณาตรวจสอบคลังเวชภัณฑ์ก่อนเบิกทุกครั้ง",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"รหัสเบิกเปลี่ยนได้ตาม Batch กรุณาตรวจสอบคลังเวชภัณฑ์ก่อนเบิกทุกครั้ง",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#1565C0","cornerRadius":"4px","contents":[]},{"type":"text","text":"🎬 ขั้นตอนการเตรียม CRRT Set (Prime วงจร)","weight":"bold","size":"sm","color":"#0D47A1","wrap":true,"flex":1,"margin":"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1565C0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 1 เตรียมพื้นที่: ปูผ้า Sterile บน Trolley วางอุปกรณ์ครบ: CRRT Set, ถุงน้ำยา, NSS 0.9% 2,000 ml","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1565C0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 2 ติดตั้ง Set: เปิดถุง CRRT Set แบบ Aseptic นำ Hemofilter และ Bloodline ใส่เข้าช่องของเครื่องตามลำดับ","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1565C0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 3 ต่อถุงน้ำยา: ต่อถุง PrismaSOL เข้าสาย Dialysate/Replacement ตาม mode ที่แพทย์สั่ง ตรวจสอบไม่มีฟองอากาศ","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1565C0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 4 Prime วงจร: กด [Prime] บนหน้าจอเครื่อง เครื่องดึง NSS 0.9% ผ่านวงจร ใช้เวลาประมาณ 15-20 นาที","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1565C0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 5 ตรวจก่อน Run: ไม่มีฟองอากาศในสาย, Connection แน่นทุกจุด, Clamp เปิดถูกต้องครบ","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{"type":"text","text":"▶","color":"#1565C0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 6 ตั้งค่าเครื่อง: ใส่ BFR, UF Rate, Dose, Anticoagulant ตาม Order แพทย์ก่อนกด [Run]","size":"sm","color":"#333333","wrap":true,"flex":1}]}
         ]},
             footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
