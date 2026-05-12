@@ -119,8 +119,16 @@ function deactivate(uid){sessions.delete(uid);}
 
 function findAlarm(text){
   const q=text.toLowerCase().trim();
-  return DB_MAIN.find(r=>r.alarm_title?.toLowerCase()===q)||
-    DB_MAIN.find(r=>r.keywords?.toLowerCase().split(",").some(k=>{const kw=k.trim();return q.includes(kw)||kw.includes(q)}))||null;
+  // Direct title match
+  let row = DB_MAIN.find(r=>r.alarm_title?.toLowerCase()===q);
+  if (row) return row;
+  // Keyword match
+  row = DB_MAIN.find(r=>r.keywords?.toLowerCase().split(",").some(k=>{const kw=k.trim();return q.includes(kw)||kw.includes(q)}));
+  if (row) return row;
+  // Reverse T2T lookup: if text is a trigger word, find alarm by title
+  const revTitle = Object.keys(T2T).find(k=>T2T[k]===q);
+  if (revTitle) return DB_MAIN.find(r=>r.alarm_title===revTitle)||null;
+  return null;
 }
 function getSub(trigger){return DB_SUB.filter(r=>r.trigger_word===trigger);}
 
@@ -199,9 +207,16 @@ function parse(rawInput) {
   const sections = [];
   for (const part of parts) {
     if (/^⚠️\s*(ข้อมูลนี้|ข้อมูล นี้)/.test(part)) continue;
-    // ข้าม section ที่เป็นแค่เวลาโดด ⏱️ 2 นาที (head สั้น < 15 chars, ไม่มี items)
-    if (/^⏱️\s*\d+\s*นาที\s*$/.test(part.trim())) continue;
-    // ข้าม section ที่เป็นแค่ "กดปุ่มด้านล่าง" ซ้ำกับปุ่ม "กดปุ่มด้านล่าง" ซ้ำกับปุ่ม
+    // ข้อ 1: ⏱️ แค่ตัวเลขนาที → merge เข้ากับ goal ก่อนหน้า ไม่ตัดทิ้ง
+    if (/^⏱️\s*\d+\s*นาที\s*$/.test(part.trim())) {
+      if (sections.length > 0 && sections[sections.length-1].s === SS.goal) {
+        const last = sections[sections.length-1];
+        const mins = part.trim().replace(/^⏱️\s*/,"");
+        if (!last.head.includes("ภายใน")) last.head += " ภายใน " + mins;
+      }
+      continue;
+    }
+    // ข้าม prompt ที่ซ้ำกับปุ่ม
     if (/กดปุ่มด้านล่าง|กรุณาถามแพทย์/.test(part) && part.length < 60) continue;
 
     let skey = "step";
@@ -303,7 +318,7 @@ function alarmFlex(alarm, subRows, trigger) {
     {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF8E1",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",
      contents:[
        {type:"text",text:"⚠️",size:"sm",flex:0},
-       {type:"text",text:"ใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#795548",wrap:true,flex:1}
+       {type:"text",text:"โปรดใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#795548",wrap:true,flex:1}
      ]}
   ];
 
@@ -532,7 +547,7 @@ function mainMenu(){
          {type:"text",text:"3. กดปุ่มเมนูด้านล่างครับ 👇",size:"xs",color:"#555555",margin:"xs"}
        ]},
       {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#FFF8E1",cornerRadius:"8px",paddingAll:"8px",
-       contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกเสมอ",size:"xxs",color:"#795548",wrap:true}]},
+       contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางในการช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#795548",wrap:true}]},
       {type:"box",layout:"horizontal",spacing:"xs",contents:[
         {type:"button",action:{type:"message",label:"🚨 แก้ไข Alarm",text:"alarm_menu"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#1B5E20",height:"sm",adjustMode:"shrink-to-fit",flex:1}
@@ -987,9 +1002,17 @@ async function handleEvent(event) {
     const t=T2T[respRow.alarm_title];
     const ns=t?getSub(t):getSub("main_menu");
     const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(F(r.next_step_label)),uri:r.next_step_action}:{type:"message",label:_san(F(r.next_step_label)),text:r.next_step_action}}));
-    const msg={type:"text",text:F(rt)||"✅ ดำเนินการเรียบร้อยครับ"};
-    if(qr.length>0)msg.quickReply={items:qr};
-    await client.replyMessage(replyToken,msg);
+    const respText = F(rt)||"";
+    if (respText) {
+      // มี response text → ส่ง text + quickReply (ถ้ามี) ครั้งเดียว
+      const msg={type:"text",text:respText};
+      if(qr.length>0)msg.quickReply={items:qr};
+      await client.replyMessage(replyToken,msg);
+    } else {
+      // ไม่มี response text → แสดง subFlex แทน
+      const t2=T2T[respRow.alarm_title];
+      await client.replyMessage(replyToken,subFlex(getSub(t2||"main_menu"),t2||"main_menu"));
+    }
     return;
   }
 
