@@ -199,6 +199,10 @@ function parse(rawInput) {
   const sections = [];
   for (const part of parts) {
     if (/^⚠️\s*(ข้อมูลนี้|ข้อมูล นี้)/.test(part)) continue;
+    // ข้าม section ที่เป็นแค่เวลา เช่น "⏱️ 2 นาที" หรือ "⏱️ 1 นาที"
+    if (/^⏱️\s*\d+\s*นาที/.test(part.trim())) continue;
+    // ข้าม section ที่เป็นแค่ "กดปุ่มด้านล่าง" ซ้ำกับปุ่ม "กดปุ่มด้านล่าง" ซ้ำกับปุ่ม
+    if (/กดปุ่มด้านล่าง|กรุณาถามแพทย์/.test(part) && part.length < 60) continue;
 
     let skey = "step";
     if (/^🔍/.test(part))      skey = "cause";
@@ -336,7 +340,16 @@ function alarmFlex(alarm, subRows, trigger) {
 // ── SUB FLOW FLEX ──────────────────────────────────────────────────────────────
 function subFlex(subRows, trigger) {
   const first = subRows.find(r=>r.follow_up_msg&&r.follow_up_msg!=="nan");
-  const msg = first?.follow_up_msg||"เลือกตัวเลือกด้านล่างครับ";
+  // ลบประโยคซ้ำท้ายที่ DB ใส่มาซ้ำกับปุ่ม
+  const _cleanMsg = (s) => {
+    if (!s) return s;
+    return s
+      .replace(/💡[^\n]*กดปุ่มด้านล่าง[^\n]*👇?/g,"")
+      .replace(/💡[^\n]*เลือกตัวเลือก[^\n]*👇?/g,"")
+      .replace(/💡[^\n]*กดปุ่ม[^\n]*$/gm,"")
+      .replace(/  {3,}/g,"  ").trim();
+  };
+  const msg = _cleanMsg(first?.follow_up_msg)||"เลือกตัวเลือกด้านล่างครับ";
 
   const MAP={
     "show_hotline":      {color:"#1B5E20",emoji:"📞",title:"Hotline CRRT",     bg:"#EEFFF4"},
@@ -371,7 +384,14 @@ function subFlex(subRows, trigger) {
 
   const secs = parse(msg);
   const bs = mkBlocks(secs);
-  const body = bs.length>0 ? bs : F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2).map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
+  const body = bs.length>0 ? bs : F(msg)
+    .replace(/【[^】]*】/g,"")
+    .replace(/💡[^\n]*(กดปุ่ม|เลือก)[^\n]*/g,"")
+    .replace(/กดปุ่มด้านล่าง[^\n]*/g,"")
+    .split(/\s{3,}|\n/)
+    .map(s=>s.trim())
+    .filter(s=>s.length>2 && !/^💡\s*(กดปุ่ม|กรุณา)/.test(s))
+    .map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
 
   // Knowledge menu — เพิ่มปุ่ม 4 หัวข้อใหม่
   if (trigger === "crrt_knowledge") {
@@ -963,6 +983,8 @@ async function handleEvent(event) {
   if(respRow){
     let rt="";
     for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
+    // ลบประโยค call-to-action ที่ซ้ำกับ quickReply ปุ่ม
+    rt = rt.replace(/💡[^\n]*👇?/g,"").replace(/กดปุ่มด้านล่าง[^\n]*/g,"").trim();
     const t=T2T[respRow.alarm_title];
     const ns=t?getSub(t):getSub("main_menu");
     const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(F(r.next_step_label)),uri:r.next_step_action}:{type:"message",label:_san(F(r.next_step_label)),text:r.next_step_action}}));
