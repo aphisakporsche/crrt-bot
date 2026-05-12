@@ -11,7 +11,6 @@ const LINE_CFG = {
 const client = new line.Client(LINE_CFG);
 
 // ── SANITIZE lone surrogates — ป้องกัน 400 Bad Request จาก LINE ──────────────
-// สาเหตุ: emoji surrogate pair ที่ถูก split กลางคัน ทำให้ JSON invalid
 function _san(obj) {
   if (typeof obj === 'string') {
     return obj.replace(/[\uD800-\uDFFF]/g, function(ch, offset, str) {
@@ -39,8 +38,6 @@ const _reply = client.replyMessage.bind(client);
 client.replyMessage = (token, msg) => _reply(token, _san(msg));
 const _push = client.pushMessage.bind(client);
 client.pushMessage = (uid, msg) => _push(uid, _san(msg));
-
-
 
 const GEMINI_KEY  = process.env.GEMINI_API_KEY;
 const SHEET_ID    = process.env.GOOGLE_SHEET_ID;
@@ -168,7 +165,6 @@ const AC = {
 };
 function ac(t){return AC[t]||{color:"#1A237E",light:"#EEF0FF",emoji:"🚨",tag:"Alarm",lv:"⚪ ALARM"};}
 
-// ── SECTION STYLES ────────────────────────────────────────────────────────────
 const SS = {
   goal:  {bar:"#1565C0", bg:"#E3F2FD", hc:"#0D47A1", icon:"🎯"},
   cause: {bar:"#E65100", bg:"#FFF3E0", hc:"#BF360C", icon:"🔍"},
@@ -177,109 +173,70 @@ const SS = {
   info:  {bar:"#6A1B9A", bg:"#F3E5F5", hc:"#4A148C", icon:"💡"},
 };
 
-// ── PARSER ────────────────────────────────────────────────────────────────────
-// instruction ใน Sheet เป็น 1 บรรทัดยาว แยก section ด้วย emoji headers
 function parse(rawInput) {
   if (!rawInput) return [{s:SS.step, head:"ไม่มีข้อมูลขั้นตอน", items:[]}];
-
-  // Fix emoji + clean
   const text = F(rawInput)
     .replace(/【[^】]*】/g,"")
     .replace(/\\\[/g,"[").replace(/\\\]/g,"]")
     .replace(/\\>/g,">").replace(/\\</g,"<")
     .replace(/\\!/g,"!").replace(/\\_/g,"_")
     .trim();
-
   if (!text) return [{s:SS.step, head:"ไม่มีข้อมูลขั้นตอน", items:[]}];
-
-  // แยก sections ด้วย lookahead ก่อน section emoji
   const parts = text.split(/(?=🔍\s|⏱️\s|🚀\s|▶️\s*(?:ขั้น|Step)|⚠️\s*(?:ข้อ|Nursing))/)
     .map(s=>s.trim()).filter(Boolean);
-
   const sections = [];
   for (const part of parts) {
     if (/^⚠️\s*(ข้อมูลนี้|ข้อมูล นี้)/.test(part)) continue;
-
     let skey = "step";
     if (/^🔍/.test(part))      skey = "cause";
     else if (/^⏱️/.test(part)) skey = "goal";
     else if (/^🚀/.test(part)) skey = "step";
     else if (/^▶️/.test(part)) skey = "step";
     else if (/^⚠️/.test(part)) skey = "warn";
-
-    // แยก items ด้วย emoji number 1️⃣2️⃣3️⃣
-    const sub = part.split(/(?=1️⃣|2️⃣|3️⃣|4️⃣|5️⃣|6️⃣|7️⃣|8️⃣|9️⃣)/)
-      .map(s=>s.trim()).filter(Boolean);
-
-    const head = (sub[0]||"")
-      .replace(/^[🔍⏱️🚀⚠️💡🔄📌]\s*/,"")
-      .replace(/^▶️\s*/,"")
-      .trim();
-
-    const items = sub.slice(1)
-      .map(x=>x.replace(/^[1-9]️⃣\s*/,"").trim())
-      .filter(Boolean);
-
-    // ถ้า head ยาวมาก (ข้อมูลฝังใน head) ให้แสดงเป็น item
+    const sub = part.split(/(?=1️⃣|2️⃣|3️⃣|4️⃣|5️⃣|6️⃣|7️⃣|8️⃣|9️⃣)/).map(s=>s.trim()).filter(Boolean);
+    const head = (sub[0]||"").replace(/^[🔍⏱️🚀⚠️💡🔄📌]\s*/,"").replace(/^▶️\s*/,"").trim();
+    const items = sub.slice(1).map(x=>x.replace(/^[1-9]️⃣\s*/,"").trim()).filter(Boolean);
     if (items.length===0 && head.length>100) {
-      // แยกด้วยเครื่องหมายจุลภาคหรือช่องว่างหลายอัน
       const subItems = head.split(/[,，]\s*|\s{2,}/).filter(s=>s.length>3).slice(0,6);
       sections.push({s:SS[skey], head: head, items: subItems.length>1?subItems.slice(1):[]});
     } else {
       sections.push({s:SS[skey], head, items});
     }
   }
-
-  // Fallback
   if (sections.length===0) {
-    const items = text
-      .split(/▶️\s*[^1️⃣2️⃣3️⃣]*|[1-9]️⃣\s*/)
-      .map(s=>s.trim())
-      .filter(s=>s.length>3 && !/^⚠️\s*ข้อมูลนี้/.test(s))
-      ;
+    const items = text.split(/▶️\s*[^1️⃣2️⃣3️⃣]*|[1-9]️⃣\s*/).map(s=>s.trim()).filter(s=>s.length>3 && !/^⚠️\s*ข้อมูลนี้/.test(s));
     return [{s:SS.step, head:"ขั้นตอน", items: items.length>0?items:[text.slice(0,200)]}];
   }
   return sections;
 }
 
-// สร้าง Flex blocks สีสวยแยก Part
 function mkBlocks(sections) {
   const out = [];
   for (const sec of sections) {
     const s = sec.s;
-    // Head box พร้อมสี
     if (sec.head) {
-      out.push({
-        type:"box", layout:"horizontal", margin:"md", spacing:"sm",
-        backgroundColor:s.bg, paddingAll:"8px", cornerRadius:"8px",
+      out.push({type:"box",layout:"horizontal",margin:"md",spacing:"sm",backgroundColor:s.bg,paddingAll:"8px",cornerRadius:"8px",
         contents:[
           {type:"box",layout:"vertical",width:"4px",backgroundColor:s.bar,cornerRadius:"4px",contents:[]},
           {type:"text",text:s.icon+" "+sec.head,weight:"bold",size:"sm",color:s.hc,wrap:true,flex:1,margin:"sm"}
-        ]
-      });
+        ]});
     }
-    // Items ด้วย bullet ▶ ไม่มีเลข
     for (const item of sec.items) {
       const warn = ["ห้าม","ทันที","วิกฤต","เด็ดขาด","ห้ามรอ","ห้ามฝืน","ห้ามกด","ห้ามคืน","ห้ามต่อ","ห้ามให้"].some(w=>item.includes(w));
-      out.push({
-        type:"box", layout:"horizontal", margin:"xs", spacing:"sm",
-        paddingStart:sec.head?"8px":"0px",
+      out.push({type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:sec.head?"8px":"0px",
         contents:[
           {type:"text",text:"▶",color:s.bar,size:"xxs",flex:0,gravity:"top",margin:"xs"},
           {type:"text",text:item,size:"sm",color:warn?"#C62828":"#333333",weight:warn?"bold":"regular",wrap:true,flex:1}
-        ]
-      });
+        ]});
     }
   }
   return out;
 }
 
-// ── ALARM FLEX ────────────────────────────────────────────────────────────────
 function alarmFlex(alarm, subRows, trigger) {
   const c = ac(trigger);
   const secs = parse(alarm.instruction);
   const bs = mkBlocks(secs);
-
   const body = [
     {type:"box",layout:"horizontal",spacing:"sm",contents:[
       {type:"box",layout:"baseline",flex:0,paddingAll:"4px",paddingStart:"10px",paddingEnd:"10px",backgroundColor:c.color,cornerRadius:"20px",
@@ -292,33 +249,25 @@ function alarmFlex(alarm, subRows, trigger) {
     ...(bs.length>0 ? bs : [{type:"text",text:"กรุณาดูข้อมูลในระบบครับ",size:"sm",color:"#555555",wrap:true,margin:"sm"}]),
     {type:"separator",margin:"lg",color:"#EEEEEE"},
     {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF8E1",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",
-     contents:[
-       {type:"text",text:"⚠️",size:"sm",flex:0},
-       {type:"text",text:"ใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#795548",wrap:true,flex:1}
-     ]}
+     contents:[{type:"text",text:"⚠️",size:"sm",flex:0},{type:"text",text:"ใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#795548",wrap:true,flex:1}]}
   ];
-
-  // Buttons
   const btns = [];
   for (let n=1;n<=6;n++) {
     const lbl = F((alarm[`btn_${n}_label`]||"").trim());
     const act = (alarm[`btn_${n}_action`]||"").trim();
     if (!lbl||lbl==="nan"||!act||act==="nan") continue;
-    btns.push({type:"button",
-      action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
+    btns.push({type:"button",action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
       style:btns.length===0?"primary":"secondary",color:btns.length===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   }
   if (btns.length===0) {
     subRows.filter(r=>r.next_step_label).slice(0,4).forEach((r,i)=>{
       const lbl=F(r.next_step_label||"");
-      btns.push({type:"button",
-        action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
+      btns.push({type:"button",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
         style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
     });
   }
   if (!btns.some(b=>b.action?.text==="main_menu"))
     btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
-
   return {type:"flex",altText:alarm.alarm_title||"CRRT Alarm",contents:{type:"bubble",
     hero:{type:"box",layout:"horizontal",backgroundColor:c.color,paddingAll:"12px",spacing:"sm",contents:[
       {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
@@ -333,51 +282,49 @@ function alarmFlex(alarm, subRows, trigger) {
   }};
 }
 
-// ── SUB FLOW FLEX ──────────────────────────────────────────────────────────────
 function subFlex(subRows, trigger) {
   const first = subRows.find(r=>r.follow_up_msg&&r.follow_up_msg!=="nan");
   const msg = first?.follow_up_msg||"เลือกตัวเลือกด้านล่างครับ";
-
   const MAP={
-    "show_hotline":      {color:"#1B5E20",emoji:"📞",title:"Hotline CRRT",     bg:"#EEFFF4"},
-    "show_non_citrate":  {color:"#004D40",emoji:"🔵",title:"Preset No Citrate",bg:"#EEFFFE"},
-    "show_with_citrate": {color:"#E65100",emoji:"🟠",title:"Preset Citrate",   bg:"#FFF8F0"},
-    "crrt_knowledge":    {color:"#1565C0",emoji:"📚",title:"CRRT Knowledge",   bg:"#EFF7FF"},
-    "crrt_mode_info":    {color:"#0D47A1",emoji:"🔄",title:"CRRT Mode",        bg:"#EEF5FF"},
-    "crrt_pressure_info":{color:"#880E4F",emoji:"📊",title:"ค่า Pressure",     bg:"#FFF0F5"},
-    "how_to_return":     {color:"#C62828",emoji:"🩸",title:"การคืนเลือด",      bg:"#FFF5F5"},
-    "how_to_flush_dlc":  {color:"#00695C",emoji:"💉",title:"หล่อเส้น DLC",     bg:"#EEFFFE"},
-    "show_cleanup":      {color:"#2E7D32",emoji:"✅",title:"เก็บเครื่อง",      bg:"#EEFFF2"},
-    "alarm_menu":        {color:"#B71C1C",emoji:"🚨",title:"เมนู Alarm",       bg:"#FFF5F5"},
-    "alarm_menu_2":      {color:"#B71C1C",emoji:"🚨",title:"เมนู Alarm 2/3",   bg:"#FFF5F5"},
-    "alarm_menu_3":      {color:"#B71C1C",emoji:"🚨",title:"เมนู Alarm 3/3",   bg:"#FFF5F5"},
-    "update_status":     {color:"#4527A0",emoji:"📋",title:"สถานะเครื่อง",    bg:"#F3F0FF"},
-    "how_to_closeloop":  {color:"#0277BD",emoji:"💧",title:"NSS Recirculation",bg:"#EEF7FF"},
-    "fallback":          {color:"#546E7A",emoji:"❓",title:"ไม่พบข้อมูล",      bg:"#F4F6F7"},
-    "restart_crrt_flow": {color:"#1565C0",emoji:"▶️",title:"Start CRRT",       bg:"#EFF7FF"},
-    "end_crrt_flow":     {color:"#C62828",emoji:"⏹️",title:"End CRRT",         bg:"#FFF5F5"},
-    "ask_doctor_plan":   {color:"#1B5E20",emoji:"👨",title:"ปรึกษาแพทย์",     bg:"#EEFFF4"},
-    "how_to_swap_dlc":   {color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",      bg:"#EEFFFE"},
-    "how_to_swap_dlc_2": {color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",      bg:"#EEFFFE"},
-    "flow_air_fail":     {color:"#1565C0",emoji:"💨",title:"Air Detected",     bg:"#EFF7FF"},
-    "how_to_use":        {color:"#37474F",emoji:"📖",title:"วิธีใช้งาน",        bg:"#F4F6F7"},
-    "exit_crrt":         {color:"#546E7A",emoji:"🚪",title:"ออกจากระบบ",       bg:"#F4F6F7"},
+    "show_hotline":{color:"#1B5E20",emoji:"📞",title:"Hotline CRRT",bg:"#EEFFF4"},
+    "show_non_citrate":{color:"#004D40",emoji:"🔵",title:"Preset No Citrate",bg:"#EEFFFE"},
+    "show_with_citrate":{color:"#E65100",emoji:"🟠",title:"Preset Citrate",bg:"#FFF8F0"},
+    "crrt_knowledge":{color:"#1565C0",emoji:"📚",title:"CRRT Knowledge Base",bg:"#EFF7FF"},
+    "crrt_billing":{color:"#2E7D32",emoji:"💰",title:"การเบิกจ่ายตามสิทธิ์",bg:"#EEFFF2"},
+    "crrt_supplies":{color:"#4527A0",emoji:"📦",title:"รหัสอุปกรณ์เบิกจ่าย",bg:"#F3F0FF"},
+    "crrt_wound":{color:"#C62828",emoji:"🩹",title:"การทำแผล DLC",bg:"#FFF5F5"},
+    "crrt_calc":{color:"#E65100",emoji:"🧮",title:"คำนวณสารน้ำ CRRT",bg:"#FFF8F0"},
+    "crrt_mode_info":{color:"#0D47A1",emoji:"🔄",title:"CRRT Mode",bg:"#EEF5FF"},
+    "crrt_pressure_info":{color:"#880E4F",emoji:"📊",title:"ค่า Pressure",bg:"#FFF0F5"},
+    "how_to_return":{color:"#C62828",emoji:"🩸",title:"การคืนเลือด",bg:"#FFF5F5"},
+    "how_to_flush_dlc":{color:"#00695C",emoji:"💉",title:"หล่อเส้น DLC",bg:"#EEFFFE"},
+    "show_cleanup":{color:"#2E7D32",emoji:"✅",title:"เก็บเครื่อง",bg:"#EEFFF2"},
+    "alarm_menu":{color:"#B71C1C",emoji:"🚨",title:"เมนู Alarm",bg:"#FFF5F5"},
+    "alarm_menu_2":{color:"#B71C1C",emoji:"🚨",title:"เมนู Alarm 2/3",bg:"#FFF5F5"},
+    "alarm_menu_3":{color:"#B71C1C",emoji:"🚨",title:"เมนู Alarm 3/3",bg:"#FFF5F5"},
+    "update_status":{color:"#4527A0",emoji:"📋",title:"สถานะเครื่อง",bg:"#F3F0FF"},
+    "how_to_closeloop":{color:"#0277BD",emoji:"💧",title:"NSS Recirculation",bg:"#EEF7FF"},
+    "fallback":{color:"#546E7A",emoji:"❓",title:"ไม่พบข้อมูล",bg:"#F4F6F7"},
+    "restart_crrt_flow":{color:"#1565C0",emoji:"▶️",title:"Start CRRT",bg:"#EFF7FF"},
+    "end_crrt_flow":{color:"#C62828",emoji:"⏹️",title:"End CRRT",bg:"#FFF5F5"},
+    "ask_doctor_plan":{color:"#1B5E20",emoji:"👨",title:"ปรึกษาแพทย์",bg:"#EEFFF4"},
+    "how_to_swap_dlc":{color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",bg:"#EEFFFE"},
+    "how_to_swap_dlc_2":{color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",bg:"#EEFFFE"},
+    "flow_air_fail":{color:"#1565C0",emoji:"💨",title:"Air Detected",bg:"#EFF7FF"},
+    "how_to_use":{color:"#37474F",emoji:"📖",title:"วิธีใช้งาน",bg:"#F4F6F7"},
+    "exit_crrt":{color:"#546E7A",emoji:"🚪",title:"ออกจากระบบ",bg:"#F4F6F7"},
   };
   const m=MAP[trigger]||{color:"#1A237E",emoji:"📋",title:"CRRT Bot",bg:"#EEF0FF"};
-
   const secs = parse(msg);
   const bs = mkBlocks(secs);
   const body = bs.length>0 ? bs : F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2).map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
-
   const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
     const lbl=F(r.next_step_label||"");
-    return {type:"button",
-      action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
+    return {type:"button",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
       style:i===0?"primary":"secondary",color:i===0?m.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
   });
   if (!["main_menu","exit_crrt"].includes(trigger)&&!btns.some(b=>b.action?.text==="main_menu"))
     btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
-
   return {type:"flex",altText:m.emoji+" "+m.title,contents:{type:"bubble",
     hero:{type:"box",layout:"horizontal",backgroundColor:m.color,paddingAll:"10px",spacing:"sm",contents:[
       {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
@@ -392,14 +339,13 @@ function subFlex(subRows, trigger) {
   }};
 }
 
-// ── ALARM MENU ────────────────────────────────────────────────────────────────
 const PAGES=[
   {title:"🚨 เมนู Alarm (1/3)",sub:"วิกฤต / เร่งด่วน",color:"#B71C1C",
    items:[
      {label:"🫧 Air Detected",text:"air_detected",color:"#E53935"},
      {label:"🩸 Blood Leak Detected",text:"blood_leak",color:"#C62828"},
-     {label:"📉 Access Neg.",text:"access_neg",color:"#1A237E"},
-     {label:"📈 Return Pos.",text:"return_pos",color:"#0D47A1"},
+     {label:"📉 Access Negative",text:"access_neg",color:"#1A237E"},
+     {label:"📈 Return Positive",text:"return_pos",color:"#0D47A1"},
      {label:"❌ Filter Clotted",text:"filter_clotted",color:"#BF360C"},
      {label:"⚙️ System Error",text:"system_error",color:"#4527A0"},
      {label:"📊 TMP Too High",text:"tmp_high",color:"#E65100"},
@@ -407,9 +353,9 @@ const PAGES=[
    ],next:"alarm_menu_2"},
   {title:"🚨 เมนู Alarm (2/3)",sub:"วิกฤต / สาย / อุปกรณ์",color:"#C62828",
    items:[
-     {label:"📈 Access Pos.",text:"access_pos",color:"#006064"},
+     {label:"📈 Access Positive",text:"access_pos",color:"#006064"},
      {label:"🔌 Disconnect",text:"disconnect",color:"#880E4F"},
-     {label:"📡 Comm. Loss",text:"comm_loss",color:"#37474F"},
+     {label:"📡 Communication Loss",text:"comm_loss",color:"#37474F"},
      {label:"💧 Bag Empty",text:"bag_empty",color:"#00695C"},
      {label:"⚖️ Flow Error",text:"flow_error",color:"#2E7D32"},
      {label:"💉 Syringe Empty",text:"syringe_empty",color:"#6A1B9A"},
@@ -423,7 +369,7 @@ const PAGES=[
      {label:"🟢 Line Clamped",text:"line_clamped",color:"#1B5E20"},
      {label:"⚖️ Effluent OL",text:"effluent_overload",color:"#E65100"},
      {label:"🩸 Return Blood",text:"return_blood",color:"#C62828"},
-     {label:"💧 NSS Recirc",text:"nss_recirculation",color:"#0277BD"},
+     {label:"💧 Blood recirculation",text:"nss_recirculation",color:"#0277BD"},
      {label:"⚙️ Self-Test",text:"self_test_failed",color:"#4527A0"},
    ],prev:"alarm_menu_2"}
 ];
@@ -448,7 +394,6 @@ function menuFlex(idx){
   }};
 }
 
-// ── MAIN MENU ─────────────────────────────────────────────────────────────────
 function mainMenu(){
   return {type:"flex",altText:"🏥 CRRT Bot RA5IC",contents:{type:"bubble",
     hero:{type:"box",layout:"vertical",backgroundColor:"#030303",paddingAll:"14px",
@@ -471,7 +416,16 @@ function mainMenu(){
          {type:"text",text:"3. กดปุ่มเมนูด้านล่างครับ 👇",size:"xs",color:"#555555",margin:"xs"}
        ]},
       {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#FFF8E1",cornerRadius:"8px",paddingAll:"8px",
-       contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกเสมอ",size:"xxs",color:"#795548",wrap:true}]}
+       contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกเสมอ",size:"xxs",color:"#795548",wrap:true}]},
+      {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",cornerRadius:"8px",paddingAll:"10px",spacing:"sm",
+       contents:[
+         {type:"text",text:"📞",size:"xl",flex:0,gravity:"center"},
+         {type:"box",layout:"vertical",flex:1,
+           contents:[
+             {type:"text",text:"Hotline CRRT — ตลอด 24 ชั่วโมง",weight:"bold",size:"xs",color:"#B71C1C"},
+             {type:"text",text:"📱 086-341-7250",size:"md",weight:"bold",color:"#B71C1C",margin:"xs"}
+           ]}
+       ]}
     ]},
     footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
       {type:"box",layout:"horizontal",spacing:"xs",contents:[
@@ -483,27 +437,26 @@ function mainMenu(){
         {type:"button",action:{type:"message",label:"📉 Hypotension",text:"hypotension"},style:"primary",color:"#C62828",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🔵 No Citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"🟠 Citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"🔵 Prime set c no citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🟠 Prime set c citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"💧 NSS Recirc",text:"nss_recirculation"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"💧 Blood recirculation",text:"nss_recirculation"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"💉 หล่อเส้น DLC",text:"how_to_flush_dlc"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"💉 วิธีหล่อเส้น DLC",text:"how_to_flush_dlc"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"✅ เก็บเครื่อง",text:"show_cleanup"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"📋 สถานะ",text:"update_status"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"🚪 ออก",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"📋 Check สถานะเครื่อง",text:"update_status"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🚪 ออกจากระบบ",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]}
     ]}
   }};
 }
 
-// ── GEMINI ────────────────────────────────────────────────────────────────────
 const GPROMPT=`คุณคือผู้เชี่ยวชาญ CRRT วิเคราะห์รูปภาพ:
 ALARM_NAME: [ชื่อ alarm ภาษาอังกฤษ หรือ unknown]
 ---
@@ -532,19 +485,15 @@ async function imgB64(msgId){
 }
 function extractName(text){const m=text.match(/ALARM_NAME:\s*(.+)/i);return m?m[1].trim():null;}
 
-// ── EVENT ─────────────────────────────────────────────────────────────────────
 async function handleEvent(event) {
   await loadDB();
   if (OLD_WEBHOOK) axios.post(OLD_WEBHOOK,{events:[event]}).catch(()=>{});
-
   if(event.source?.type==="group"||event.source?.type==="room") return;
   const uid=event.source?.userId;
   if(event.type==="follow") return;
   if(event.type!=="message") return;
-
   const{replyToken,message}=event;
 
-  // Image
   if(message.type==="image"){
     if(!isActive(uid))return;
     touch(uid);
@@ -570,18 +519,248 @@ async function handleEvent(event) {
   if(message.type!=="text") return;
   const text=message.text.trim();
 
-  // Reset
   if(["รีเซ็ต","/reset"].includes(text.toLowerCase())){deactivate(uid);await client.replyMessage(replyToken,{type:"text",text:"✅ ล้างประวัติแล้วครับ"});return;}
 
-  // Fixed nav
   if(text==="main_menu")   {activate(uid);  await client.replyMessage(replyToken,mainMenu());return;}
-  if(text==="exit_crrt")   {deactivate(uid);await client.replyMessage(replyToken,{type:"text",text:"👋 ออกจาก CRRT Bot แล้วครับ กด Rich Menu เพื่อใช้งานอีกครั้งครับ"});return;}
+  if(text==="exit_crrt")   {
+    deactivate(uid);
+    await client.replyMessage(replyToken,{type:"flex",altText:"👋 ออกจากระบบ CRRT Bot",contents:{type:"bubble",
+      hero:{type:"box",layout:"vertical",backgroundColor:"#1A237E",paddingAll:"20px",
+        contents:[
+          {type:"text",text:"👋",size:"5xl",align:"center"},
+          {type:"text",text:"ขอบคุณที่ใช้งานระบบครับ",color:"#FFFFFF",size:"lg",weight:"bold",align:"center",margin:"md"},
+          {type:"text",text:"CRRT Bot RA5IC · RAMATHIBODI",color:"#FFECB3",size:"xs",align:"center"}
+        ]},
+      body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"md",
+        contents:[
+          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้ว",weight:"bold",size:"md",color:"#1B5E20",align:"center"},
+          {type:"box",layout:"vertical",backgroundColor:"#EEF2FF",cornerRadius:"8px",paddingAll:"12px",
+            contents:[
+              {type:"text",text:"📞 Hotline CRRT (24 ชั่วโมง)",weight:"bold",size:"sm",color:"#1A237E"},
+              {type:"text",text:"📱 086-341-7250",size:"lg",weight:"bold",color:"#C62828",margin:"sm"},
+              {type:"text",text:"พร้อมรับสายตลอด 24 ชั่วโมงครับ",size:"xs",color:"#666666"}
+            ]},
+          {type:"text",text:"หากต้องการใช้งานอีกครั้ง\nกด Rich Menu ด้านล่างได้เลยครับ 👇",size:"sm",color:"#555555",wrap:true,align:"center"}
+        ]},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",
+        contents:[
+          {type:"button",action:{type:"uri",label:"📞 โทร Hotline 086-341-7250",uri:"tel:0863417250"},style:"primary",color:"#C62828",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
+          {type:"button",action:{type:"message",label:"🏠 กลับหน้าแรก",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
+        ]}
+    }});
+    return;
+  }
   if(text==="alarm_menu")  {activate(uid);  await client.replyMessage(replyToken,menuFlex(0));return;}
   if(text==="alarm_menu_2"){if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(1));return;}
   if(text==="alarm_menu_3"){if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(2));return;}
 
   if(!isActive(uid))return;
   touch(uid);
+
+  // ── Knowledge sub-topics ──────────────────────────────────────────────────
+  if(text==="crrt_billing"){
+    await client.replyMessage(replyToken,{type:"flex",altText:"💰 การเบิกจ่ายตามสิทธิ์",contents:{type:"bubble",
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#2E7D32",paddingAll:"12px",spacing:"sm",contents:[
+        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
+          {type:"text",text:"💰 การเบิกจ่ายตามสิทธิ์",color:"#FFD700",size:"sm",weight:"bold"}
+        ]}
+      ]},
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#EEFFF2",spacing:"sm",
+        contents:[
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"💰 สิทธิ์บัตรทอง (UC) / 30 บาท",weight:"bold",size:"sm",color:"#1B5E20",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"ชุด CRRT Set เบิกได้จากคลังยา (ต้องมี Order แพทย์)",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"ค่าบริการ CRRT: เบิกตาม DRG ของโรงพยาบาล",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#1565C0",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"🏥 สิทธิ์ข้าราชการ / ประกันสังคม",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"สิทธิ์ข้าราชการ: เบิกได้เต็มจำนวนตามจริง",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"ประกันสังคม: เบิกตาม DRG เช่นเดียวกับ UC",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"⚠️ ต้องขออนุมัติแพทย์ก่อนทุกครั้ง และบันทึกใน Order ให้ครบถ้วน สอบถามเพิ่มเติมที่ฝ่ายการเงินและงานเวชระเบียน",weight:"bold",size:"sm",color:"#BF360C",wrap:true,flex:1,margin:"sm"}
+          ]}
+        ]},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
+        {type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
+        {type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
+      ]}
+    }});return;
+  }
+
+  if(text==="crrt_supplies"){
+    await client.replyMessage(replyToken,{type:"flex",altText:"📦 รหัสอุปกรณ์เบิกจ่าย",contents:{type:"bubble",
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#4527A0",paddingAll:"12px",spacing:"sm",contents:[
+        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
+          {type:"text",text:"📦 รหัสอุปกรณ์เบิกจ่าย",color:"#FFD700",size:"sm",weight:"bold"}
+        ]}
+      ]},
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#F3F0FF",spacing:"sm",
+        contents:[
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#6A1B9A",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"📦 อุปกรณ์ CRRT หลัก",weight:"bold",size:"sm",color:"#4A148C",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"CRRT Set (Prismax/Prismaflex): สอบถามรหัสที่คลังเวชภัณฑ์",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"ถุงน้ำยา PrismaSOL / Hemosol: แจ้งขอที่ห้องยา",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"Heparin Sodium / Citrate Solution: ขอผ่านระบบ Drug Order",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#4527A0",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"🔧 อุปกรณ์เสริม",weight:"bold",size:"sm",color:"#4A148C",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#4527A0",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"DLC Catheter: เบิกตามขนาดที่แพทย์กำหนด (11.5Fr / 13.5Fr)",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#4527A0",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"NSS 0.9% สำหรับ Prime: ขอที่คลังเวชภัณฑ์ทั่วไป",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"📝 รหัสอาจเปลี่ยนตามรุ่นของโรงพยาบาล กรุณาสอบถามคลังเวชภัณฑ์โดยตรงครับ",size:"xs",color:"#BF360C",wrap:true,flex:1,margin:"sm"}
+          ]}
+        ]},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
+        {type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
+        {type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
+      ]}
+    }});return;
+  }
+
+  if(text==="crrt_wound"){
+    await client.replyMessage(replyToken,{type:"flex",altText:"🩹 การทำแผล DLC",contents:{type:"bubble",
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#C62828",paddingAll:"12px",spacing:"sm",contents:[
+        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
+          {type:"text",text:"🩹 การทำแผล DLC",color:"#FFD700",size:"sm",weight:"bold"}
+        ]}
+      ]},
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFF5F5",spacing:"sm",
+        contents:[
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"🎯 เป้าหมาย: ป้องกันการติดเชื้อที่ตำแหน่ง DLC",weight:"bold",size:"sm",color:"#B71C1C",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"🔍 ความถี่: ทุก 48-72 ชั่วโมง หรือเมื่อแผ่นปิดแผลเปียก/หลุด",weight:"bold",size:"sm",color:"#E65100",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"🚀 ขั้นตอนการทำแผล",weight:"bold",size:"sm",color:"#1B5E20",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"เตรียม: ชุดทำแผล Sterile, Alcohol 70%, Chlorhexidine 2%, แผ่นปิดแผล Transparent",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"ล้างมือ 7 ขั้นตอน และสวม Sterile Glove ก่อนทำแผลทุกครั้ง",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"เช็ดทำความสะอาดรอบ Exit Site ด้วย Chlorhexidine เป็นวงกลมจากในออกนอก",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"ปิดแผลด้วย Transparent Dressing หรือ Gauze + Tegaderm ให้แน่น",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#B71C1C",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"⚠️ สังเกต: รอยแดง บวม ร้อน หรือมีสิ่งคัดหลั่งผิดปกติ — รายงานแพทย์ทันที",weight:"bold",size:"sm",color:"#B71C1C",wrap:true,flex:1,margin:"sm"}
+          ]}
+        ]},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
+        {type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
+        {type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
+      ]}
+    }});return;
+  }
+
+  if(text==="crrt_calc"){
+    await client.replyMessage(replyToken,{type:"flex",altText:"🧮 คำนวณสารน้ำ CRRT",contents:{type:"bubble",
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#E65100",paddingAll:"12px",spacing:"sm",contents:[
+        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
+          {type:"text",text:"🧮 คำนวณสารน้ำ CRRT",color:"#FFD700",size:"sm",weight:"bold"}
+        ]}
+      ]},
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFF8F0",spacing:"sm",
+        contents:[
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"🎯 สูตรหลัก CRRT Dose",weight:"bold",size:"sm",color:"#BF360C",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"Dose = 20-25 ml/kg/hr (ตาม KDIGO 2012)",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"Total Effluent = UF Rate (ml/hr) × เวลา (hr)",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#1565C0",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"💧 Fluid Balance",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"Net UF = Patient Fluid Removal ที่ตั้งในเครื่อง (ml/hr)",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"In = IV fluid + ยา IV + อาหาร PPN/TPN",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[
+            {type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},
+            {type:"text",text:"Out = Urine + Drain + Effluent (เครื่อง CRRT)",size:"sm",color:"#333333",wrap:true,flex:1}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"📊 ตัวอย่าง: น้ำหนัก 60 kg → Dose = 60×25 = 1,500 ml/hr → ตั้ง UF Rate ≈ 1,500 ml/hr และ Patient Fluid Removal = Net Balance ที่ต้องการ",size:"sm",color:"#1B5E20",wrap:true,flex:1,margin:"sm"}
+          ]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},
+            {type:"text",text:"⚠️ ต้องปรึกษาแพทย์เสมอก่อนปรับค่า CRRT ทุกครั้ง",weight:"bold",size:"sm",color:"#B71C1C",wrap:true,flex:1,margin:"sm"}
+          ]}
+        ]},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
+        {type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
+        {type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
+      ]}
+    }});return;
+  }
 
   // Sub flows
   const subRows=getSub(text);
@@ -621,9 +800,9 @@ app.post("/webhook",line.middleware(LINE_CFG),async(req,res)=>{
   catch(e){console.error(e);res.status(500).end();}
 });
 
-app.get("/",(_, res)=>res.json({status:"CRRT Bot v13.0 — RA5IC",alarms:Object.keys(T2T).length}));
+app.get("/",(_, res)=>res.json({status:"CRRT Bot v14.0 — RA5IC",alarms:Object.keys(T2T).length,knowledge:["crrt_billing","crrt_supplies","crrt_wound","crrt_calc"]}));
 
 loadDB().then(()=>{
   const PORT=process.env.PORT||3000;
-  app.listen(PORT,()=>console.log(`CRRT Bot v13.0 :${PORT}`));
+  app.listen(PORT,()=>console.log(`CRRT Bot v14.0 :${PORT}`));
 });
