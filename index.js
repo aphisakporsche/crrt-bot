@@ -196,6 +196,9 @@ function parse(rawInput) {
     .replace(/\\\[/g,"[").replace(/\\\]/g,"]")
     .replace(/\\>/g,">").replace(/\\</g,"<")
     .replace(/\\!/g,"!").replace(/\\_/g,"_")
+    // ข้อ 4: ลบวงเล็บรอบตัวเลขเวลา เช่น (⏱️ 2 นาที) → 2 นาที
+    .replace(/[（(]\s*⏱️?\s*(\d+[\s\w]*นาที)[）)]/g,"$1")
+    .replace(/[（(]\s*(\d+[-–]?\s*\d*\s*นาที)[）)]/g,"$1")
     .trim();
 
   if (!text) return [{s:SS.step, head:"ไม่มีข้อมูลขั้นตอน", items:[]}];
@@ -561,25 +564,21 @@ function mainMenu(){
         {type:"button",action:{type:"message",label:"🚨 แก้ไข Alarm",text:"alarm_menu"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#1B5E20",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
-      {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"❤️ CPR",text:"cardiac_arrest"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"📉 Hypotension",text:"hypotension"},style:"primary",color:"#C62828",height:"sm",adjustMode:"shrink-to-fit",flex:1}
-      ]},
+
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🔵 Prime set c no citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"🟠 Prime set c citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"💧 Blood recirculation",text:"nss_recirculation"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"uri",label:"📋 Check สถานะเครื่อง",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"💉 วิธีหล่อเส้น DLC",text:"how_to_flush_dlc"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"✅ เก็บเครื่อง",text:"show_cleanup"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"📋 Check สถานะเครื่อง",text:"update_status"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🚪 ออกจากระบบ",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
@@ -859,104 +858,7 @@ async function handleEvent(event) {
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prism0cal B22 รหัส 30072138 ราคา 1,161 บาท (Dialysate/Post dilution)",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismasol B0 รหัส — ราคา 880 บาท (มาตรฐาน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismocitrate 18/0 รหัส 30049087 ราคา 1,381 บาท (Regional Citrate)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"4% Trisodium citrate 500 ml รหัส 30072725 ราคา 264 บาท (Predilution)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#1565C0",cornerRadius:"4px",contents:[]},{type:"text",text:"🎬 ขั้นตอนการเตรียม CRRT Set (Prime วงจร)",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 1 เตรียมพื้นที่: ปูผ้า Sterile บน Trolley วางอุปกรณ์ครบ: CRRT Set, ถุงน้ำยา, NSS 0.9% 2,000 ml, Heparin/Citrate",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 2 ติดตั้ง Set: เปิดถุง CRRT Set แบบ Aseptic นำ Hemofilter + Bloodline ใส่เข้าช่องของเครื่องตามลำดับ",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 3 ต่อถุงน้ำยา: ต่อถุง PrismaSOL เข้าสาย Dialysate/Replacement ตาม Mode ที่แพทย์สั่ง ตรวจไม่มีฟองอากาศ",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 4 Prime วงจร: กด [Prime] เครื่องดึง NSS 0.9% ผ่านวงจรทั้งหมด ใช้เวลา 15-20 นาที",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 5 ตรวจก่อน Run: ไม่มีฟองอากาศในสาย, Connection แน่นทุกจุด, Clamp เปิดถูกต้องครบ",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 6 ตั้งค่าเครื่อง: ใส่ BFR 100-150 ml/min, UF Rate, Dose 30 ml/kg/h, Anticoagulant ตาม Order แพทย์",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"NSS Flush 200 ml ทุก 8 ชั่วโมงเพื่อป้องกัน Filter อุดตัน",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
-        ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
-    }});return;
-  }
-
-
-  if(text==="crrt_wound"){
-    await client.replyMessage(replyToken,{type:"flex",altText:"🩹 การทำแผล DLC",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#C62828",paddingAll:"12px",spacing:"sm",contents:[
-        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
-          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
-          {type:"text",text:"🩹 การทำแผล DLC (Nursing Management)",color:"#FFD700",size:"sm",weight:"bold"}
-        ]}
-      ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFF5F5",spacing:"sm",
-        contents:[
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"🎯 เป้าหมาย: ป้องกัน CLABSI (Catheter-Line Associated BSI)",weight:"bold",size:"sm",color:"#B71C1C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},{type:"text",text:"📅 ความถี่การทำแผล",weight:"bold",size:"sm",color:"#E65100",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Gauze dressing: เปลี่ยนทุกครั้งที่ทำ HD/CRRT หรือเมื่อเปียก/ชน/แฉะ",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Transparent dressing (Tegaderm): เปลี่ยนทุก 7 วัน หรือเมื่อหลุด/เปียก/ขอบยก",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#6A1B9A",cornerRadius:"4px",contents:[]},{type:"text",text:"📦 อุปกรณ์ที่ต้องเตรียม",weight:"bold",size:"sm",color:"#4A148C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ชุดทำแผลปราศจากเชื้อ (Set wet dressing) 1 set",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Syringe 5 ml 2 อัน + Syringe 10 ml 2 อัน",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Sterile gauze 2x2 นิ้ว 5 ชิ้น + Sterile gauze 3x3 นิ้ว 5 ชิ้น",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"2% Chlorhexidine in 70% Alcohol (CHG) — สำหรับเช็ด Exit Site",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Sterile gloves 1 คู่ + Disposable gloves 1 คู่ + Mask + หมวกคลุมผม",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#6A1B9A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Fixomull 10×10 cm หรือ Transparent dressing",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"🚀 ขั้นตอน Pre-HD/CRRT (เตรียมก่อนเริ่มเครื่อง)",weight:"bold",size:"sm",color:"#1B5E20",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 1: ประเมินผ้าปิดแผล — เปียก ชื้น แฉะ หลุด หรือไม่",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 2: เปิดผ้าปิดแผลเก่าออกอย่างนุ่มนวล",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 3: ประเมิน Exit Site — บวม แดง มี Discharge หรือไม่",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 4: เปิด Set Dressing ใช้ 2% CHG ทำความสะอาดผิวหนังรอบ Catheter",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 5: ปิดผ้าปิดแผล Exit Site ส่วนต้น",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 6: ปูผ้า Sterile — ทำความสะอาดสาย DLC ส่วนปลาย",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 7: เปิด Cap → Scrub the Hub ≥ 5 วินาที ด้วย 2% CHG",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 8: Draw Heparinized saline ออก ~2 เท่าของ Prime Volume → Test Flow",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"🔒 ขั้นตอน Post-HD/CRRT (Lock Catheter หลังเครื่อง)",weight:"bold",size:"sm",color:"#1B5E20",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 1: ปลด Blood line CRRT ออก → สวม Sterile Gloves",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 2: เตรียม Heparinized saline 2,500 unit/ml และ NSS 10 ml x2 syringe",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 3: Flush 0.9% NSS 10 ml/ขาง ด้วย Push-pause technique",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 4: Lock Heparin 2,500 unit/ml ปริมาณ = Prime volume ด้วย Positive pressure technique",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 5: Scrub the Hub ≥ 5 วินาที → ปิด Cap ใหม่",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ขั้น 6: ห่อสาย DLC ด้วย Gauze → ปิดด้วย Fixomull ให้แน่น",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"งด Lock Heparin ถ้ามีแผนถอน Catheter (Off Catheter)",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#B71C1C",cornerRadius:"4px",contents:[]},{type:"text",text:"⚠️ สัญญาณ CLABSI รายงานแพทย์ทันที",weight:"bold",size:"sm",color:"#B71C1C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ไข้ > 38°C ไม่ทราบสาเหตุ + หนาวสั่น (Rigors) หลัง Flush สาย",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Exit Site: แดง บวม ร้อน เจ็บ หรือมี Discharge (หนอง/เลือด)",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"เพาะเชื้อ Blood Culture 2 ตำแหน่ง (Peripheral + จาก Catheter) ก่อนให้ ATB",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
-        ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
-    }});return;
-  }
-
-
-  if(text==="crrt_calc"){
-    await client.replyMessage(replyToken,{type:"flex",altText:"🧮 คำนวณสารน้ำ CRRT",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#E65100",paddingAll:"12px",spacing:"sm",contents:[
-        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
-          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
-          {type:"text",text:"🧮 คำนวณสารน้ำ CRRT",color:"#FFD700",size:"sm",weight:"bold"}
-        ]}
-      ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFF8F0",spacing:"sm",
-        contents:[
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#E65100",cornerRadius:"4px",contents:[]},{type:"text",text:"🎯 สูตรหลัก CRRT Dose (KDIGO 2012)",weight:"bold",size:"sm",color:"#BF360C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prescribed Dose = 20-25 ml/kg/hr (ใช้ Actual BW หรือ Ideal BW ตามแพทย์)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Delivered Dose จริง ≈ Prescribed x 0.85-0.90 (เพราะมี Downtime)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ตัวอย่าง: BW 60 kg → Dose = 60x25 = 1,500 ml/hr = UF Rate ที่ตั้งในเครื่อง",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#1565C0",cornerRadius:"4px",contents:[]},{type:"text",text:"💧 Fluid Balance คิด In/Out ต่อชั่วโมง",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"IN: IV Fluid + ยา IV + อาหาร (PPN/TPN/Enteral) + ยา Oral ที่ต้องนับ",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"OUT: Urine + Drain (NGT/Chest drain) + Effluent จากเครื่อง CRRT",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Net Balance (ml/hr) = Total IN - Total OUT",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#1565C0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Patient Fluid Removal = Net UF ที่ต้องการดึงออก/ชั่วโมง ตั้งในเครื่อง",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 ตัวอย่าง CVVHDF BW 70 kg",weight:"bold",size:"sm",color:"#1B5E20",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Total Effluent = 70x25 = 1,750 ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"แบ่ง: Dialysate 875 ml/hr + Replacement (Pre/Post) 875 ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ถ้าต้องดึงน้ำ 100 ml/hr → ตั้ง Patient Fluid Removal = 100 ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Heparin เริ่ม 500-1,000 IU/hr ปรับตาม APTT target 60-80 วินาที",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#4527A0",cornerRadius:"4px",contents:[]},{type:"text",text:"🔬 Citrate Anticoagulation (Regional)",weight:"bold",size:"sm",color:"#4A148C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#4527A0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismocitrat 18 mmol/L Pre-filter: เริ่ม 1.5-2x BFR ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#4527A0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Calcium Gluconate 10% Systemic: ปรับตาม iCa systemic 1.1-1.3 mmol/L",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#4527A0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"iCa Post-filter target: 0.25-0.35 mmol/L (วัดทุก 6 ชั่วโมง)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#4527A0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อห้าม: Liver failure รุนแรง เสี่ยง Citrate accumulation",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#B71C1C",cornerRadius:"4px",contents:[]},{type:"text",text:"⚠️ ข้อควรระวัง",weight:"bold",size:"sm",color:"#B71C1C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ปรึกษาแพทย์ Nephrology/ICU ก่อนปรับค่าทุกครั้ง ห้ามปรับเองโดยไม่มี Order",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วัด Electrolytes ทุก 6-8 ชม.: K, Na, Mg, Phos, Ca (iCa ถ้าใช้ Citrate)",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Monitor อุณหภูมิผู้ป่วย: CRRT ทำให้ตัวเย็น ต้องเปิด Heater เครื่อง",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#E65100",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"4% Trisodium citrate 500 ml รหัส 30072725 ราคา 264 บาท (Predilution)",size:"sm",color:"#333333",wrap:true,flex:1}]}
         ]},
             footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
@@ -1050,10 +952,7 @@ async function handleEvent(event) {
           {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"4️⃣ CVVHDF — Continuous Veno-Venous Hemodiafiltration",weight:"bold",size:"sm",color:"#B71C1C",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: Diffusion + Convection — กำจัดของเสียได้ทุกขนาด",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: AKI รุนแรง / Sepsis / Cytokines — ใช้บ่อยที่สุดใน ICU",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ต้องการทั้ง Dialysate + Replacement Fluid | Dose 25-35 ml/kg/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#ECEFF1",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#37474F",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 สรุป: RA5IC ใช้ CVVHDF เป็นหลัก",weight:"bold",size:"sm",color:"#263238",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#37474F",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"SCUF → ดึงน้ำ | CVVH → Convection | CVVHD → Diffusion | CVVHDF → ทั้งสองอย่าง",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#37474F",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"CVVHDF ให้ประสิทธิภาพสูงสุดในผู้ป่วย ICU วิกฤต",size:"sm",color:"#333333",wrap:true,flex:1}]}
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ต้องการทั้ง Dialysate + Replacement Fluid | Dose 25-35 ml/kg/hr",size:"sm",color:"#333333",wrap:true,flex:1}]}
         ]},
             footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
@@ -1131,19 +1030,7 @@ async function handleEvent(event) {
   }
 
   // Sub flows
-  // ── ข้อ 5 fix: ถ้า trigger เป็น alarm trigger → ดึง alarmFlex โดยตรงก่อน ──────
-  {
-    const directAlarm = DB_MAIN.find(r=>T2T[r.alarm_title]===text);
-    if (directAlarm && !NAV.has(text)) {
-      const t = T2T[directAlarm.alarm_title];
-      const subs = getSub(t||text);
-      await client.replyMessage(replyToken, alarmFlex(directAlarm, subs, t));
-      return;
-    }
-  }
-
-  // ข้อ 5: direct alarm trigger — ถ้า text เป็น trigger word (tmp_high, battery_low, access_pos ฯลฯ)
-  // ให้ค้นหา alarm ใน DB_MAIN ก่อน แม้ subRows จะว่าง
+  // Direct alarm trigger: tmp_high, battery_low, access_pos etc.
   if(!NAV.has(text)){
     const directAlarm = DB_MAIN.find(r=>T2T[r.alarm_title]===text);
     if(directAlarm){
@@ -1175,15 +1062,12 @@ async function handleEvent(event) {
     const ns=t?getSub(t):getSub("main_menu");
     const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(F(r.next_step_label)),uri:r.next_step_action}:{type:"message",label:_san(F(r.next_step_label)),text:r.next_step_action}}));
     const respText = F(rt)||"";
+    // ข้อ 5: ส่งแค่ text reply เดียว ไม่มี quickReply ซ้ำ
     if (respText) {
-      // มี response text → ส่ง text + quickReply (ถ้ามี) ครั้งเดียว
-      const msg={type:"text",text:respText};
-      if(qr.length>0)msg.quickReply={items:qr};
-      await client.replyMessage(replyToken,msg);
+      await client.replyMessage(replyToken,{type:"text",text:respText});
     } else {
-      // ไม่มี response text → แสดง subFlex แทน
-      const t2=T2T[respRow.alarm_title];
-      await client.replyMessage(replyToken,subFlex(getSub(t2||"main_menu"),t2||"main_menu"));
+      // ถ้าไม่มีข้อความตอบ → แสดง Main Menu
+      await client.replyMessage(replyToken,{type:"text",text:"✅ ดำเนินการเรียบร้อยครับ"});
     }
     return;
   }
