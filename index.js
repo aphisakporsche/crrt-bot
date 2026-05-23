@@ -196,9 +196,11 @@ function parse(rawInput) {
     .replace(/\\\[/g,"[").replace(/\\\]/g,"]")
     .replace(/\\>/g,">").replace(/\\</g,"<")
     .replace(/\\!/g,"!").replace(/\\_/g,"_")
-    // ข้อ 4: ลบวงเล็บรอบตัวเลขเวลา เช่น (⏱️ 2 นาที) → 2 นาที
+    // ลบวงเล็บรอบตัวเลขเวลา
     .replace(/[（(]\s*⏱️?\s*(\d+[\s\w]*นาที)[）)]/g,"$1")
     .replace(/[（(]\s*(\d+[-–]?\s*\d*\s*นาที)[）)]/g,"$1")
+    // ลบการเว้นบรรทัดซ้อน → ข้อความต่อเนื่อง
+    .replace(/\n{2,}/g," ").replace(/\r\n/g," ")
     .trim();
 
   if (!text) return [{s:SS.step, head:"ไม่มีข้อมูลขั้นตอน", items:[]}];
@@ -573,20 +575,20 @@ function mainMenu(){
         {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#0277BD",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"❤️ Hypotension",text:"hypotension"},style:"primary",color:"#C62828",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"🫀 Cardiac Arrest",text:"cardiac_arrest"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"❤️ Hypotension",text:"hypotension"},style:"primary",color:"#880E4F",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🫀 Cardiac Arrest",text:"cardiac_arrest"},style:"primary",color:"#4A148C",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🔵 Prime set c no citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"🟠 Prime set c citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"primary",color:"#C62828",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"primary",color:"#AD1457",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"uri",label:"📋 Check สถานะเครื่อง",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#4527A0",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"💉 วิธีหล่อเส้นด้วย Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#00695C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"✅ วิธีเก็บเครื่อง",text:"show_cleanup"},style:"primary",color:"#2E7D32",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"💉 วิธีหล่อเส้นด้วย Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#006064",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"✅ วิธีเก็บเครื่อง",text:"show_cleanup"},style:"primary",color:"#1B5E20",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"primary",color:"#1565C0",height:"sm",adjustMode:"shrink-to-fit",flex:1},
@@ -1061,8 +1063,10 @@ async function handleEvent(event) {
     }
   }
 
+  // ข้อ 2: ถ้า text เป็น btn_action → ข้าม subRows ป้องกัน double reply
+  const isBtnAction = DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text));
   const subRows=getSub(text);
-  if(subRows.length>0){
+  if(subRows.length>0 && !isBtnAction){
     if(!NAV.has(text)){
       const row=DB_MAIN.find(r=>T2T[r.alarm_title]===text||r.alarm_title?.toLowerCase()===text.toLowerCase());
       if(row){const t=T2T[row.alarm_title]||text;await client.replyMessage(replyToken,alarmFlex(row,subRows,t));return;}
