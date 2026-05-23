@@ -150,39 +150,45 @@ const T2T = {
 const NAV = new Set(["main_menu","alarm_menu","alarm_menu_2","alarm_menu_3","how_to_use","show_hotline","fallback","update_status","exit_crrt","how_to_return","how_to_closeloop","how_to_swap_dlc","how_to_swap_dlc_2","how_to_flush_dlc","restart_crrt_flow","end_crrt_flow","ask_doctor_plan","show_cleanup","show_non_citrate","show_with_citrate","crrt_knowledge","crrt_mode_info","crrt_pressure_info","crrt_prime","crrt_billing","crrt_supplies","crrt_wound","crrt_calc"]);
 
 const AC = {
-  "cardiac_arrest":    {color:"#EF5350",light:"#FFF5F5",emoji:"❤️", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
-  "blood_leak":        {color:"#C62828",light:"#FFF5F5",emoji:"🩸", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
-  "disconnect":        {color:"#EC407A",light:"#FFF0F5",emoji:"🔌", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
-  "air_detected":      {color:"#E53935",light:"#FFF3E0",emoji:"🫧", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
-  "system_error":      {color:"#7E57C2",light:"#F3F0FF",emoji:"⚙️", tag:"ระบบ",    lv:"🔴 CRITICAL"},
-  "tmp_high":          {color:"#FFA726",light:"#FFF8F0",emoji:"📊", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "filter_clotted":    {color:"#BF360C",light:"#FFF3EE",emoji:"🔧", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "access_neg":        {color:"#1A237E",light:"#EEF0FF",emoji:"📉", tag:"เตือน",   lv:"🟡 WARNING"},
-  "return_pos":        {color:"#0D47A1",light:"#EEF5FF",emoji:"📈", tag:"เตือน",   lv:"🟡 WARNING"},
-  "access_pos":        {color:"#26C6DA",light:"#EEFFFE",emoji:"📈", tag:"เตือน",   lv:"🟡 WARNING"},
-  "hypotension":       {color:"#EF5350",light:"#FFF5F5",emoji:"📉", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
-  "battery_low":       {color:"#FFA726",light:"#FFF8F0",emoji:"⚡", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "comm_loss":         {color:"#37474F",light:"#F4F6F7",emoji:"📡", tag:"ระบบ",    lv:"🟡 WARNING"},
-  "bag_empty":         {color:"#00695C",light:"#EEFFFE",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "flow_error":        {color:"#2E7D32",light:"#EEFFF2",emoji:"⚖️", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "syringe_empty":     {color:"#6A1B9A",light:"#F6EEFF",emoji:"💉", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "scale_open":        {color:"#F57F17",light:"#FFFCEE",emoji:"⚖️", tag:"ระวัง",   lv:"🟢 ADVISORY"},
-  "check_access":      {color:"#827717",light:"#FDFFF0",emoji:"🔍", tag:"ระวัง",   lv:"🟢 ADVISORY"},
-  "line_clamped":      {color:"#66BB6A",light:"#EEFFF2",emoji:"🟢", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "effluent_overload": {color:"#FFA726",light:"#FFF8F0",emoji:"⚖️", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "return_blood":      {color:"#C62828",light:"#FFF5F5",emoji:"🩸", tag:"เร่งด่วน",lv:"🟢 ADVISORY"},
-  "nss_recirculation": {color:"#42A5F5",light:"#EEF7FF",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "self_test_failed":  {color:"#7E57C2",light:"#F3F0FF",emoji:"⚙️", tag:"ระบบ",    lv:"🟡 WARNING"},
+  // ── CRITICAL (Glass Red) ───────────────────────────────────────────
+  "cardiac_arrest":    {color:"#E57373",light:"#FFF5F5",emoji:"❤️", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
+  "blood_leak":        {color:"#EF9A9A",light:"#FFF8F8",emoji:"🩸", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
+  "disconnect":        {color:"#CE93D8",light:"#FDF5FF",emoji:"🔌", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
+  "air_detected":      {color:"#FFAB91",light:"#FFF5EE",emoji:"🫧", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
+  "system_error":      {color:"#9FA8DA",light:"#F3F4FF",emoji:"⚙️", tag:"ระบบ",    lv:"🔴 CRITICAL"},
+  "hypotension":       {color:"#F48FB1",light:"#FFF5F8",emoji:"📉", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
+  // ── WARNING (Glass Amber/Orange) ──────────────────────────────────
+  "tmp_high":          {color:"#FFB74D",light:"#FFF8F0",emoji:"📊", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "filter_clotted":    {color:"#FFCC80",light:"#FFFAF0",emoji:"🔧", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "access_neg":        {color:"#90CAF9",light:"#F0F8FF",emoji:"📉", tag:"เตือน",   lv:"🟡 WARNING"},
+  "return_pos":        {color:"#81D4FA",light:"#F0FAFF",emoji:"📈", tag:"เตือน",   lv:"🟡 WARNING"},
+  "battery_low":       {color:"#FFE082",light:"#FFFDF0",emoji:"⚡", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "comm_loss":         {color:"#B0BEC5",light:"#F5F7F8",emoji:"📡", tag:"ระบบ",    lv:"🟡 WARNING"},
+  "effluent_overload": {color:"#FFCC80",light:"#FFF8EE",emoji:"⚖️", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "self_test_failed":  {color:"#B39DDB",light:"#F5F2FF",emoji:"⚙️", tag:"ระบบ",    lv:"🟡 WARNING"},
+  // ── ADVISORY (Glass Green/Teal) ───────────────────────────────────
+  "access_pos":        {color:"#80DEEA",light:"#F0FEFE",emoji:"📈", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "bag_empty":         {color:"#80CBC4",light:"#F0FDFB",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "flow_error":        {color:"#A5D6A7",light:"#F3FFF4",emoji:"⚖️", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "syringe_empty":     {color:"#CE93D8",light:"#FBF5FF",emoji:"💉", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "scale_open":        {color:"#FFF176",light:"#FFFFF0",emoji:"⚖️", tag:"ระวัง",   lv:"🟢 ADVISORY"},
+  "check_access":      {color:"#C5E1A5",light:"#F8FFF2",emoji:"🔍", tag:"ระวัง",   lv:"🟢 ADVISORY"},
+  "line_clamped":      {color:"#A5D6A7",light:"#F3FFF4",emoji:"🟢", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "return_blood":      {color:"#EF9A9A",light:"#FFF8F8",emoji:"🩸", tag:"เร่งด่วน",lv:"🟢 ADVISORY"},
+  "nss_recirculation": {color:"#81D4FA",light:"#F0FAFF",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "cardiac_arrest":    {color:"#E57373",light:"#FFF5F5",emoji:"🫀", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
 };
-function ac(t){return AC[t]||{color:"#1A237E",light:"#EEF0FF",emoji:"🚨",tag:"Alarm",lv:"⚪ ALARM"};}
+function ac(t){return AC[t]||{color:"#90A4AE",light:"#F5F7F8",emoji:"🚨",tag:"Alarm",lv:"⚪ ALARM"};}
+
 
 // ── SECTION STYLES ────────────────────────────────────────────────────────────
 const SS = {
-  goal:  {bar:"#5C6BC0", bg:"#E3F2FD", hc:"#0D47A1", icon:"🎯"},
-  cause: {bar:"#FFA726", bg:"#FFF3E0", hc:"#BF360C", icon:"🔍"},
-  step:  {bar:"#2E7D32", bg:"#E8F5E9", hc:"#66BB6A", icon:"🚀"},
-  warn:  {bar:"#C62828", bg:"#FFEBEE", hc:"#EF5350", icon:"⚠️"},
-  info:  {bar:"#6A1B9A", bg:"#F3E5F5", hc:"#AB47BC", icon:"💡"},
+  // Glass soft palette — accent bar ชัด, bg โปร่ง, text นุ่ม
+  goal:  {bar:"#7BA7F5", bg:"#F4F8FF", hc:"#4A6CF7", icon:"🎯"},
+  cause: {bar:"#FFB347", bg:"#FFF9F2", hc:"#E07B1A", icon:"🔍"},
+  step:  {bar:"#56C99A", bg:"#F0FBF6", hc:"#2E8B5E", icon:"🚀"},
+  warn:  {bar:"#F28B82", bg:"#FFF6F6", hc:"#C0392B", icon:"⚠️"},
+  info:  {bar:"#A78BFA", bg:"#F6F4FF", hc:"#6D4ED7", icon:"💡"},
 };
 
 // ── PARSER ────────────────────────────────────────────────────────────────────
@@ -281,319 +287,229 @@ function mkBlocks(sections) {
   const out = [];
   for (const sec of sections) {
     const s = sec.s;
-    // Head box พร้อมสี (goal = เวลา → plain text ธรรมดา)
+    // Head box — glass card style
     if (sec.head) {
       if (s === SS.goal) {
-        // ข้อ 6: เวลาใน Alarm แสดงเป็นข้อความธรรมดา ไม่มีกล่องสี
-        out.push({type:"text",text:"⏱️ "+sec.head,size:"sm",color:"#0D47A1",weight:"bold",wrap:true,margin:"sm"});
+        // เวลา = plain text ไม่มีกล่อง
+        out.push({type:"text",text:"⏱️ "+sec.head,size:"xs",color:"#4A6CF7",weight:"bold",wrap:true,margin:"sm"});
       } else {
         out.push({
-          type:"box", layout:"horizontal", margin:"md", spacing:"sm",
-          backgroundColor:s.bg, paddingAll:"8px", cornerRadius:"8px",
+          type:"box",layout:"horizontal",margin:"sm",spacing:"sm",
+          backgroundColor:s.bg,
+          paddingAll:"8px",cornerRadius:"10px",
           contents:[
-            {type:"box",layout:"vertical",width:"4px",backgroundColor:s.bar,cornerRadius:"4px",contents:[]},
+            // Accent left bar (simulate)
+            {type:"box",layout:"vertical",width:"3px",backgroundColor:s.bar,cornerRadius:"3px",contents:[]},
             {type:"text",text:s.icon+" "+sec.head,weight:"bold",size:"sm",color:s.hc,wrap:true,flex:1,margin:"sm"}
           ]
         });
       }
     }
-    // Items ด้วย bullet ▶ ไม่มีเลข
+    // Items — clean minimal rows
     for (const item of sec.items) {
-      const warn = ["ห้าม","ทันที","วิกฤต","เด็ดขาด","ห้ามรอ","ห้ามฝืน","ห้ามกด","ห้ามคืน","ห้ามต่อ","ห้ามให้"].some(w=>item.includes(w));
       out.push({
-        type:"box", layout:"horizontal", margin:"xs", spacing:"sm",
-        paddingStart:sec.head?"8px":"0px",
+        type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"12px",
         contents:[
-          {type:"text",text:"▶",color:s.bar,size:"xxs",flex:0,gravity:"top",margin:"xs"},
-          {type:"text",text:item,size:"sm",color:warn?"#C62828":"#333333",weight:warn?"bold":"regular",wrap:true,flex:1}
+          {type:"text",text:"·",color:s.bar,size:"md",flex:0,gravity:"top"},
+          {type:"text",text:item,size:"sm",color:"#374151",wrap:true,flex:1,margin:"sm"}
         ]
       });
     }
   }
   return out;
 }
-
-// ── ALARM FLEX ────────────────────────────────────────────────────────────────
 function alarmFlex(alarm, subRows, trigger) {
   const c = ac(trigger);
   const secs = parse(alarm.instruction);
   const bs = mkBlocks(secs);
 
   const body = [
+    // Badge + Tag row
     {type:"box",layout:"horizontal",spacing:"sm",contents:[
-      {type:"box",layout:"baseline",flex:0,paddingAll:"4px",paddingStart:"10px",paddingEnd:"10px",backgroundColor:c.color,cornerRadius:"20px",
+      {type:"box",layout:"baseline",flex:0,paddingAll:"4px",paddingStart:"12px",paddingEnd:"12px",
+       backgroundColor:c.color,cornerRadius:"99px",
        contents:[{type:"text",text:c.lv+" • ALARM",color:"#FFFFFF",size:"xxs",weight:"bold"}]},
       {type:"filler"},
-      {type:"text",text:c.tag,color:c.color,size:"xs",weight:"bold",flex:0}
+      {type:"text",text:c.emoji+" "+c.tag,color:c.color,size:"xs",weight:"bold",flex:0}
     ]},
-    {type:"text",text:alarm.alarm_title||"Alarm",weight:"bold",size:"xl",color:c.color,wrap:true,margin:"sm"},
-    {type:"separator",margin:"sm",color:c.color},
-    ...(bs.length>0 ? bs : [{type:"text",text:"กรุณาดูข้อมูลในระบบครับ",size:"sm",color:"#555555",wrap:true,margin:"sm"}]),
-    {type:"separator",margin:"lg",color:"#EEEEEE"},
-    {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF8E1",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",
-     contents:[
-       {type:"text",text:"⚠️",size:"sm",flex:0},
-       {type:"text",text:"โปรดใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#795548",wrap:true,flex:1}
-     ]}
+    // Alarm title
+    {type:"text",text:alarm.alarm_title||"Alarm",weight:"bold",size:"lg",color:"#1C1C2E",wrap:true,margin:"sm"},
+    // Glass separator
+    {type:"separator",margin:"sm",color:"#E8ECF4"},
+    // Instruction blocks
+    ...(bs.length>0 ? bs : [{type:"text",text:"กรุณาดูข้อมูลในระบบครับ",size:"sm",color:"#666",wrap:true}])
   ];
 
-  // Buttons
+  // Buttons จาก DB
   const btns = [];
-  for (let n=1;n<=6;n++) {
+  for(let n=1;n<=6;n++){
     const lbl = F((alarm[`btn_${n}_label`]||"").trim());
     const act = (alarm[`btn_${n}_action`]||"").trim();
-    if (!lbl||lbl==="nan"||!act||act==="nan") continue;
-    // ข้อ 11+13: สีปุ่มตาม label
+    if(!lbl||lbl==="nan"||!act||act==="nan") continue;
     const lblL=lbl.toLowerCase();
     let bStyle=btns.length===0?"primary":"secondary";
     let bColor=btns.length===0?c.color:undefined;
-    if(lblL.includes("แก้ไขได้")||lblL.includes("เรียบร้อย")||lblL.includes("run ต่อ")||lblL.includes("✅")){bColor="#2E7D32";bStyle="primary";}
-    else if(lblL.includes("ยังไม่ได้")||lblL.includes("ยัง alarm")||lblL.includes("❌")){bColor="#C62828";bStyle="primary";}
-    else if(lblL.includes("ย้อนกลับ")||lblL.includes("⬅")){bColor="#F9A825";bStyle="primary";}
+    if(lblL.includes("แก้ไขได้")||lblL.includes("เรียบร้อย")||lblL.includes("run ต่อ")||lblL.includes("✅")){bColor="#56C99A";bStyle="primary";}
+    else if(lblL.includes("ยังไม่ได้")||lblL.includes("ยัง alarm")||lblL.includes("❌")){bColor="#F28B82";bStyle="primary";}
+    else if(lblL.includes("ย้อนกลับ")||lblL.includes("⬅")){bColor="#FFB347";bStyle="primary";}
     btns.push({type:"button",
       action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
       style:bStyle,color:bColor,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   }
-  if (btns.length===0) {
-    subRows.filter(r=>r.next_step_label).slice(0,4).forEach((r,i)=>{
-      const lbl=F(r.next_step_label||"");
-      btns.push({type:"button",
-        action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
-        style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
-    });
-  }
-  if (!btns.some(b=>b.action?.text==="main_menu"))
-    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+  if(btns.length===0) btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit"});
 
-  return {type:"flex",altText:alarm.alarm_title||"CRRT Alarm",contents:{type:"bubble",
-    hero:{type:"box",layout:"horizontal",backgroundColor:c.color,paddingAll:"12px",spacing:"sm",contents:[
-      {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-      {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
-        {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
-        {type:"text",text:"CRRT ALARM BOT",color:"#FFD700",size:"sm",weight:"bold"}
+  return {type:"flex",altText:"🚨 "+( alarm.alarm_title||"Alarm"),contents:{type:"bubble",
+    // Hero: glass gradient header
+    hero:{type:"box",layout:"horizontal",backgroundColor:c.color,paddingAll:"14px",spacing:"sm",
+      contents:[
+        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",margin:"sm",
+          contents:[
+            {type:"text",text:"RA5IC · RAMATHIBODI",color:"rgba(255,255,255,0.7)",size:"xxs"},
+            {type:"text",text:"CRRT ALARM BOT",color:"#FFFFFF",size:"sm",weight:"bold"}
+          ]},
+        {type:"text",text:c.emoji,size:"xxl",flex:0,gravity:"center"}
       ]},
-      {type:"text",text:c.emoji,size:"xxl",flex:0,align:"center",gravity:"center"}
-    ]},
-    body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:c.light,contents:body},
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:btns}
+    // Body: white glass card
+    body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FAFBFF",spacing:"sm",contents:body},
+    // Footer: glass tray
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",
+      backgroundColor:"#F3F5FB",
+      contents:btns}
   }};
 }
-
-// ── SUB FLOW FLEX ──────────────────────────────────────────────────────────────
 function subFlex(subRows, trigger) {
-  const first = subRows.find(r=>r.follow_up_msg&&r.follow_up_msg!=="nan");
-  // ลบประโยคซ้ำท้ายที่ DB ใส่มาซ้ำกับปุ่ม
+  const m = ac(trigger);
   const _cleanMsg = (s) => {
     if (!s) return s;
     return s
       .replace(/💡[^\n]*(กดปุ่มด้านล่าง|เลือกตัวเลือก|กดปุ่ม)[^\n]*👇?/g,"")
       .replace(/👇[^\n]*/g,"")
       .replace(/💡[^\n]*$/gm,"")
-      .replace(/ดูรูปภาพ/g,"ดูรูปภาพ")
       .replace(/\s{3,}/g,"  ").trim();
   };
-  const msg = _cleanMsg(first?.follow_up_msg)||"เลือกตัวเลือกด้านล่างครับ";
-
-  const MAP={
-    "show_hotline":      {color:"#66BB6A",emoji:"📞",title:"Hotline CRRT",     bg:"#EEFFF4"},
-    "show_non_citrate":  {color:"#26A69A",emoji:"🔵",title:"Preset No Citrate",bg:"#EEFFFE"},
-    "show_with_citrate": {color:"#FFA726",emoji:"🟠",title:"Preset Citrate",   bg:"#FFF8F0"},
-    "crrt_knowledge":    {color:"#5C6BC0",emoji:"📚",title:"CRRT Knowledge",   bg:"#EFF7FF"},
-    "crrt_billing":      {color:"#5C6BC0",emoji:"💳",title:"การเบิกจ่ายสิทธิ์",   bg:"#E8F0FE"},
-    "crrt_supplies":     {color:"#2E7D32",emoji:"📦",title:"รหัสเบิกอุปกรณ์",      bg:"#E8F5E9"},
-    "crrt_wound":        {color:"#EC407A",emoji:"🩹",title:"การทำแผล DLC",          bg:"#FCE4EC"},
-    "crrt_calc":         {color:"#7E57C2",emoji:"🧮",title:"คำนวณสารน้ำ CRRT",     bg:"#EDE7F6"},
-    "crrt_mode_info":    {color:"#0D47A1",emoji:"🔄",title:"CRRT Mode",        bg:"#EEF5FF"},
-    "crrt_pressure_info":{color:"#EC407A",emoji:"📊",title:"ค่า Pressure",     bg:"#FFF0F5"},
-    "how_to_return":     {color:"#C62828",emoji:"🩸",title:"การคืนเลือด",      bg:"#FFF5F5"},
-    "how_to_flush_dlc":  {color:"#00695C",emoji:"💉",title:"หล่อเส้น DLC",     bg:"#EEFFFE"},
-    "show_cleanup":{color:"#2E7D32",emoji:"✅",title:"วิธีเก็บเครื่อง (รูปภาพ)",bg:"#EEFFF2"},
-    "alarm_menu":        {color:"#EF5350",emoji:"🚨",title:"เมนู Alarm",       bg:"#FFF5F5"},
-    "alarm_menu_2":      {color:"#EF5350",emoji:"🚨",title:"เมนู Alarm 2/3",   bg:"#FFF5F5"},
-    "alarm_menu_3":      {color:"#EF5350",emoji:"🚨",title:"เมนู Alarm 3/3",   bg:"#FFF5F5"},
-    "update_status":     {color:"#7E57C2",emoji:"📋",title:"สถานะเครื่อง",    bg:"#F3F0FF"},
-    "how_to_closeloop":  {color:"#42A5F5",emoji:"💧",title:"NSS Recirculation",bg:"#EEF7FF"},
-    "fallback":          {color:"#546E7A",emoji:"❓",title:"ไม่พบข้อมูล",      bg:"#F4F6F7"},
-    "restart_crrt_flow": {color:"#5C6BC0",emoji:"▶️",title:"Start CRRT",       bg:"#EFF7FF"},
-    "end_crrt_flow":     {color:"#C62828",emoji:"⏹️",title:"End CRRT",         bg:"#FFF5F5"},
-    "ask_doctor_plan":   {color:"#66BB6A",emoji:"👨",title:"ปรึกษาแพทย์",     bg:"#EEFFF4"},
-    "how_to_swap_dlc":   {color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",      bg:"#EEFFFE"},
-    "how_to_swap_dlc_2": {color:"#00695C",emoji:"🔄",title:"สลับสาย DLC",      bg:"#EEFFFE"},
-    "flow_air_fail":     {color:"#5C6BC0",emoji:"💨",title:"Air Detected",     bg:"#EFF7FF"},
-    "how_to_use":        {color:"#37474F",emoji:"📖",title:"วิธีใช้งาน",        bg:"#F4F6F7"},
-    "exit_crrt":         {color:"#546E7A",emoji:"🚪",title:"ออกจากระบบ",       bg:"#F4F6F7"},
-  };
-  const m=MAP[trigger]||{color:"#1A237E",emoji:"📋",title:"CRRT Bot",bg:"#EEF0FF"};
-
+  const first = subRows.find(r=>r.follow_up_msg&&r.follow_up_msg!=="nan");
+  const rawMsg = _cleanMsg(first?.follow_up_msg)||"เลือกตัวเลือกด้านล่างครับ";
+  const msg = F(rawMsg).replace(/【[^】]*】/g,"").trim();
   const secs = parse(msg);
   const bs = mkBlocks(secs);
-  const body = bs.length>0 ? bs : F(msg)
-    .replace(/【[^】]*】/g,"")
-    .replace(/💡[^\n]*(กดปุ่ม|เลือก)[^\n]*/g,"")
-    .replace(/กดปุ่มด้านล่าง[^\n]*/g,"")
-    .split(/\s{3,}|\n/)
-    .map(s=>s.trim())
-    .filter(s=>s.length>2 && !/^💡\s*(กดปุ่ม|กรุณา)/.test(s))
-    .map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
+  const body = bs.length>0 ? bs :
+    msg.split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2)
+       .filter(s=>!/^💡\s*(กดปุ่ม|กรุณา)/.test(s))
+       .map(line=>({type:"text",text:line,size:"sm",color:"#374151",wrap:true,margin:"xs"}));
 
-  // Knowledge menu — เพิ่มปุ่ม 4 หัวข้อใหม่
-  if (trigger === "crrt_knowledge") {
-    const kbBtns = [
-      {label:"🔄 CRRT Mode",action:"crrt_mode_info",color:"#0D47A1"},
-      {label:"📊 ค่า Pressure",action:"crrt_pressure_info",color:"#EC407A"},
-      {label:"💳 การเบิกจ่ายสิทธิ์",action:"crrt_billing",color:"#5C6BC0"},
-      {label:"📦 รหัสเบิกอุปกรณ์",action:"crrt_supplies",color:"#2E7D32"},
-      {label:"🧪 เตรียม CRRT Set",action:"crrt_prime",color:"#0D47A1"},
-      {label:"🩹 การทำแผล DLC",action:"crrt_wound",color:"#EC407A"},
-      {label:"🧮 คิดคำนวณสารน้ำ",action:"crrt_calc",color:"#7E57C2"},
-      {label:"💉 วิธีหล่อเส้นด้วย Citrate",action:"how_to_flush_dlc",color:"#00695C"},
-      {label:"✅ วิธีเก็บเครื่อง",action:"show_cleanup",color:"#2E7D32"},
-      {label:"🏠 Main Menu",action:"main_menu",color:"#546E7A"},
-    ];
-    const kbFlexBtns = kbBtns.map((b,i)=>({type:"button",action:{type:"message",label:b.label,text:b.action},style:i<6?"primary":"secondary",color:b.color,height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}));
-    return {type:"flex",altText:"📚 CRRT Knowledge",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#5C6BC0",paddingAll:"10px",spacing:"sm",
-        contents:[
-          {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-          {type:"box",layout:"vertical",flex:1,justifyContent:"center",
-            contents:[
-              {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
-              {type:"text",text:"📚 CRRT Knowledge Base",color:"#FFFFFF",size:"sm",weight:"bold",wrap:true}
-            ]}
-        ]},
-      body:{type:"box",layout:"vertical",paddingAll:"12px",spacing:"xs",backgroundColor:"#EFF7FF",
-        contents:[
-          {type:"text",text:"เลือกหัวข้อที่ต้องการเรียนรู้ครับ 👇",size:"sm",color:"#1A237E",weight:"bold"}
-        ]},
-      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:kbFlexBtns}
-    }};
-  }
+  // Buttons
+  const seen = new Set();
+  const btns = subRows.filter(r=>r.next_step_label&&r.next_step_label!=="nan"&&r.next_step_action&&r.next_step_action!=="nan")
+    .slice(0,5).map((r,i)=>{
+      const lbl = _san(F(r.next_step_label));
+      if(seen.has(lbl)) return null; seen.add(lbl);
+      const ll=lbl.toLowerCase();
+      let ss2=i===0?"primary":"secondary",sc2=i===0?m.color:undefined;
+      if(ll.includes("ย้อนกลับ")||ll.includes("⬅")){sc2="#FFB347";ss2="primary";}
+      else if(ll.includes("แก้ไขได้")||ll.includes("✅")||ll.includes("run ต่อ")){sc2="#56C99A";ss2="primary";}
+      else if(ll.includes("ยังไม่ได้")||ll.includes("❌")||ll.includes("ยัง alarm")){sc2="#F28B82";ss2="primary";}
+      return {type:"button",
+        action:r.next_step_action?.startsWith("http")?{type:"uri",label:lbl,uri:r.next_step_action}:{type:"message",label:lbl,text:r.next_step_action},
+        style:ss2,color:sc2,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
+    }).filter(Boolean);
 
-  const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
-    const lbl=F(r.next_step_label||"");
-    return {type:"button",
-      action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
-      style:(lbl.toLowerCase().includes("ย้อนกลับ")||lbl.includes("⬅"))?"primary":(lbl.toLowerCase().includes("แก้ไขได้")||lbl.includes("✅"))?"primary":(lbl.toLowerCase().includes("ยังไม่ได้")||lbl.includes("❌"))?"primary":i===0?"primary":"secondary",color:(lbl.toLowerCase().includes("ย้อนกลับ")||lbl.includes("⬅"))?"#F9A825":(lbl.toLowerCase().includes("แก้ไขได้")||lbl.includes("✅"))?"#2E7D32":(lbl.toLowerCase().includes("ยังไม่ได้")||lbl.includes("❌"))?"#C62828":i===0?m.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
-  });
-  if (!["main_menu","exit_crrt"].includes(trigger)&&!btns.some(b=>b.action?.text==="main_menu"))
+  // Nav buttons
+  if(![...seen].some(l=>l.includes("Main Menu")||l.includes("หน้าแรก")))
     btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+  if(![...seen].some(l=>l.includes("ออกจากระบบ")))
+    btns.push({type:"button",action:{type:"message",label:"🚪 ออกจากระบบ",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
 
-  return {type:"flex",altText:m.emoji+" "+m.title,contents:{type:"bubble",
-    hero:{type:"box",layout:"horizontal",backgroundColor:m.color,paddingAll:"10px",spacing:"sm",contents:[
-      {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-      {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
-        {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
-        {type:"text",text:m.emoji+" "+m.title,color:"#FFFFFF",size:"sm",weight:"bold",wrap:true}
-      ]}
-    ]},
-    body:{type:"box",layout:"vertical",paddingAll:"14px",spacing:"xs",backgroundColor:m.bg,
-      contents:body.length>0?body:[{type:"text",text:"เลือกตัวเลือกด้านล่างครับ",size:"sm",color:"#888888"}]},
-    footer:btns.length>0?{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:btns}:undefined
+  return {type:"flex",altText:msg.slice(0,40)||"ขั้นตอนถัดไป",contents:{type:"bubble",
+    hero:{type:"box",layout:"horizontal",backgroundColor:m.color,paddingAll:"12px",spacing:"sm",
+      contents:[
+        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",margin:"sm",
+          contents:[
+            {type:"text",text:"RA5IC · RAMATHIBODI",color:"rgba(255,255,255,0.7)",size:"xxs"},
+            {type:"text",text:m.emoji+" ขั้นตอนถัดไป",color:"#FFFFFF",size:"sm",weight:"bold"}
+          ]}
+      ]},
+    body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FAFBFF",spacing:"sm",
+      contents:body.length>0?body:[{type:"text",text:"กรุณาเลือกตัวเลือกด้านล่างครับ",size:"sm",color:"#666",wrap:true}]},
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F3F5FB",contents:btns}
   }};
 }
-
-// ── ALARM MENU ────────────────────────────────────────────────────────────────
-const PAGES=[
-  {title:"🚨 เมนู Alarm (1/3)",sub:"วิกฤต / เร่งด่วน",color:"#EF5350",
-   items:[
-     {label:"🫧 Air Detected",text:"air_detected",color:"#E53935"},
-     {label:"🩸 Blood Leak Detected",text:"blood_leak",color:"#C62828"},
-     {label:"📉 Access Negative",text:"access_neg",color:"#1A237E"},
-     {label:"📈 Return Positive",text:"return_pos",color:"#0D47A1"},
-     {label:"❌ Filter Clotted",text:"filter_clotted",color:"#BF360C"},
-     {label:"⚙️ System Error",text:"system_error",color:"#7E57C2"},
-     {label:"📊 TMP Too High",text:"tmp_high",color:"#FFA726"},
-     {label:"⚡ Battery Low",text:"battery_low",color:"#FFA726"},
-   ],next:"alarm_menu_2"},
-  {title:"🚨 เมนู Alarm (2/3)",sub:"สาย / อุปกรณ์",color:"#C62828",
-   items:[
-     {label:"📈 Access Positive",text:"access_pos",color:"#26C6DA"},
-     {label:"🔌 Disconnect",text:"disconnect",color:"#EC407A"},
-     {label:"📡 Communication Loss",text:"comm_loss",color:"#37474F"},
-     {label:"💧 Bag Empty",text:"bag_empty",color:"#00695C"},
-     {label:"⚖️ Flow Error",text:"flow_error",color:"#2E7D32"},
-     {label:"💉 Syringe Empty",text:"syringe_empty",color:"#6A1B9A"},
-   ],prev:"alarm_menu",next:"alarm_menu_3"},
-  {title:"🚨 เมนู Alarm (3/3)",sub:"อุปกรณ์ / Procedure",color:"#D32F2F",
-   items:[
-     {label:"⚖️ Scale Open",text:"scale_open",color:"#F57F17"},
-     {label:"🔍 Check Access",text:"check_access",color:"#827717"},
-     {label:"🟢 Line Clamped",text:"line_clamped",color:"#66BB6A"},
-     {label:"⚖️ Effluent OL",text:"effluent_overload",color:"#FFA726"},
-     {label:"🩸 Return Blood",text:"return_blood",color:"#C62828"},
-     {label:"💧 Blood recirculation",text:"nss_recirculation",color:"#42A5F5"},
-     {label:"⚙️ Self-Test",text:"self_test_failed",color:"#7E57C2"},
-   ],prev:"alarm_menu_2"}
-];
-
 function menuFlex(idx){
   const p=PAGES[idx];
-  const btns=p.items.map(item=>({type:"button",action:{type:"message",label:_san(item.label),text:item.text},style:"primary",color:item.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}));
+  // Glass pastel buttons
+  const btns=p.items.map(item=>({
+    type:"button",
+    action:{type:"message",label:_san(item.label),text:item.text},
+    style:"primary",color:item.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"
+  }));
   const nav=[];
-  if(p.prev)nav.push({type:"button",action:{type:"message",label:"⬅️ หน้าก่อน",text:p.prev},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1});
-  if(p.next)nav.push({type:"button",action:{type:"message",label:"➡️ หน้าถัดไป",text:p.next},style:"primary",color:p.color,height:"sm",adjustMode:"shrink-to-fit",flex:1});
-  nav.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1});
+  if(p.prev)nav.push({type:"button",action:{type:"message",label:"⬅️ หน้าก่อน",text:p.prev},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+  if(p.next)nav.push({type:"button",action:{type:"message",label:"➡️ หน้าถัดไป",text:p.next},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+  nav.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   return {type:"flex",altText:p.title,contents:{type:"bubble",
-    hero:{type:"box",layout:"horizontal",backgroundColor:p.color,paddingAll:"10px",spacing:"sm",contents:[
-      {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-      {type:"box",layout:"vertical",flex:1,contents:[
-        {type:"text",text:p.title,color:"#FFFFFF",size:"sm",weight:"bold"},
-        {type:"text",text:p.sub,color:"#FFCCCC",size:"xs"}
-      ]}
-    ]},
-    body:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",contents:btns},
-    footer:{type:"box",layout:"horizontal",paddingAll:"10px",spacing:"xs",contents:nav}
+    hero:{type:"box",layout:"vertical",backgroundColor:"#1C2340",paddingAll:"14px",
+      contents:[
+        {type:"box",layout:"horizontal",spacing:"sm",contents:[
+          {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+          {type:"box",layout:"vertical",flex:1,justifyContent:"center",margin:"sm",
+            contents:[
+              {type:"text",text:"🚨 "+p.title,color:"#FFFFFF",size:"sm",weight:"bold"},
+              {type:"text",text:p.sub,color:"rgba(255,255,255,0.65)",size:"xxs",margin:"xs"}
+            ]}
+        ]}
+      ]},
+    body:{type:"box",layout:"vertical",paddingAll:"12px",backgroundColor:"#F8FAFF",spacing:"xs",contents:btns},
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F0F2F8",contents:nav}
   }};
 }
-
-// ── MAIN MENU ─────────────────────────────────────────────────────────────────
 function mainMenu(){
   return {type:"flex",altText:"🏥 CRRT Bot RA5IC",contents:{type:"bubble",
-    hero:{type:"box",layout:"vertical",backgroundColor:"#030303",paddingAll:"14px",
+    hero:{type:"box",layout:"vertical",backgroundColor:"#1C1C2E",paddingAll:"14px",
       contents:[{type:"box",layout:"horizontal",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
         {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
-          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFC800",size:"xxs"},
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#F1C40F",size:"xxs"},
           {type:"text",text:"CRRT ALARM BOT",color:"#FFD700",size:"md",weight:"bold"},
-          {type:"text",text:"หอผู้ป่วยวิกฤตศัลยกรรม",color:"#FFECB3",size:"xxs"}
+          {type:"text",text:"หอผู้ป่วยวิกฤตศัลยกรรม",color:"#FEF9E7",size:"xxs"}
         ]},
         {type:"image",url:MACHINE_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"1:1"}
       ]}]},
     body:{type:"box",layout:"vertical",paddingAll:"12px",spacing:"sm",contents:[
       {type:"text",text:"👋 สวัสดีครับ! ยินดีต้อนรับ",weight:"bold",size:"md",color:"#1A237E"},
-      {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#EEF2FF",cornerRadius:"8px",paddingAll:"10px",
+      {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#F0F4FF",cornerRadius:"8px",paddingAll:"10px",
        contents:[
-         {type:"text",text:"📖 วิธีใช้งาน",weight:"bold",size:"xs",color:"#3F51B5"},
+         {type:"text",text:"📖 วิธีใช้งาน",weight:"bold",size:"xs",color:"#5C7CFA"},
          {type:"text",text:"1. พิมพ์ชื่อ Alarm ที่เห็นบนหน้าจอ",size:"xs",color:"#555555",margin:"xs"},
          {type:"text",text:"2. ถ่ายรูป Alarm ส่งมาได้เลย",size:"xs",color:"#555555",margin:"xs"},
          {type:"text",text:"3. กดปุ่มเมนูด้านล่างครับ 👇",size:"xs",color:"#555555",margin:"xs"}
        ]},
-      {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#FFF8E1",cornerRadius:"8px",paddingAll:"8px",
-       contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางในการช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#795548",wrap:true}]}
+      {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#FFFBF0",cornerRadius:"8px",paddingAll:"8px",
+       contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางในการช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#78716C",wrap:true}]}
     ]},
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F0F2F8",contents:[
       {type:"box",layout:"horizontal",spacing:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🚨 แก้ไข Alarm",text:"alarm_menu"},style:"primary",color:"#EF5350",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#42A5F5",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"🚨 แก้ไข Alarm",text:"alarm_menu"},style:"primary",color:"#E57373",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#64B5F6",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"❤️ Hypotension",text:"hypotension"},style:"primary",color:"#EC407A",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"🫀 Cardiac Arrest",text:"cardiac_arrest"},style:"primary",color:"#AB47BC",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"❤️ Hypotension",text:"hypotension"},style:"primary",color:"#F48FB1",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🫀 Cardiac Arrest",text:"cardiac_arrest"},style:"primary",color:"#CE93D8",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🔵 Prime set c no citrate",text:"show_non_citrate"},style:"primary",color:"#26A69A",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"🟠 Prime set c citrate",text:"show_with_citrate"},style:"primary",color:"#FFA726",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"🔵 Prime set c no citrate",text:"show_non_citrate"},style:"primary",color:"#4DB6AC",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🟠 Prime set c citrate",text:"show_with_citrate"},style:"primary",color:"#FFB74D",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"primary",color:"#F06292",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"uri",label:"📋 Check สถานะเครื่อง",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#7E57C2",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"primary",color:"#F48FB1",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"uri",label:"📋 Check สถานะเครื่อง",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#9575CD",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"💉 วิธีหล่อเส้นด้วย Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#26C6DA",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"✅ วิธีเก็บเครื่อง",text:"show_cleanup"},style:"primary",color:"#66BB6A",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"💉 วิธีหล่อเส้นด้วย Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#4DD0E1",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"✅ วิธีเก็บเครื่อง",text:"show_cleanup"},style:"primary",color:"#81C784",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"primary",color:"#5C6BC0",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"primary",color:"#7986CB",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"🚪 ออกจากระบบ",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]}
     ]}
@@ -608,11 +524,11 @@ const KB = {
 
   crrt_billing: {
     title:"💳 การเบิกจ่ายตามสิทธิ์",
-    color:"#5C6BC0", bg:"#E8F0FE", emoji:"💳",
+    color:"#7986CB", bg:"#E8F0FE", emoji:"💳",
     sections:[
-      {head:"🎯 สิทธิ์ที่ใช้ได้กับ CRRT", icon:"🎯", bar:"#5C6BC0", bg:"#E3F2FD", hc:"#0D47A1",
+      {head:"🎯 สิทธิ์ที่ใช้ได้กับ CRRT", icon:"🎯", bar:"#7986CB", bg:"#E3F2FD", hc:"#0D47A1",
        items:["UC (บัตรทอง): ครอบคลุม CRRT ทุกส่วน ไม่มีค่าใช้จ่ายเพิ่มเติม","ข้าราชการ/รัฐวิสาหกิจ: เบิกได้เต็ม 100% รวมค่าชุดสาย Filter","ประกันสังคม: ครอบคลุม CRRT กรณีวิกฤต รพ.มีข้อตกลง","ชำระเอง (Self-pay): ตามอัตรา รพ. ติดต่อการเงินก่อนทำ"]},
-      {head:"🔍 ขั้นตอนก่อน CRRT", icon:"🔍", bar:"#FFA726", bg:"#FFF3E0", hc:"#BF360C",
+      {head:"🔍 ขั้นตอนก่อน CRRT", icon:"🔍", bar:"#FFB74D", bg:"#FFF3E0", hc:"#BF360C",
        items:["ตรวจสอบสิทธิ์ผู้ป่วยทุกครั้งก่อนเริ่ม","กรณี UC ให้ทำ Authorization ผ่านระบบ NHSO","กรณีข้าราชการ ต้องมีใบส่งตัวจากต้นสังกัด","บันทึก Indication การทำ CRRT ใน Progress Note ทุกวัน"]}
     ]
   },
@@ -621,35 +537,35 @@ const KB = {
     title:"📦 รหัสเบิกอุปกรณ์ CRRT",
     color:"#2E7D32", bg:"#E8F5E9", emoji:"📦",
     sections:[
-      {head:"🚀 อุปกรณ์หลัก — รหัสเบิก", icon:"🚀", bar:"#2E7D32", bg:"#E8F5E9", hc:"#66BB6A",
+      {head:"🚀 อุปกรณ์หลัก — รหัสเบิก", icon:"🚀", bar:"#2E7D32", bg:"#E8F5E9", hc:"#81C784",
        items:["CRRT Set (Prismaflex AN69): รหัส 1-18-03-001","Filter HF1400 (High-flux): รหัส 1-18-03-010","ถุงน้ำยา Prismasol 5L: รหัส 1-18-04-002","ถุงน้ำยา B22 / B0: รหัส 1-18-04-003","Citrate Solution (ACD-A): รหัส 1-18-05-001","Calcium Chloride 10%: รหัส 1-01-02-015"]},
-      {head:"🔍 DLC และอุปกรณ์เสริม", icon:"🔍", bar:"#FFA726", bg:"#FFF3E0", hc:"#BF360C",
+      {head:"🔍 DLC และอุปกรณ์เสริม", icon:"🔍", bar:"#FFB74D", bg:"#FFF3E0", hc:"#BF360C",
        items:["DLC 13Fr / 14Fr (Arrow / Argon): รหัส 1-13-01-020","Heparin 25,000 IU/5ml: รหัส 1-02-01-001","NSS 0.9% 1000ml (Lock): รหัส 1-01-01-001","Chlorhexidine Dressing: รหัส 1-06-01-005"]}
     ]
   },
 
   crrt_wound: {
     title:"🩹 การทำแผล DLC",
-    color:"#EC407A", bg:"#FCE4EC", emoji:"🩹",
+    color:"#F48FB1", bg:"#FCE4EC", emoji:"🩹",
     sections:[
-      {head:"⏱️ ความถี่และเวลา", icon:"🎯", bar:"#5C6BC0", bg:"#E3F2FD", hc:"#0D47A1",
+      {head:"⏱️ ความถี่และเวลา", icon:"🎯", bar:"#7986CB", bg:"#E3F2FD", hc:"#0D47A1",
        items:["ทำแผลทุก 48-72 ชั่วโมง หรือเมื่อแผลเปียก/หลุด","เปลี่ยน Transparent dressing ทุก 7 วัน (ถ้าแห้งดี)","ทำทุกครั้งที่เห็น Discharge หรือ Oozing ที่ Exit site"]},
-      {head:"🚀 ขั้นตอนทำแผล DLC", icon:"🚀", bar:"#2E7D32", bg:"#E8F5E9", hc:"#66BB6A",
+      {head:"🚀 ขั้นตอนทำแผล DLC", icon:"🚀", bar:"#2E7D32", bg:"#E8F5E9", hc:"#81C784",
        items:["เตรียม Sterile set: ผ้าก๊อซ, ถุงมือ Sterile, ชาม","ล้างมือ 7 ขั้นตอน + ใส่ถุงมือ Sterile","เปิดแผลเก่าออกอย่างระมัดระวัง ไม่ดึงรั้งสาย","เช็ดด้วย Chlorhexidine 2% เป็นวงกลมจากในออกนอก รัศมี 5 cm","ทำซ้ำ 3 รอบ รอแห้ง","ปิด Transparent dressing กดแน่น ไม่มีฟองอากาศ","บันทึก Exit site: ไม่มีบวม แดง ร้อน หรือ Discharge"]},
-      {head:"⚠️ สัญญาณอันตราย — รายงานแพทย์ทันที", icon:"⚠️", bar:"#C62828", bg:"#FFEBEE", hc:"#EF5350",
+      {head:"⚠️ สัญญาณอันตราย — รายงานแพทย์ทันที", icon:"⚠️", bar:"#C62828", bg:"#FFEBEE", hc:"#E57373",
        items:["ผิวรอบสายบวม แดง ร้อน หรือกดเจ็บ","มี Discharge สีเหลือง/เขียว หรือมีกลิ่น","ไข้ >38.5°C โดยไม่ทราบสาเหตุ","สายเลื่อนหลุดหรือ Depth เปลี่ยน"]}
     ]
   },
 
   crrt_calc: {
     title:"🧮 คำนวณสารน้ำ CRRT",
-    color:"#7E57C2", bg:"#EDE7F6", emoji:"🧮",
+    color:"#9575CD", bg:"#EDE7F6", emoji:"🧮",
     sections:[
-      {head:"🎯 Dose CRRT ที่แนะนำ", icon:"🎯", bar:"#5C6BC0", bg:"#E3F2FD", hc:"#0D47A1",
+      {head:"🎯 Dose CRRT ที่แนะนำ", icon:"🎯", bar:"#7986CB", bg:"#E3F2FD", hc:"#0D47A1",
        items:["KDIGO 2012: 20-25 ml/kg/hr (Effluent rate)","Sepsis / AKI รุนแรง: อาจพิจารณา 25-35 ml/kg/hr","ตัวอย่าง: นน. 60 kg → Dose 25 ml/kg/hr = 1,500 ml/hr"]},
-      {head:"🚀 สูตรคิด Fluid Balance", icon:"🚀", bar:"#2E7D32", bg:"#E8F5E9", hc:"#66BB6A",
+      {head:"🚀 สูตรคิด Fluid Balance", icon:"🚀", bar:"#2E7D32", bg:"#E8F5E9", hc:"#81C784",
        items:["Fluid Balance = Fluid In - Fluid Out","Fluid In = IV fluid + ยา + อาหาร + น้ำยา CRRT (ที่คืนให้ผู้ป่วย)","Fluid Out = ปัสสาวะ + Insensible loss + CRRT Effluent","Net UF = Effluent - Replacement - Dialysate ที่ผู้ป่วยได้รับ","ตั้ง Patient Fluid Removal ตาม Target Fluid Balance ของแพทย์"]},
-      {head:"⚠️ ข้อควรระวัง", icon:"⚠️", bar:"#C62828", bg:"#FFEBEE", hc:"#EF5350",
+      {head:"⚠️ ข้อควรระวัง", icon:"⚠️", bar:"#C62828", bg:"#FFEBEE", hc:"#E57373",
        items:["ติดตาม Electrolyte (K, Ca, Mg, Phos) ทุก 4-6 ชม.","ระวัง Citrate Toxicity: Ca/ionized Ca ratio > 2.5","ถ้า BP drop → ลด UF เป็น 0 ก่อน และ Fluid challenge","บันทึก Cumulative Balance ทุก 12 ชม."]}
     ]
   }
@@ -685,7 +601,7 @@ function kbFlex(key) {
       ]},
     body:{type:"box",layout:"vertical",paddingAll:"14px",spacing:"xs",backgroundColor:k.bg,
       contents:blocks.length>0?blocks:[{type:"text",text:"ไม่มีข้อมูล",size:"sm",color:"#888888"}]},
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",
       contents:[
         {type:"button",action:{type:"message",label:"📚 Knowledge Menu",text:"crrt_knowledge"},style:"primary",color:k.color,height:"sm",adjustMode:"shrink-to-fit"},
         {type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
@@ -746,15 +662,15 @@ async function handleEvent(event) {
   if(text==="exit_crrt"){
     deactivate(uid);
     await client.replyMessage(replyToken,{type:"flex",altText:"👋 ออกจากระบบ",contents:{type:"bubble",
-      hero:{type:"box",layout:"vertical",backgroundColor:"#1A237E",paddingAll:"24px",
+      hero:{type:"box",layout:"vertical",backgroundColor:"#1C1C2E",paddingAll:"24px",
         contents:[
           {type:"text",text:"👋",size:"5xl",align:"center"},
           {type:"text",text:"ขอบคุณที่ใช้งาน CRRT Bot ครับ",color:"#FFFFFF",size:"md",weight:"bold",align:"center",margin:"md"},
-          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFECB3",size:"xs",align:"center",margin:"sm"}
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FEF9E7",size:"xs",align:"center",margin:"sm"}
         ]},
       body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"md",
         contents:[
-          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้วครับ",weight:"bold",size:"sm",color:"#66BB6A",align:"center"},
+          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้วครับ",weight:"bold",size:"sm",color:"#81C784",align:"center"},
           {type:"text",text:"หากต้องการใช้งานอีกครั้ง\nกด Rich Menu ด้านล่างได้เลยครับ 👇",size:"sm",color:"#555555",wrap:true,align:"center",margin:"sm"}
         ]},
       footer:{type:"box",layout:"vertical",paddingAll:"10px",
@@ -792,71 +708,71 @@ async function handleEvent(event) {
           {type:"text",text:"💰 การเบิกจ่าย CRRT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#EEFFF2",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFFFFF",spacing:"sm",
         contents:[
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#66BB6A",cornerRadius:"4px",contents:[]},{type:"text",text:"💰 การเบิกจ่าย CRRT ในประเทศไทย (มีนาคม 2567)",weight:"bold",size:"sm",color:"#66BB6A",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#66BB6A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"อนุมัติเบิกจ่ายเฉพาะกรณี AKI (Acute Kidney Injury) เท่านั้น",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#5C6BC0",cornerRadius:"4px",contents:[]},{type:"text",text:"🏥 กรมบัญชีกลาง (ข้าราชการ)",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันแรก: เบิกตามจริงได้ ไม่เกิน 15,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันถัดไป: เบิกตามจริง ไม่เกิน 10,000 บาท/วัน ไม่เกิน 4 วัน",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Oxiris Set: เบิกไม่ได้ | RCA: รวมอยู่ใน CRRT แล้ว",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFA726",cornerRadius:"4px",contents:[]},{type:"text",text:"💳 ประกันสังคม",weight:"bold",size:"sm",color:"#FFA726",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันแรก: เบิกตามจริง ไม่เกิน 15,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันถัดไป: ไม่เกิน 10,000 บาท/วัน (ไม่จำกัดจำนวนวัน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EEF7FF",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#42A5F5",cornerRadius:"4px",contents:[]},{type:"text",text:"🏨 สปสช. (บัตรทอง / 30 บาท)",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#42A5F5",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันแรก: เบิกตามจริง ไม่เกิน 15,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#42A5F5",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันถัดไป: ไม่เกิน 10,000 บาท/วัน (ไม่จำกัดจำนวนวัน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7E57C2",cornerRadius:"4px",contents:[]},{type:"text",text:"📋 ค่าใช้จ่ายอ้างอิง (Prismaflex ต่อวัน)",weight:"bold",size:"sm",color:"#AB47BC",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"MKC6 ค่าบริการ = 8,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Filter + Circuit = 6,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Replacement Fluid = 10,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Drain bag = 250 บาท | รวมประมาณ 25,000 บาท/วัน",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"📝 ขั้นตอนเตรียมเอกสารเบิก",weight:"bold",size:"sm",color:"#EF5350",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#81C784",cornerRadius:"4px",contents:[]},{type:"text",text:"💰 การเบิกจ่าย CRRT ในประเทศไทย (มีนาคม 2567)",weight:"bold",size:"sm",color:"#81C784",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#81C784",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"อนุมัติเบิกจ่ายเฉพาะกรณี AKI (Acute Kidney Injury) เท่านั้น",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7986CB",cornerRadius:"4px",contents:[]},{type:"text",text:"🏥 กรมบัญชีกลาง (ข้าราชการ)",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันแรก: เบิกตามจริงได้ ไม่เกิน 15,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันถัดไป: เบิกตามจริง ไม่เกิน 10,000 บาท/วัน ไม่เกิน 4 วัน",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Oxiris Set: เบิกไม่ได้ | RCA: รวมอยู่ใน CRRT แล้ว",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFB74D",cornerRadius:"4px",contents:[]},{type:"text",text:"💳 ประกันสังคม",weight:"bold",size:"sm",color:"#FFB74D",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันแรก: เบิกตามจริง ไม่เกิน 15,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันถัดไป: ไม่เกิน 10,000 บาท/วัน (ไม่จำกัดจำนวนวัน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#F0F7FF",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#64B5F6",cornerRadius:"4px",contents:[]},{type:"text",text:"🏨 สปสช. (บัตรทอง / 30 บาท)",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#64B5F6",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันแรก: เบิกตามจริง ไม่เกิน 15,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#64B5F6",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วันถัดไป: ไม่เกิน 10,000 บาท/วัน (ไม่จำกัดจำนวนวัน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#9575CD",cornerRadius:"4px",contents:[]},{type:"text",text:"📋 ค่าใช้จ่ายอ้างอิง (Prismaflex ต่อวัน)",weight:"bold",size:"sm",color:"#CE93D8",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"MKC6 ค่าบริการ = 8,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Filter + Circuit = 6,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Replacement Fluid = 10,000 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Drain bag = 250 บาท | รวมประมาณ 25,000 บาท/วัน",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"📝 ขั้นตอนเตรียมเอกสารเบิก",weight:"bold",size:"sm",color:"#E57373",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"บันทึก Order แพทย์ชัดเจน: Diagnosis, Machine, Mode, Vascular Access, Dialyzer, BFR, Net UF, Replacement fluid, Anticoagulant",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ต้องมี Informed Consent ผู้ป่วยหรือญาติลงนามก่อนเริ่ม CRRT ทุกครั้ง",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กรอกใบเบิกพร้อม Lot Number ของ Filter + Circuit ทุก Set ที่ใช้",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ส่งคืนถุงน้ำยาที่ใช้แล้วพร้อมใบเบิกให้ฝ่ายการเงินตาม Cycle รายวัน",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Oxiris Set เบิกไม่ได้ทุกสิทธิ์ | RCA รวมอยู่ใน CRRT ไม่ต้องเบิกแยก",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
         ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
+            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
   }
 
 
   if(text==="crrt_supplies"){
     await client.replyMessage(replyToken,{type:"flex",altText:"📦 รหัสอุปกรณ์ CRRT",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#7E57C2",paddingAll:"12px",spacing:"sm",contents:[
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#9575CD",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
         {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"📦 รหัสอุปกรณ์ CRRT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#F3F0FF",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#F5F2FF",spacing:"sm",
         contents:[
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#5C6BC0",cornerRadius:"4px",contents:[]},{type:"text",text:"🖥️ เครื่อง CRRT ที่ใช้ในรามาธิบดี",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex (Baxter): รองรับ CVVH, CVVHD, CVVHDF, TPE, ECMO",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Infomed HF 440 (Infomed): รองรับ SCUF, CVVH, CVVHD, CVVHDF, ECMO",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Aquarius: รองรับ SCUF, CVVH, CVVHD, CVVHDF, TPE, DFPP",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7E57C2",cornerRadius:"4px",contents:[]},{type:"text",text:"🔬 Filter & Circuit — Prismaflex",weight:"bold",size:"sm",color:"#AB47BC",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex M100 รหัส 30056375 ราคา 5,750 บาท (ผู้ใหญ่ทั่วไป)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex M150 รหัส 30072047 ราคา 5,750 บาท (ผู้ใหญ่ ECMO)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex HF20 รหัส 30072216 ราคา 5,750 บาท (เด็ก)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex Oxiris รหัส 30055135 ราคา 16,500 บาท (Cytokine adsorption)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Effluent bag รหัส 30072217 ราคา 121 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"🔬 Filter & Circuit — HF440 / Aquarius",weight:"bold",size:"sm",color:"#66BB6A",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7986CB",cornerRadius:"4px",contents:[]},{type:"text",text:"🖥️ เครื่อง CRRT ที่ใช้ในรามาธิบดี",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex (Baxter): รองรับ CVVH, CVVHD, CVVHDF, TPE, ECMO",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Infomed HF 440 (Infomed): รองรับ SCUF, CVVH, CVVHD, CVVHDF, ECMO",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Aquarius: รองรับ SCUF, CVVH, CVVHD, CVVHDF, TPE, DFPP",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#9575CD",cornerRadius:"4px",contents:[]},{type:"text",text:"🔬 Filter & Circuit — Prismaflex",weight:"bold",size:"sm",color:"#CE93D8",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex M100 รหัส 30056375 ราคา 5,750 บาท (ผู้ใหญ่ทั่วไป)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex M150 รหัส 30072047 ราคา 5,750 บาท (ผู้ใหญ่ ECMO)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex HF20 รหัส 30072216 ราคา 5,750 บาท (เด็ก)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismaflex Oxiris รหัส 30055135 ราคา 16,500 บาท (Cytokine adsorption)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Effluent bag รหัส 30072217 ราคา 121 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"🔬 Filter & Circuit — HF440 / Aquarius",weight:"bold",size:"sm",color:"#81C784",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Pecopen hemofilter 1.4 sqm รหัส 30061353 ราคา 2,484 บาท (ผู้ใหญ่ทั่วไป)",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Pecopen hemofilter 1.9 sqm รหัส 30061354 ราคา 2,484 บาท (ECMO)",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Adult CRRT circuit (Infomed) รหัส 30047408 ราคา 3,220 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Aquamax HF12 รหัส 30007360 ราคา 2,558 บาท | Aqualine รหัส 30000080 ราคา 3,449 บาท",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFA726",cornerRadius:"4px",contents:[]},{type:"text",text:"💧 Replacement Fluid ที่ใช้บ่อย",weight:"bold",size:"sm",color:"#FFA726",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Accusol K+0 รหัส 30060934 ราคา 872 บาท (มาตรฐาน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prism0cal B22 รหัส 30072138 ราคา 1,161 บาท (Dialysate/Post dilution)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismasol B0 รหัส — ราคา 880 บาท (มาตรฐาน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismocitrate 18/0 รหัส 30049087 ราคา 1,381 บาท (Regional Citrate)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"4% Trisodium citrate 500 ml รหัส 30072725 ราคา 264 บาท (Predilution)",size:"sm",color:"#333333",wrap:true,flex:1}]}
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFB74D",cornerRadius:"4px",contents:[]},{type:"text",text:"💧 Replacement Fluid ที่ใช้บ่อย",weight:"bold",size:"sm",color:"#FFB74D",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Accusol K+0 รหัส 30060934 ราคา 872 บาท (มาตรฐาน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prism0cal B22 รหัส 30072138 ราคา 1,161 บาท (Dialysate/Post dilution)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismasol B0 รหัส — ราคา 880 บาท (มาตรฐาน)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismocitrate 18/0 รหัส 30049087 ราคา 1,381 บาท (Regional Citrate)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"4% Trisodium citrate 500 ml รหัส 30072725 ราคา 264 บาท (Predilution)",size:"sm",color:"#333333",wrap:true,flex:1}]}
         ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
+            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
   }
 
@@ -864,25 +780,25 @@ async function handleEvent(event) {
   // ── show_hotline: แสดงเบอร์พร้อมปุ่มโทรโดยตรง ─────────────────────────────
   if(text==="show_hotline"){
     await client.replyMessage(replyToken,{type:"flex",altText:"📞 Hotline CRRT",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#66BB6A",paddingAll:"12px",spacing:"sm",contents:[
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#81C784",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
         {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"📞 Hotline CRRT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"16px",backgroundColor:"#EEFFF4",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"16px",backgroundColor:"#F0FFF8",spacing:"sm",
         contents:[
           {type:"text",text:"มีปัญหาที่ Bot ช่วยไม่ได้?",size:"sm",color:"#333333",weight:"bold"},
           {type:"text",text:"โทรหาผู้เชี่ยวชาญได้ทันทีเลยครับ 🙏",size:"sm",color:"#555555",wrap:true},
           {type:"box",layout:"vertical",margin:"md",backgroundColor:"#FFEBEE",cornerRadius:"8px",paddingAll:"12px",
             contents:[
-              {type:"text",text:"📱 086-341-7250",size:"xxl",weight:"bold",color:"#EF5350",align:"center"},
+              {type:"text",text:"📱 086-341-7250",size:"xxl",weight:"bold",color:"#E57373",align:"center"},
               {type:"text",text:"พร้อมรับสายตลอด 24 ชั่วโมง",size:"xs",color:"#666666",align:"center",margin:"xs"}
             ]}
         ]},
-      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
-        {type:"button",action:{type:"uri",label:"📞 โทร 086-341-7250",uri:"tel:0863417250"},style:"primary",color:"#66BB6A",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[
+        {type:"button",action:{type:"uri",label:"📞 โทร 086-341-7250",uri:"tel:0863417250"},style:"primary",color:"#81C784",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"},
         {type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}
       ]}
     }});return;
@@ -890,23 +806,23 @@ async function handleEvent(event) {
 
   if(text==="crrt_prime"){
     await client.replyMessage(replyToken,{type:"flex",altText:"🧪 การเตรียม CRRT Set (Prime)",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#5C6BC0",paddingAll:"12px",spacing:"sm",contents:[
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#7986CB",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
         {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"🧪 การเตรียม CRRT Set (Prime)",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#EFF7FF",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#F0F8FF",spacing:"sm",
         contents:[
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E3F2FD","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#5C6BC0","cornerRadius":"4px","contents":[]},{"type":"text","text":"🎯 เป้าหมาย: เตรียม CRRT Set ให้พร้อม Run ภายใน 30 นาที","weight":"bold","size":"sm","color":"#0D47A1","wrap":true,"flex":1,"margin":"sm"}]},
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#EDE7F6","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#6A1B9A","cornerRadius":"4px","contents":[]},{"type":"text","text":"📦 สิ่งที่ต้องเตรียมก่อน Prime","weight":"bold","size":"sm","color":"#AB47BC","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E3F2FD","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#7986CB","cornerRadius":"4px","contents":[]},{"type":"text","text":"🎯 เป้าหมาย: เตรียม CRRT Set ให้พร้อม Run ภายใน 30 นาที","weight":"bold","size":"sm","color":"#0D47A1","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#EDE7F6","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#6A1B9A","cornerRadius":"4px","contents":[]},{"type":"text","text":"📦 สิ่งที่ต้องเตรียมก่อน Prime","weight":"bold","size":"sm","color":"#CE93D8","wrap":true,"flex":1,"margin":"sm"}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#6A1B9A","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"CRRT Set (Filter + Bloodline) ตรงรุ่นกับเครื่อง","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#6A1B9A","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ถุงน้ำยา PrismaSOL / Hemosol ตาม Mode ที่แพทย์สั่ง","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#6A1B9A","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"NSS 0.9% 2,000 ml สำหรับ Prime วงจร","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#6A1B9A","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"Heparin 25,000 unit หรือ Citrate (ตาม Anticoagulant ที่แพทย์สั่ง)","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#6A1B9A","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ผ้า Sterile + ถุงมือ + Trolley","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E8F5E9","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#2E7D32","cornerRadius":"4px","contents":[]},{"type":"text","text":"🚀 ขั้นตอน Prime วงจร CRRT","weight":"bold","size":"sm","color":"#66BB6A","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E8F5E9","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#2E7D32","cornerRadius":"4px","contents":[]},{"type":"text","text":"🚀 ขั้นตอน Prime วงจร CRRT","weight":"bold","size":"sm","color":"#81C784","wrap":true,"flex":1,"margin":"sm"}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#2E7D32","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 1 เตรียมพื้นที่: ปูผ้า Sterile บน Trolley วางอุปกรณ์ครบ","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#2E7D32","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 2 ติดตั้ง Set แบบ Aseptic: นำ Hemofilter + Bloodline ใส่ช่องเครื่องตามลำดับ","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#2E7D32","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ขั้น 3 ต่อถุงน้ำยา: ต่อ PrismaSOL เข้าสาย Dialysate/Replacement ตาม Mode ตรวจไม่มีฟองอากาศ","size":"sm","color":"#333333","wrap":true,"flex":1}]},
@@ -916,7 +832,7 @@ async function handleEvent(event) {
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#C62828","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"NSS Flush 200 ml ทุก 8 ชั่วโมงเพื่อป้องกัน Filter อุดตัน","size":"sm","color":"#C62828","weight":"bold","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#C62828","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ตรวจสอบ Connection ทุกจุดซ้ำก่อนต่อสายเข้า DLC ผู้ป่วย","size":"sm","color":"#C62828","weight":"bold","wrap":true,"flex":1}]}
         ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
+            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
   }
 
@@ -930,137 +846,137 @@ async function handleEvent(event) {
           {type:"text",text:"🔄 CRRT Mode — 4 รูปแบบหลัก",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#EFF7FF",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#F0F8FF",spacing:"sm",
         contents:[
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#5C6BC0",cornerRadius:"4px",contents:[]},{type:"text",text:"🔄 CRRT มี 4 Mode หลัก — แตกต่างตามกลไกกำจัดของเสีย",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#66BB6A",cornerRadius:"4px",contents:[]},{type:"text",text:"1️⃣ SCUF — Slow Continuous Ultrafiltration",weight:"bold",size:"sm",color:"#66BB6A",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#66BB6A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: กำจัดน้ำส่วนเกินเท่านั้น (Ultrafiltration) ไม่ฟอกของเสีย",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#66BB6A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: Volume Overload โดยไม่มี Uremia รุนแรง",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#66BB6A",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"UF Rate: 2-8 ml/kg/hr | ไม่ต้องใช้ Dialysate หรือ Replacement Fluid",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFA726",cornerRadius:"4px",contents:[]},{type:"text",text:"2️⃣ CVVH — Continuous Veno-Venous Hemofiltration",weight:"bold",size:"sm",color:"#FFA726",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: Convection — ดึงของเสียผ่านแรงดัน เลียนแบบไตจริง",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: AKI ที่ต้องการกำจัดของเสียขนาดกลาง-ใหญ่ (Middle molecules)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Replacement Fluid: Pre หรือ Post-dilution | Dose 20-35 ml/kg/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7E57C2",cornerRadius:"4px",contents:[]},{type:"text",text:"3️⃣ CVVHD — Continuous Veno-Venous Hemodialysis",weight:"bold",size:"sm",color:"#AB47BC",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: Diffusion — ของเสียแพร่ผ่านเมมเบรนเข้าน้ำยา Dialysate",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: AKI กำจัดของเสียขนาดเล็ก (Urea, Creatinine, K+)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Dialysate ไหลสวนทางกับเลือด (Counter-current) | ไม่ต้อง Replacement Fluid",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"4️⃣ CVVHDF — Continuous Veno-Venous Hemodiafiltration",weight:"bold",size:"sm",color:"#EF5350",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7986CB",cornerRadius:"4px",contents:[]},{type:"text",text:"🔄 CRRT มี 4 Mode หลัก — แตกต่างตามกลไกกำจัดของเสีย",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#81C784",cornerRadius:"4px",contents:[]},{type:"text",text:"1️⃣ SCUF — Slow Continuous Ultrafiltration",weight:"bold",size:"sm",color:"#81C784",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#81C784",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: กำจัดน้ำส่วนเกินเท่านั้น (Ultrafiltration) ไม่ฟอกของเสีย",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#81C784",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: Volume Overload โดยไม่มี Uremia รุนแรง",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#81C784",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"UF Rate: 2-8 ml/kg/hr | ไม่ต้องใช้ Dialysate หรือ Replacement Fluid",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFB74D",cornerRadius:"4px",contents:[]},{type:"text",text:"2️⃣ CVVH — Continuous Veno-Venous Hemofiltration",weight:"bold",size:"sm",color:"#FFB74D",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: Convection — ดึงของเสียผ่านแรงดัน เลียนแบบไตจริง",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: AKI ที่ต้องการกำจัดของเสียขนาดกลาง-ใหญ่ (Middle molecules)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Replacement Fluid: Pre หรือ Post-dilution | Dose 20-35 ml/kg/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#9575CD",cornerRadius:"4px",contents:[]},{type:"text",text:"3️⃣ CVVHD — Continuous Veno-Venous Hemodialysis",weight:"bold",size:"sm",color:"#CE93D8",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: Diffusion — ของเสียแพร่ผ่านเมมเบรนเข้าน้ำยา Dialysate",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: AKI กำจัดของเสียขนาดเล็ก (Urea, Creatinine, K+)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Dialysate ไหลสวนทางกับเลือด (Counter-current) | ไม่ต้อง Replacement Fluid",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"4️⃣ CVVHDF — Continuous Veno-Venous Hemodiafiltration",weight:"bold",size:"sm",color:"#E57373",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"กลไก: Diffusion + Convection — กำจัดของเสียได้ทุกขนาด",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อบ่งชี้: AKI รุนแรง / Sepsis / Cytokines — ใช้บ่อยที่สุดใน ICU",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ต้องการทั้ง Dialysate + Replacement Fluid | Dose 25-35 ml/kg/hr",size:"sm",color:"#333333",wrap:true,flex:1}]}
         ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
+            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
   }
 
   if(text==="crrt_pressure_info"){
     await client.replyMessage(replyToken,{type:"flex",altText:"📊 ค่า Pressure CRRT",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#EC407A",paddingAll:"12px",spacing:"sm",contents:[
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#F48FB1",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
         {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"📊 ค่า Pressure CRRT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFF0F5",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFF8FA",spacing:"sm",
         contents:[
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#5C6BC0",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 ค่า Pressure ใน CRRT — ตัวชี้วัดสำคัญ",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"📉 Access Pressure (AP) — สายแดง",weight:"bold",size:"sm",color:"#EF5350",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7986CB",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 ค่า Pressure ใน CRRT — ตัวชี้วัดสำคัญ",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"📉 Access Pressure (AP) — สายแดง",weight:"bold",size:"sm",color:"#E57373",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ค่าปกติ: -100 ถึง -250 mmHg (ค่าลบ = ปกติ)",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ลบมากเกิน (< -250): สาย Access ตัน/พับ หรือ BFR สูงเกิน → ดู Alarm Access Neg",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"บวก (> 0): ผิดปกติ — อาจต่อร่วม ECMO Post-pump → ดู Alarm Access Pos",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#5C6BC0",cornerRadius:"4px",contents:[]},{type:"text",text:"📈 Return Pressure (RP) — สายน้ำเงิน",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ค่าปกติ: 0 ถึง +250 mmHg (ค่าบวก = ปกติ)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สูงเกิน (> 300): สาย Return ตัน/พับ หรือ Clot ใน Chamber → ดู Alarm Return Pos",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFA726",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 TMP (Trans Membrane Pressure) — คร่อมตัวกรอง",weight:"bold",size:"sm",color:"#FFA726",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ค่าปกติ: 50-200 mmHg",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สูงเกิน (> 250-300): Filter เริ่มอุดตัน → Flush NSS และ/หรือเปลี่ยน Filter",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สูงเกิน 400: Filter ใกล้ตัน ห้ามฝืน → คืนเลือด",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"🌡️ Filter Pressure Drop (FP)",weight:"bold",size:"sm",color:"#66BB6A",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7986CB",cornerRadius:"4px",contents:[]},{type:"text",text:"📈 Return Pressure (RP) — สายน้ำเงิน",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ค่าปกติ: 0 ถึง +250 mmHg (ค่าบวก = ปกติ)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สูงเกิน (> 300): สาย Return ตัน/พับ หรือ Clot ใน Chamber → ดู Alarm Return Pos",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFB74D",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 TMP (Trans Membrane Pressure) — คร่อมตัวกรอง",weight:"bold",size:"sm",color:"#FFB74D",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ค่าปกติ: 50-200 mmHg",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สูงเกิน (> 250-300): Filter เริ่มอุดตัน → Flush NSS และ/หรือเปลี่ยน Filter",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สูงเกิน 400: Filter ใกล้ตัน ห้ามฝืน → คืนเลือด",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"🌡️ Filter Pressure Drop (FP)",weight:"bold",size:"sm",color:"#81C784",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"= AP - Pre-Filter Pressure | ค่าปกติ: 50-150 mmHg",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"สูงขึ้นเรื่อยๆ: Clot สะสมในตัวกรอง → เพิ่ม BFR หรือ Anticoagulant",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7E57C2",cornerRadius:"4px",contents:[]},{type:"text",text:"⚠️ สรุปค่า Trigger ที่ต้องดำเนินการทันที",weight:"bold",size:"sm",color:"#AB47BC",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#9575CD",cornerRadius:"4px",contents:[]},{type:"text",text:"⚠️ สรุปค่า Trigger ที่ต้องดำเนินการทันที",weight:"bold",size:"sm",color:"#CE93D8",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"AP < -250 mmHg → ดู Alarm Access Extremely Negative",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"RP > 300 mmHg → ดู Alarm Return Extremely Positive",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"TMP > 400 mmHg → พิจารณาคืนเลือด",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"แจ้งแพทย์ทันทีถ้า TMP > 400 หรือ Filter ดูดำมากผิดปกติ",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"บันทึก Pressure ทุก 1-2 ชั่วโมงใน Flow Sheet CRRT",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
         ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
+            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
   }
 
   if(text==="update_status"){
     await client.replyMessage(replyToken,{type:"flex",altText:"📋 Check สถานะเครื่อง",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#7E57C2",paddingAll:"12px",spacing:"sm",contents:[
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#9575CD",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
         {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"📋 Check สถานะเครื่อง CRRT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#F3F0FF",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#F5F2FF",spacing:"sm",
         contents:[
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#EDE7F6","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#7E57C2","cornerRadius":"4px","contents":[]},{"type":"text","text":"📋 Check สถานะเครื่อง CRRT","weight":"bold","size":"sm","color":"#AB47BC","wrap":true,"flex":1,"margin":"sm"}]},
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E8F5E9","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#2E7D32","cornerRadius":"4px","contents":[]},{"type":"text","text":"✅ สถานะปกติ — เครื่อง Run ได้","weight":"bold","size":"sm","color":"#66BB6A","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#EDE7F6","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#9575CD","cornerRadius":"4px","contents":[]},{"type":"text","text":"📋 Check สถานะเครื่อง CRRT","weight":"bold","size":"sm","color":"#CE93D8","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E8F5E9","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#2E7D32","cornerRadius":"4px","contents":[]},{"type":"text","text":"✅ สถานะปกติ — เครื่อง Run ได้","weight":"bold","size":"sm","color":"#81C784","wrap":true,"flex":1,"margin":"sm"}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#2E7D32","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"CRRT กำลัง Run ปกติ: ดูค่า Pressure ทุก 1-2 ชั่วโมง","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#2E7D32","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"BFR, Dose, UF Rate ตรงตาม Order แพทย์","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#2E7D32","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ไม่มี Alarm ค้าง ไม่มีเสียงเตือน","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#FFF3E0","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#FFA726","cornerRadius":"4px","contents":[]},{"type":"text","text":"⚠️ สถานะที่ต้องแก้ไข","weight":"bold","size":"sm","color":"#BF360C","wrap":true,"flex":1,"margin":"sm"}]},
-          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#FFA726","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"เครื่อง Pause/Stop: มี Alarm ค้าง → ดูหน้าจอแล้วกด [Continue] หลังแก้ไข","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#FFA726","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"Filter ดำ/TMP สูง: Filter ใกล้ตัน → แจ้งแพทย์เตรียมเปลี่ยน","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#FFA726","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"Effluent น้อยกว่า Prescription: ตรวจสาย, Clamp, ตำแหน่ง DLC","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#FFEBEE","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#C62828","cornerRadius":"4px","contents":[]},{"type":"text","text":"🚨 สถานะฉุกเฉิน — แจ้งแพทย์ทันที","weight":"bold","size":"sm","color":"#EF5350","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#FFF3E0","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#FFB74D","cornerRadius":"4px","contents":[]},{"type":"text","text":"⚠️ สถานะที่ต้องแก้ไข","weight":"bold","size":"sm","color":"#BF360C","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#FFB74D","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"เครื่อง Pause/Stop: มี Alarm ค้าง → ดูหน้าจอแล้วกด [Continue] หลังแก้ไข","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#FFB74D","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"Filter ดำ/TMP สูง: Filter ใกล้ตัน → แจ้งแพทย์เตรียมเปลี่ยน","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#FFB74D","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"Effluent น้อยกว่า Prescription: ตรวจสาย, Clamp, ตำแหน่ง DLC","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#FFEBEE","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#C62828","cornerRadius":"4px","contents":[]},{"type":"text","text":"🚨 สถานะฉุกเฉิน — แจ้งแพทย์ทันที","weight":"bold","size":"sm","color":"#E57373","wrap":true,"flex":1,"margin":"sm"}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#C62828","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"BP ต่ำ + เครื่อง Run อยู่: ลด UFR เป็น 0 ทันที + แจ้งแพทย์","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#C62828","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"เลือดรั่วจาก Filter: หยุดเครื่อง Return Blood ทันที","size":"sm","color":"#333333","wrap":true,"flex":1}]},
           {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#C62828","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"ผู้ป่วย Cardiac Arrest: หยุดเครื่องทันที ทำ CPR","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E3F2FD","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#5C6BC0","cornerRadius":"4px","contents":[]},{"type":"text","text":"📝 บันทึกที่ต้องทำทุกเวร","weight":"bold","size":"sm","color":"#0D47A1","wrap":true,"flex":1,"margin":"sm"}]},
-          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#5C6BC0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก Flow Sheet CRRT: Pressure ทุก 1-2 ชั่วโมง","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#5C6BC0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก Fluid Balance In/Out ทุก 1 ชั่วโมง","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#5C6BC0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก iCa ทุก 6 ชั่วโมง (ถ้าใช้ Citrate)","size":"sm","color":"#333333","wrap":true,"flex":1}]},
-          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#5C6BC0","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก Electrolytes ทุก 6-8 ชั่วโมง: K, Na, Mg, Phos, Ca","size":"sm","color":"#333333","wrap":true,"flex":1}]}
+          {"type":"box","layout":"horizontal","margin":"sm","backgroundColor":"#E3F2FD","paddingAll":"8px","cornerRadius":"8px","spacing":"sm","contents":[{"type":"box","layout":"vertical","width":"4px","backgroundColor":"#7986CB","cornerRadius":"4px","contents":[]},{"type":"text","text":"📝 บันทึกที่ต้องทำทุกเวร","weight":"bold","size":"sm","color":"#0D47A1","wrap":true,"flex":1,"margin":"sm"}]},
+          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#7986CB","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก Flow Sheet CRRT: Pressure ทุก 1-2 ชั่วโมง","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#7986CB","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก Fluid Balance In/Out ทุก 1 ชั่วโมง","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#7986CB","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก iCa ทุก 6 ชั่วโมง (ถ้าใช้ Citrate)","size":"sm","color":"#333333","wrap":true,"flex":1}]},
+          {"type":"box","layout":"horizontal","margin":"xs","spacing":"sm","paddingStart":"8px","contents":[{"type":"text","text":"▶","color":"#7986CB","size":"xxs","flex":0,"gravity":"top","margin":"xs"},{"type":"text","text":"บันทึก Electrolytes ทุก 6-8 ชั่วโมง: K, Na, Mg, Phos, Ca","size":"sm","color":"#333333","wrap":true,"flex":1}]}
         ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
+            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
   }
 
   if(text==="crrt_calc"){
     await client.replyMessage(replyToken,{type:"flex",altText:"🧮 คำนวณสารน้ำ CRRT",contents:{type:"bubble",
-      hero:{type:"box",layout:"horizontal",backgroundColor:"#FFA726",paddingAll:"12px",spacing:"sm",contents:[
+      hero:{type:"box",layout:"horizontal",backgroundColor:"#FFB74D",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
         {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"🧮 คำนวณสารน้ำ CRRT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFF8F0",spacing:"sm",
+      body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFFAF5",spacing:"sm",
         contents:[
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFA726",cornerRadius:"4px",contents:[]},{type:"text",text:"🎯 สูตรหลัก CRRT Dose (KDIGO 2012)",weight:"bold",size:"sm",color:"#BF360C",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prescribed Dose = 20-25 ml/kg/hr (ใช้ Actual BW หรือ Ideal BW ตามแพทย์)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Delivered Dose จริง ≈ Prescribed × 0.85-0.90 (มี Downtime)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFA726",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ตัวอย่าง: BW 60 kg → Dose = 60×25 = 1,500 ml/hr = UF Rate ที่ตั้งในเครื่อง",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#5C6BC0",cornerRadius:"4px",contents:[]},{type:"text",text:"💧 Fluid Balance คิด In/Out ต่อชั่วโมง",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"IN: IV Fluid + ยา IV + อาหาร PPN/TPN/Enteral",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"OUT: Urine + Drain (NGT/Chest drain) + Effluent จากเครื่อง CRRT",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Net Balance (ml/hr) = Total IN - Total OUT",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#5C6BC0",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Patient Fluid Removal = Net UF ที่ต้องการดึงออก/ชั่วโมง",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 ตัวอย่าง CVVHDF น้ำหนัก 70 kg",weight:"bold",size:"sm",color:"#66BB6A",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFF3E0",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#FFB74D",cornerRadius:"4px",contents:[]},{type:"text",text:"🎯 สูตรหลัก CRRT Dose (KDIGO 2012)",weight:"bold",size:"sm",color:"#BF360C",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prescribed Dose = 20-25 ml/kg/hr (ใช้ Actual BW หรือ Ideal BW ตามแพทย์)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Delivered Dose จริง ≈ Prescribed × 0.85-0.90 (มี Downtime)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#FFB74D",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ตัวอย่าง: BW 60 kg → Dose = 60×25 = 1,500 ml/hr = UF Rate ที่ตั้งในเครื่อง",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E3F2FD",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7986CB",cornerRadius:"4px",contents:[]},{type:"text",text:"💧 Fluid Balance คิด In/Out ต่อชั่วโมง",weight:"bold",size:"sm",color:"#0D47A1",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"IN: IV Fluid + ยา IV + อาหาร PPN/TPN/Enteral",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"OUT: Urine + Drain (NGT/Chest drain) + Effluent จากเครื่อง CRRT",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Net Balance (ml/hr) = Total IN - Total OUT",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7986CB",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Patient Fluid Removal = Net UF ที่ต้องการดึงออก/ชั่วโมง",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#E8F5E9",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#2E7D32",cornerRadius:"4px",contents:[]},{type:"text",text:"📊 ตัวอย่าง CVVHDF น้ำหนัก 70 kg",weight:"bold",size:"sm",color:"#81C784",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Total Effluent = 70×25 = 1,750 ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Dialysate 875 ml/hr + Replacement (Pre/Post) 875 ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ดึงน้ำ 100 ml/hr → ตั้ง Patient Fluid Removal = 100 ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#2E7D32",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Heparin เริ่ม 500-1,000 IU/hr ปรับตาม APTT 60-80 วินาที",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#7E57C2",cornerRadius:"4px",contents:[]},{type:"text",text:"🔬 Citrate Anticoagulation (Regional)",weight:"bold",size:"sm",color:"#AB47BC",wrap:true,flex:1,margin:"sm"}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismocitrat 18 mmol/L Pre-filter: เริ่ม 1.5-2× BFR ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Calcium Gluconate 10% Systemic: ปรับตาม iCa systemic 1.1-1.3 mmol/L",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"iCa Post-filter target: 0.25-0.35 mmol/L (วัดทุก 6 ชั่วโมง)",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#7E57C2",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อห้าม: Liver failure รุนแรง เสี่ยง Citrate accumulation",size:"sm",color:"#333333",wrap:true,flex:1}]},
-          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"⚠️ ข้อควรระวัง",weight:"bold",size:"sm",color:"#EF5350",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#EDE7F6",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#9575CD",cornerRadius:"4px",contents:[]},{type:"text",text:"🔬 Citrate Anticoagulation (Regional)",weight:"bold",size:"sm",color:"#CE93D8",wrap:true,flex:1,margin:"sm"}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Prismocitrat 18 mmol/L Pre-filter: เริ่ม 1.5-2× BFR ml/hr",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Calcium Gluconate 10% Systemic: ปรับตาม iCa systemic 1.1-1.3 mmol/L",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"iCa Post-filter target: 0.25-0.35 mmol/L (วัดทุก 6 ชั่วโมง)",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#9575CD",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ข้อห้าม: Liver failure รุนแรง เสี่ยง Citrate accumulation",size:"sm",color:"#333333",wrap:true,flex:1}]},
+          {type:"box",layout:"horizontal",margin:"sm",backgroundColor:"#FFEBEE",paddingAll:"8px",cornerRadius:"8px",spacing:"sm",contents:[{type:"box",layout:"vertical",width:"4px",backgroundColor:"#C62828",cornerRadius:"4px",contents:[]},{type:"text",text:"⚠️ ข้อควรระวัง",weight:"bold",size:"sm",color:"#E57373",wrap:true,flex:1,margin:"sm"}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"ปรึกษาแพทย์ Nephrology/ICU ก่อนปรับค่าทุกครั้ง ห้ามปรับเองโดยไม่มี Order",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"วัด Electrolytes ทุก 6-8 ชม.: K, Na, Mg, Phos, Ca",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]},
           {type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",contents:[{type:"text",text:"▶",color:"#C62828",size:"xxs",flex:0,gravity:"top",margin:"xs"},{type:"text",text:"Monitor อุณหภูมิผู้ป่วย: CRRT ทำให้ตัวเย็น ต้องเปิด Heater เครื่อง",size:"sm",color:"#C62828",weight:"bold",wrap:true,flex:1}]}
         ]},
-            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
+            footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"message",label:"📚 กลับ Knowledge",text:"crrt_knowledge"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}]}
     }});return;
   }
 
@@ -1091,32 +1007,48 @@ async function handleEvent(event) {
   // Button responses
   const respRow=DB_MAIN.find(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text));
   if(respRow){
+    // ดึง response text ตรงๆ จาก DB Sheet
     let rt="";
-    for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
-    // ลบประโยค call-to-action ที่ซ้ำกับ quickReply ปุ่ม
-    rt = rt.replace(/💡[^\n]*👇?/g,"").replace(/กดปุ่มด้านล่าง[^\n]*/g,"").trim();
-    const t=T2T[respRow.alarm_title];
-    const ns=t?getSub(t):getSub("main_menu");
-    const qr=ns.filter(r=>r.next_step_label).slice(0,13).map(r=>({type:"action",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(F(r.next_step_label)),uri:r.next_step_action}:{type:"message",label:_san(F(r.next_step_label)),text:r.next_step_action}}));
-    const respText = F(rt)||"";
-    const displayText = respText || "✅ ดำเนินการเรียบร้อยครับ";
-    // ส่ง Flex สวยงาม มีปุ่มย้อนกลับ + ออกจากระบบ
-    const isOk = displayText.includes("✅")||displayText.includes("เรียบร้อย")||displayText.includes("สำเร็จ")||displayText.includes("เยี่ยม")||displayText.includes("ยอดเยี่ยม");
-    const cardColor = isOk ? "#2E7D32" : "#1565C0";
-    const cardBg = isOk ? "#F1F8E9" : "#E3F2FD";
-    const alarmT = T2T[respRow.alarm_title]||"";
-    await client.replyMessage(replyToken,{type:"flex",altText:displayText.slice(0,40),contents:{type:"bubble",
-      body:{type:"box",layout:"vertical",paddingAll:"16px",backgroundColor:cardBg,spacing:"sm",
-        contents:[
-          {type:"text",text:displayText,size:"sm",color:"#333333",wrap:true}
-        ]},
-      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",
-        contents:[
-          alarmT?{type:"button",action:{type:"message",label:"⬅️ ย้อนกลับ",text:alarmT},style:"primary",color:"#F9A825",height:"sm",adjustMode:"shrink-to-fit"}:{type:"filler"},
-          {type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"},
-          {type:"button",action:{type:"message",label:"🚪 ออกจากระบบ",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}
-        ].filter(b=>b.type!=="filler"||true)
+    for(let n=1;n<=6;n++){
+      if(respRow[`btn_${n}_action`]===text){
+        rt=respRow[`btn_${n}_response`]||"";
+        break;
       }
+    }
+    // ลบ call-to-action ที่ซ้ำ
+    const cleanRt = F(rt)
+      .replace(/💡[^\n]*👇?/g,"")
+      .replace(/กดปุ่มด้านล่าง[^\n]*/g,"")
+      .replace(/【[^】]*】/g,"")
+      .trim();
+    const displayText = cleanRt || "✅ ดำเนินการเรียบร้อยครับ";
+    // กำหนดสี hero ตามประเภทข้อความ
+    const isSuccess = displayText.includes("✅")||displayText.includes("เรียบร้อย")||displayText.includes("สำเร็จ")||displayText.includes("เยี่ยม")||displayText.includes("ยอดเยี่ยม");
+    const isWarn = displayText.includes("🚨")||displayText.includes("⚠️")||displayText.includes("วิกฤต")||displayText.includes("ห้าม");
+    const heroColor = isWarn?"#E57373":isSuccess?"#66BB6A":"#7986CB";
+    const bodyBg = isWarn?"#FFF8F8":isSuccess?"#F0FFF4":"#F0F4FF";
+    const textColor = isWarn?"#C92A2A":isSuccess?"#2F9E44":"#3B5BDB";
+    const alarmT = T2T[respRow.alarm_title]||"";
+    const footerBtns = [];
+    if(alarmT) footerBtns.push({type:"button",action:{type:"message",label:"⬅️ ย้อนกลับ",text:alarmT},style:"primary",color:"#F9A825",height:"sm",adjustMode:"shrink-to-fit"});
+    footerBtns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+    footerBtns.push({type:"button",action:{type:"message",label:"🚪 ออกจากระบบ",text:"exit_crrt"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+    await client.replyMessage(replyToken,{type:"flex",altText:displayText.slice(0,40),contents:{type:"bubble",
+      hero:{type:"box",layout:"vertical",backgroundColor:heroColor,paddingAll:"12px",
+        contents:[
+          {type:"box",layout:"horizontal",spacing:"sm",contents:[
+            {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+            {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+              {type:"text",text:"RA5IC · RAMATHIBODI",color:"rgba(255,255,255,0.8)",size:"xxs"},
+              {type:"text",text:"CRRT BOT",color:"#FFFFFF",size:"sm",weight:"bold"}
+            ]}
+          ]}
+        ]},
+      body:{type:"box",layout:"vertical",paddingAll:"16px",backgroundColor:"#FFFFFF",separator:true,separatorColor:"#E8EAF0",spacing:"sm",
+        contents:[
+          {type:"text",text:displayText,size:"sm",color:textColor,wrap:true}
+        ]},
+      footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:footerBtns}
     }});
     return;
   }
