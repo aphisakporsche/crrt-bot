@@ -150,45 +150,41 @@ const T2T = {
 const NAV = new Set(["main_menu","alarm_menu","alarm_menu_2","alarm_menu_3","how_to_use","show_hotline","fallback","update_status","exit_crrt","how_to_return","how_to_closeloop","how_to_swap_dlc","how_to_swap_dlc_2","how_to_flush_dlc","restart_crrt_flow","end_crrt_flow","ask_doctor_plan","show_cleanup","show_non_citrate","show_with_citrate","crrt_knowledge","crrt_mode_info","crrt_pressure_info","crrt_prime","crrt_billing","crrt_supplies","crrt_wound","crrt_calc"]);
 
 const AC = {
-  // ── CRITICAL (Glass Red) ───────────────────────────────────────────
-  "cardiac_arrest":    {color:"#E57373",light:"#FFF5F5",emoji:"❤️", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
-  "blood_leak":        {color:"#EF9A9A",light:"#FFF8F8",emoji:"🩸", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
-  "disconnect":        {color:"#CE93D8",light:"#FDF5FF",emoji:"🔌", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
-  "air_detected":      {color:"#FFAB91",light:"#FFF5EE",emoji:"🫧", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
-  "system_error":      {color:"#9FA8DA",light:"#F3F4FF",emoji:"⚙️", tag:"ระบบ",    lv:"🔴 CRITICAL"},
-  "hypotension":       {color:"#F48FB1",light:"#FFF5F8",emoji:"📉", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
-  // ── WARNING (Glass Amber/Orange) ──────────────────────────────────
-  "tmp_high":          {color:"#FFB74D",light:"#FFF8F0",emoji:"📊", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "filter_clotted":    {color:"#FFCC80",light:"#FFFAF0",emoji:"🔧", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "access_neg":        {color:"#90CAF9",light:"#F0F8FF",emoji:"📉", tag:"เตือน",   lv:"🟡 WARNING"},
-  "return_pos":        {color:"#81D4FA",light:"#F0FAFF",emoji:"📈", tag:"เตือน",   lv:"🟡 WARNING"},
-  "battery_low":       {color:"#FFE082",light:"#FFFDF0",emoji:"⚡", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "comm_loss":         {color:"#B0BEC5",light:"#F5F7F8",emoji:"📡", tag:"ระบบ",    lv:"🟡 WARNING"},
-  "effluent_overload": {color:"#FFCC80",light:"#FFF8EE",emoji:"⚖️", tag:"เร่งด่วน",lv:"🟡 WARNING"},
-  "self_test_failed":  {color:"#B39DDB",light:"#F5F2FF",emoji:"⚙️", tag:"ระบบ",    lv:"🟡 WARNING"},
-  // ── ADVISORY (Glass Green/Teal) ───────────────────────────────────
-  "access_pos":        {color:"#80DEEA",light:"#F0FEFE",emoji:"📈", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "bag_empty":         {color:"#80CBC4",light:"#F0FDFB",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "flow_error":        {color:"#A5D6A7",light:"#F3FFF4",emoji:"⚖️", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "syringe_empty":     {color:"#CE93D8",light:"#FBF5FF",emoji:"💉", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "scale_open":        {color:"#FFF176",light:"#FFFFF0",emoji:"⚖️", tag:"ระวัง",   lv:"🟢 ADVISORY"},
-  "check_access":      {color:"#C5E1A5",light:"#F8FFF2",emoji:"🔍", tag:"ระวัง",   lv:"🟢 ADVISORY"},
-  "line_clamped":      {color:"#A5D6A7",light:"#F3FFF4",emoji:"🟢", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "return_blood":      {color:"#EF9A9A",light:"#FFF8F8",emoji:"🩸", tag:"เร่งด่วน",lv:"🟢 ADVISORY"},
-  "nss_recirculation": {color:"#81D4FA",light:"#F0FAFF",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
-  "cardiac_arrest":    {color:"#E57373",light:"#FFF5F5",emoji:"🫀", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
+  "cardiac_arrest":    {color:"#D63031",light:"#FFF5F5",emoji:"❤️", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
+  "blood_leak":        {color:"#D63031",light:"#FFF5F5",emoji:"🩸", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
+  "disconnect":        {color:"#A55EEA",light:"#FAF5FF",emoji:"🔌", tag:"วิกฤต",   lv:"🔴 CRITICAL"},
+  "air_detected":      {color:"#F76707",light:"#FFF4E6",emoji:"🫧", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
+  "system_error":      {color:"#5C7CFA",light:"#EEF2FF",emoji:"⚙️", tag:"ระบบ",    lv:"🔴 CRITICAL"},
+  "tmp_high":          {color:"#FF922B",light:"#FFF4E6",emoji:"📊", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "filter_clotted":    {color:"#E67E22",light:"#FFF4EA",emoji:"🔧", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "access_neg":        {color:"#748FFC",light:"#EEF2FF",emoji:"📉", tag:"เตือน",   lv:"🟡 WARNING"},
+  "return_pos":        {color:"#4DABF7",light:"#EEF8FF",emoji:"📈", tag:"เตือน",   lv:"🟡 WARNING"},
+  "access_pos":        {color:"#38D9A9",light:"#EEFDF8",emoji:"📈", tag:"เตือน",   lv:"🟡 WARNING"},
+  "hypotension":       {color:"#D63031",light:"#FFF5F5",emoji:"📉", tag:"เร่งด่วน",lv:"🔴 CRITICAL"},
+  "battery_low":       {color:"#FF922B",light:"#FFF4E6",emoji:"⚡", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "comm_loss":         {color:"#74C0FC",light:"#EEF8FF",emoji:"📡", tag:"ระบบ",    lv:"🟡 WARNING"},
+  "bag_empty":         {color:"#00695C",light:"#F0FFFE",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "flow_error":        {color:"#2E7D32",light:"#F0FFF4",emoji:"⚖️", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "syringe_empty":     {color:"#6A1B9A",light:"#F6EEFF",emoji:"💉", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "scale_open":        {color:"#F57F17",light:"#FFFCEE",emoji:"⚖️", tag:"ระวัง",   lv:"🟢 ADVISORY"},
+  "check_access":      {color:"#827717",light:"#FDFFF0",emoji:"🔍", tag:"ระวัง",   lv:"🟢 ADVISORY"},
+  "line_clamped":      {color:"#81C784",light:"#F0FFF4",emoji:"🟢", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "effluent_overload": {color:"#FFB74D",light:"#FFFAF5",emoji:"⚖️", tag:"เร่งด่วน",lv:"🟡 WARNING"},
+  "return_blood":      {color:"#C62828",light:"#FFF8F8",emoji:"🩸", tag:"เร่งด่วน",lv:"🟢 ADVISORY"},
+  "nss_recirculation": {color:"#64B5F6",light:"#F0F7FF",emoji:"💧", tag:"เตือน",   lv:"🟢 ADVISORY"},
+  "self_test_failed":  {color:"#9575CD",light:"#F5F2FF",emoji:"⚙️", tag:"ระบบ",    lv:"🟡 WARNING"},
 };
-function ac(t){return AC[t]||{color:"#90A4AE",light:"#F5F7F8",emoji:"🚨",tag:"Alarm",lv:"⚪ ALARM"};}
+function ac(t){return AC[t]||{color:"#1A237E",light:"#F0F2FF",emoji:"🚨",tag:"Alarm",lv:"⚪ ALARM"};}
+
 
 
 // ── SECTION STYLES ────────────────────────────────────────────────────────────
 const SS = {
-  // Glass soft palette — accent bar ชัด, bg โปร่ง, text นุ่ม
-  goal:  {bar:"#7BA7F5", bg:"#F4F8FF", hc:"#4A6CF7", icon:"🎯"},
-  cause: {bar:"#FFB347", bg:"#FFF9F2", hc:"#E07B1A", icon:"🔍"},
-  step:  {bar:"#56C99A", bg:"#F0FBF6", hc:"#2E8B5E", icon:"🚀"},
-  warn:  {bar:"#F28B82", bg:"#FFF6F6", hc:"#C0392B", icon:"⚠️"},
-  info:  {bar:"#A78BFA", bg:"#F6F4FF", hc:"#6D4ED7", icon:"💡"},
+  goal:  {bar:"#5C7CFA", bg:"#F0F4FF", hc:"#3B5BDB", icon:"🎯"},
+  cause: {bar:"#FF922B", bg:"#FFF4E6", hc:"#D9480F", icon:"🔍"},
+  step:  {bar:"#40C97A", bg:"#EBFBEE", hc:"#2F9E44", icon:"🚀"},
+  warn:  {bar:"#FF6B6B", bg:"#FFF8F8", hc:"#C92A2A", icon:"⚠️"},
+  info:  {bar:"#9775FA", bg:"#F5F2FF", hc:"#6741D9", icon:"💡"},
 };
 
 // ── PARSER ────────────────────────────────────────────────────────────────────
@@ -287,31 +283,26 @@ function mkBlocks(sections) {
   const out = [];
   for (const sec of sections) {
     const s = sec.s;
-    // Head box — glass card style
     if (sec.head) {
       if (s === SS.goal) {
-        // เวลา = plain text ไม่มีกล่อง
-        out.push({type:"text",text:"⏱️ "+sec.head,size:"xs",color:"#4A6CF7",weight:"bold",wrap:true,margin:"sm"});
+        out.push({type:"text",text:"⏱️ "+sec.head,size:"sm",color:"#0D47A1",weight:"bold",wrap:true,margin:"sm"});
       } else {
         out.push({
-          type:"box",layout:"horizontal",margin:"sm",spacing:"sm",
-          backgroundColor:s.bg,
-          paddingAll:"8px",cornerRadius:"10px",
+          type:"box", layout:"horizontal", margin:"md", spacing:"sm",
+          backgroundColor:s.bg, paddingAll:"8px", cornerRadius:"8px",
           contents:[
-            // Accent left bar (simulate)
-            {type:"box",layout:"vertical",width:"3px",backgroundColor:s.bar,cornerRadius:"3px",contents:[]},
+            {type:"box",layout:"vertical",width:"4px",backgroundColor:s.bar,cornerRadius:"4px",contents:[]},
             {type:"text",text:s.icon+" "+sec.head,weight:"bold",size:"sm",color:s.hc,wrap:true,flex:1,margin:"sm"}
           ]
         });
       }
     }
-    // Items — clean minimal rows
     for (const item of sec.items) {
       out.push({
-        type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"12px",
+        type:"box",layout:"horizontal",margin:"xs",spacing:"sm",paddingStart:"8px",
         contents:[
-          {type:"text",text:"·",color:s.bar,size:"md",flex:0,gravity:"top"},
-          {type:"text",text:item,size:"sm",color:"#374151",wrap:true,flex:1,margin:"sm"}
+          {type:"text",text:"▶",color:s.bar,size:"xxs",flex:0,gravity:"top",margin:"xs"},
+          {type:"text",text:item,size:"sm",color:"#333333",wrap:true,flex:1}
         ]
       });
     }
@@ -324,23 +315,17 @@ function alarmFlex(alarm, subRows, trigger) {
   const bs = mkBlocks(secs);
 
   const body = [
-    // Badge + Tag row
     {type:"box",layout:"horizontal",spacing:"sm",contents:[
-      {type:"box",layout:"baseline",flex:0,paddingAll:"4px",paddingStart:"12px",paddingEnd:"12px",
-       backgroundColor:c.color,cornerRadius:"99px",
+      {type:"box",layout:"baseline",flex:0,paddingAll:"4px",paddingStart:"10px",paddingEnd:"10px",backgroundColor:c.color,cornerRadius:"20px",
        contents:[{type:"text",text:c.lv+" • ALARM",color:"#FFFFFF",size:"xxs",weight:"bold"}]},
       {type:"filler"},
-      {type:"text",text:c.emoji+" "+c.tag,color:c.color,size:"xs",weight:"bold",flex:0}
+      {type:"text",text:c.tag,color:c.color,size:"xs",weight:"bold",flex:0}
     ]},
-    // Alarm title
-    {type:"text",text:alarm.alarm_title||"Alarm",weight:"bold",size:"lg",color:"#1C1C2E",wrap:true,margin:"sm"},
-    // Glass separator
-    {type:"separator",margin:"sm",color:"#E8ECF4"},
-    // Instruction blocks
+    {type:"text",text:alarm.alarm_title||"Alarm",weight:"bold",size:"xl",color:c.color,wrap:true,margin:"sm"},
+    {type:"separator",margin:"sm",color:c.color},
     ...(bs.length>0 ? bs : [{type:"text",text:"กรุณาดูข้อมูลในระบบครับ",size:"sm",color:"#666",wrap:true}])
   ];
 
-  // Buttons จาก DB
   const btns = [];
   for(let n=1;n<=6;n++){
     const lbl = F((alarm[`btn_${n}_label`]||"").trim());
@@ -349,33 +334,27 @@ function alarmFlex(alarm, subRows, trigger) {
     const lblL=lbl.toLowerCase();
     let bStyle=btns.length===0?"primary":"secondary";
     let bColor=btns.length===0?c.color:undefined;
-    if(lblL.includes("แก้ไขได้")||lblL.includes("เรียบร้อย")||lblL.includes("run ต่อ")||lblL.includes("✅")){bColor="#56C99A";bStyle="primary";}
-    else if(lblL.includes("ยังไม่ได้")||lblL.includes("ยัง alarm")||lblL.includes("❌")){bColor="#F28B82";bStyle="primary";}
-    else if(lblL.includes("ย้อนกลับ")||lblL.includes("⬅")){bColor="#FFB347";bStyle="primary";}
+    if(lblL.includes("แก้ไขได้")||lblL.includes("เรียบร้อย")||lblL.includes("run ต่อ")||lblL.includes("✅")){bColor="#2E7D32";bStyle="primary";}
+    else if(lblL.includes("ยังไม่ได้")||lblL.includes("ยัง alarm")||lblL.includes("❌")){bColor="#C62828";bStyle="primary";}
+    else if(lblL.includes("ย้อนกลับ")||lblL.includes("⬅")){bColor="#F9A825";bStyle="primary";}
     btns.push({type:"button",
       action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
       style:bStyle,color:bColor,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   }
   if(btns.length===0) btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit"});
 
-  return {type:"flex",altText:"🚨 "+( alarm.alarm_title||"Alarm"),contents:{type:"bubble",
-    // Hero: glass gradient header
-    hero:{type:"box",layout:"horizontal",backgroundColor:c.color,paddingAll:"14px",spacing:"sm",
+  return {type:"flex",altText:"🚨 "+(alarm.alarm_title||"Alarm"),contents:{type:"bubble",
+    hero:{type:"box",layout:"horizontal",backgroundColor:c.color,paddingAll:"12px",spacing:"sm",
       contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",margin:"sm",
-          contents:[
-            {type:"text",text:"RA5IC · RAMATHIBODI",color:"rgba(255,255,255,0.7)",size:"xxs"},
-            {type:"text",text:"CRRT ALARM BOT",color:"#FFFFFF",size:"sm",weight:"bold"}
-          ]},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
+          {type:"text",text:"CRRT ALARM BOT",color:"#FFD700",size:"sm",weight:"bold"}
+        ]},
         {type:"text",text:c.emoji,size:"xxl",flex:0,gravity:"center"}
       ]},
-    // Body: white glass card
-    body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FAFBFF",spacing:"sm",contents:body},
-    // Footer: glass tray
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",
-      backgroundColor:"#F3F5FB",
-      contents:btns}
+    body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFFFFF",spacing:"sm",contents:body},
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FA",contents:btns}
   }};
 }
 function subFlex(subRows, trigger) {
@@ -396,9 +375,8 @@ function subFlex(subRows, trigger) {
   const body = bs.length>0 ? bs :
     msg.split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2)
        .filter(s=>!/^💡\s*(กดปุ่ม|กรุณา)/.test(s))
-       .map(line=>({type:"text",text:line,size:"sm",color:"#374151",wrap:true,margin:"xs"}));
+       .map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
 
-  // Buttons
   const seen = new Set();
   const btns = subRows.filter(r=>r.next_step_label&&r.next_step_label!=="nan"&&r.next_step_action&&r.next_step_action!=="nan")
     .slice(0,5).map((r,i)=>{
@@ -406,15 +384,14 @@ function subFlex(subRows, trigger) {
       if(seen.has(lbl)) return null; seen.add(lbl);
       const ll=lbl.toLowerCase();
       let ss2=i===0?"primary":"secondary",sc2=i===0?m.color:undefined;
-      if(ll.includes("ย้อนกลับ")||ll.includes("⬅")){sc2="#FFB347";ss2="primary";}
-      else if(ll.includes("แก้ไขได้")||ll.includes("✅")||ll.includes("run ต่อ")){sc2="#56C99A";ss2="primary";}
-      else if(ll.includes("ยังไม่ได้")||ll.includes("❌")||ll.includes("ยัง alarm")){sc2="#F28B82";ss2="primary";}
+      if(ll.includes("ย้อนกลับ")||ll.includes("⬅")){sc2="#F9A825";ss2="primary";}
+      else if(ll.includes("แก้ไขได้")||ll.includes("✅")||ll.includes("run ต่อ")){sc2="#2E7D32";ss2="primary";}
+      else if(ll.includes("ยังไม่ได้")||ll.includes("❌")||ll.includes("ยัง alarm")){sc2="#C62828";ss2="primary";}
       return {type:"button",
         action:r.next_step_action?.startsWith("http")?{type:"uri",label:lbl,uri:r.next_step_action}:{type:"message",label:lbl,text:r.next_step_action},
         style:ss2,color:sc2,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
     }).filter(Boolean);
 
-  // Nav buttons
   if(![...seen].some(l=>l.includes("Main Menu")||l.includes("หน้าแรก")))
     btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   if(![...seen].some(l=>l.includes("ออกจากระบบ")))
@@ -424,43 +401,34 @@ function subFlex(subRows, trigger) {
     hero:{type:"box",layout:"horizontal",backgroundColor:m.color,paddingAll:"12px",spacing:"sm",
       contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",margin:"sm",
-          contents:[
-            {type:"text",text:"RA5IC · RAMATHIBODI",color:"rgba(255,255,255,0.7)",size:"xxs"},
-            {type:"text",text:m.emoji+" ขั้นตอนถัดไป",color:"#FFFFFF",size:"sm",weight:"bold"}
-          ]}
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+          {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
+          {type:"text",text:"CRRT ALARM BOT",color:"#FFD700",size:"sm",weight:"bold"}
+        ]}
       ]},
-    body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FAFBFF",spacing:"sm",
+    body:{type:"box",layout:"vertical",paddingAll:"14px",backgroundColor:"#FFFFFF",spacing:"sm",
       contents:body.length>0?body:[{type:"text",text:"กรุณาเลือกตัวเลือกด้านล่างครับ",size:"sm",color:"#666",wrap:true}]},
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F3F5FB",contents:btns}
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FA",contents:btns}
   }};
 }
 function menuFlex(idx){
   const p=PAGES[idx];
-  // Glass pastel buttons
-  const btns=p.items.map(item=>({
-    type:"button",
-    action:{type:"message",label:_san(item.label),text:item.text},
-    style:"primary",color:item.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"
-  }));
+  const btns=p.items.map(item=>({type:"button",action:{type:"message",label:_san(item.label),text:item.text},style:"primary",color:item.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}));
   const nav=[];
   if(p.prev)nav.push({type:"button",action:{type:"message",label:"⬅️ หน้าก่อน",text:p.prev},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   if(p.next)nav.push({type:"button",action:{type:"message",label:"➡️ หน้าถัดไป",text:p.next},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   nav.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   return {type:"flex",altText:p.title,contents:{type:"bubble",
-    hero:{type:"box",layout:"vertical",backgroundColor:"#1C2340",paddingAll:"14px",
+    hero:{type:"box",layout:"horizontal",backgroundColor:"#1C1C2E",paddingAll:"12px",spacing:"sm",
       contents:[
-        {type:"box",layout:"horizontal",spacing:"sm",contents:[
-          {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-          {type:"box",layout:"vertical",flex:1,justifyContent:"center",margin:"sm",
-            contents:[
-              {type:"text",text:"🚨 "+p.title,color:"#FFFFFF",size:"sm",weight:"bold"},
-              {type:"text",text:p.sub,color:"rgba(255,255,255,0.65)",size:"xxs",margin:"xs"}
-            ]}
+        {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+          {type:"text",text:"🚨 "+p.title,color:"#FFFFFF",size:"sm",weight:"bold"},
+          {type:"text",text:p.sub,color:"#AAAAAA",size:"xxs",margin:"xs"}
         ]}
       ]},
-    body:{type:"box",layout:"vertical",paddingAll:"12px",backgroundColor:"#F8FAFF",spacing:"xs",contents:btns},
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F0F2F8",contents:nav}
+    body:{type:"box",layout:"vertical",paddingAll:"12px",backgroundColor:"#FFFFFF",spacing:"xs",contents:btns},
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FA",contents:nav}
   }};
 }
 function mainMenu(){
@@ -487,7 +455,7 @@ function mainMenu(){
       {type:"box",layout:"vertical",margin:"sm",backgroundColor:"#FFFBF0",cornerRadius:"8px",paddingAll:"8px",
        contents:[{type:"text",text:"⚠️ ข้อมูลนี้เป็นแนวทางในการช่วยตัดสินใจเท่านั้น โปรดใช้วิจารณญาณทางคลินิกประกอบเสมอ",size:"xxs",color:"#78716C",wrap:true}]}
     ]},
-    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F0F2F8",contents:[
+    footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#FAFAFA",contents:[
       {type:"box",layout:"horizontal",spacing:"xs",contents:[
         {type:"button",action:{type:"message",label:"🚨 แก้ไข Alarm",text:"alarm_menu"},style:"primary",color:"#E57373",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#64B5F6",height:"sm",adjustMode:"shrink-to-fit",flex:1}
@@ -1025,9 +993,9 @@ async function handleEvent(event) {
     // กำหนดสี hero ตามประเภทข้อความ
     const isSuccess = displayText.includes("✅")||displayText.includes("เรียบร้อย")||displayText.includes("สำเร็จ")||displayText.includes("เยี่ยม")||displayText.includes("ยอดเยี่ยม");
     const isWarn = displayText.includes("🚨")||displayText.includes("⚠️")||displayText.includes("วิกฤต")||displayText.includes("ห้าม");
-    const heroColor = isWarn?"#E57373":isSuccess?"#66BB6A":"#7986CB";
-    const bodyBg = isWarn?"#FFF8F8":isSuccess?"#F0FFF4":"#F0F4FF";
-    const textColor = isWarn?"#C92A2A":isSuccess?"#2F9E44":"#3B5BDB";
+    const heroColor = isWarn?"#B71C1C":isSuccess?"#2E7D32":"#1565C0";
+    const bodyBg = isWarn?"#FFEBEE":isSuccess?"#F1F8E9":"#E3F2FD";
+    const textColor = isWarn?"#B71C1C":isSuccess?"#1B5E20":"#1565C0";
     const alarmT = T2T[respRow.alarm_title]||"";
     const footerBtns = [];
     if(alarmT) footerBtns.push({type:"button",action:{type:"message",label:"⬅️ ย้อนกลับ",text:alarmT},style:"primary",color:"#F9A825",height:"sm",adjustMode:"shrink-to-fit"});
