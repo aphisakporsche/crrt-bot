@@ -496,13 +496,28 @@ async function handleEvent(event) {
     return;
   }
   if(text==="alarm_menu")  {activate(uid);  await client.replyMessage(replyToken,menuFlex(0));return;}
-  if(text==="alarm_menu_2"){if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(1));return;}
-  if(text==="alarm_menu_3"){if(!isActive(uid))return;touch(uid);await client.replyMessage(replyToken,menuFlex(2));return;}
+  if(text==="alarm_menu_2"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(1));return;}
+  if(text==="alarm_menu_3"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(2));return;}
 
-  // ── Early alarm trigger — TMP Too High / Battery Low / Access Positive ───────
+  // ── Early alarm trigger + Auto-activate ───────────────────────────────────────
+  // ครอบคลุม TMP Too High / Battery Low / Access Positive และทุก alarm trigger
+  // ทำก่อน isActive check เพื่อให้ตอบได้แม้ session หมด
   if(!NAV.has(text)){
     const eDA = DB_MAIN.find(r=>T2T[r.alarm_title]===text);
-    if(eDA){activate(uid);const et=T2T[eDA.alarm_title]||text;await client.replyMessage(replyToken,alarmFlex(eDA,getSub(et),et));return;}
+    if(eDA){
+      activate(uid); // activate เสมอ เมื่อกด alarm
+      const et=T2T[eDA.alarm_title]||text;
+      await client.replyMessage(replyToken,alarmFlex(eDA,getSub(et),et));
+      return;
+    }
+    // ถ้า text เป็น alarm trigger (เช่น tmp_high, battery_low) แต่ DB ยังไม่โหลด
+    // หรือเป็น sub flow trigger → activate ให้ผ่าน isActive ด้านล่างได้
+    const T2T_VALUES = new Set(Object.values(T2T));
+    if(T2T_VALUES.has(text)) activate(uid);
+  }
+  // btn_action triggers → activate ให้ผ่าน isActive ด้านล่าง
+  if(DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text))){
+    activate(uid);
   }
 
   if(!isActive(uid))return;
@@ -742,22 +757,18 @@ async function handleEvent(event) {
     for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
     const alarmT = T2T[respRow.alarm_title]||"";
     const cleanRt = F(rt).replace(/【[^】]*】/g,"").trim();
-
-    // ━━━ FIX: ปุ่ม "ยังแก้ไม่ได้ ไปต่อ" — response ว่าง + action เป็น Sub Flow ━━━
-    // → ส่ง subFlex แทน ไม่ใช่ "ดำเนินการเรียบร้อย"
+    // ปุ่ม "ยังแก้ไม่ได้ ไปต่อ" → response ว่าง + action เป็น Sub Flow → redirect
     if(!cleanRt){
       const nextSub = getSub(text);
       if(nextSub.length > 0){
         await client.replyMessage(replyToken, subFlex(nextSub, text));
         return;
       }
-      // ไม่มี sub flow → fallback กลับไปหน้า alarm นั้น
       if(alarmT){
         const alarmRow=DB_MAIN.find(r=>T2T[r.alarm_title]===alarmT);
         if(alarmRow){await client.replyMessage(replyToken,alarmFlex(alarmRow,getSub(alarmT),alarmT));return;}
       }
     }
-
     const displayText = cleanRt || "✅ ดำเนินการเรียบร้อยครับ";
     const isOk  = displayText.includes("✅")||displayText.includes("เรียบร้อย")||displayText.includes("สำเร็จ")||displayText.includes("ยอดเยี่ยม")||displayText.includes("เยี่ยม");
     const isWarn= displayText.includes("🚨")||displayText.includes("ห้าม")||displayText.includes("วิกฤต")||displayText.includes("รีบ");
@@ -786,12 +797,10 @@ async function handleEvent(event) {
   }
 
   // ── Sub flows ────────────────────────────────────────────────────────────────
-  // isBtnAction: ใช้แค่ป้องกัน double-reply
-  // respRow จัดการ redirect ไปแล้ว → ถ้าถึงบรรทัดนี้ แปลว่า text ไม่ใช่ btn_action ที่มี response
   const isBtnAction = DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>{
     if(r[`btn_${n}_action`]!==text) return false;
     const resp = F(r[`btn_${n}_response`]||"").replace(/【[^】]*】/g,"").trim();
-    return !!resp; // มี response จริง → block subRows (respRow จัดการแล้ว)
+    return !!resp;
   }));
   const subRows=getSub(text);
   if(subRows.length>0 && !isBtnAction){
