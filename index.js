@@ -293,20 +293,47 @@ function subFlex(subRows, trigger) {if(!subRows||subRows.length===0){return{type
   const body = bs.length>0 ? bs :
     F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2)
     .map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
-  const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
-    const lbl=F(r.next_step_label||"").slice(0,20);
+  const btns = subRows.filter(r=>{
+    if(!r.next_step_label) return false;
+    const ll=F(r.next_step_label||"").toLowerCase();
+    // ลบปุ่มย้อนกลับออกทั้งหมด
+    if(ll.includes("⬅")||ll.includes("ย้อนกลับ")) return false;
+    return true;
+  }).slice(0,5).map((r,i)=>{
+    const lbl=F(r.next_step_label||""); // ไม่ตัด — ให้ shrink-to-fit จัดการ
     const ll2=lbl.toLowerCase();
-    let ss3=(i===0||ll2.includes("⬅")||ll2.includes("ย้อนกลับ"))?"primary":"secondary";
-    let sc3=i===0?m.color:undefined;
-    if(ll2.includes("ย้อนกลับ")||ll2.includes("⬅")){sc3="#F9A825";ss3="primary";}
-    else if(ll2.includes("✅")||ll2.includes("แก้ไขได้")||ll2.includes("run ต่อ")){sc3="#2E7D32";ss3="primary";}
-    else if(ll2.includes("❌")||ll2.includes("ยังไม่ได้")||ll2.includes("ยัง alarm")){sc3="#C62828";ss3="primary";}
-    else if(ss3==="secondary" && !sc3){ sc3="#546E7A"; }
-    return {type:"button",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
+    const act=r.next_step_action||"";
+    // ━━━ กำหนดสีทุกปุ่ม ━━━
+    let sc3,ss3="primary";
+    // สีเขียว: ทำได้/สำเร็จ/ดำเนินการ/คืนเลือด/พักเครื่อง
+    if(ll2.includes("✅")||ll2.includes("แก้ไขได้")||ll2.includes("run")||
+       ll2.includes("คืนเลือด")||ll2.includes("พักเครื่อง")||ll2.includes("หล่อเส้น")||
+       ll2.includes("ดำเนินการ")||ll2.includes("ต่อ")||ll2.includes("สำเร็จ")||
+       ll2.includes("เก็บเครื่อง")||ll2.includes("restart")||ll2.includes("ต้องการต่อ")||
+       act==="how_to_closeloop"||act==="how_to_flush_dlc"||act==="show_cleanup"||
+       act==="restart_crrt_flow"||act==="how_to_return"){
+      sc3="#2E7D32";
+    }
+    // สีแดง: แก้ไม่ได้/วิกฤต/ไม่ต้องการ/end
+    else if(ll2.includes("❌")||ll2.includes("ยังไม่")||ll2.includes("alarm")||
+            ll2.includes("วิกฤต")||ll2.includes("ไม่ต้องการ")||ll2.includes("ไม่ต่อ")||
+            act==="end_crrt_flow"||act==="how_to_return"&&ll2.includes("❌")){
+      sc3="#C62828";
+    }
+    // สีฟ้า: Hotline/ข้อมูล/ดูขั้นตอน
+    else if(ll2.includes("hotline")||ll2.includes("สายด่วน")||ll2.includes("ดูขั้นตอน")||
+            ll2.includes("ดูวิดีโอ")||ll2.includes("ดู")||ll2.includes("หน้าแรก")||
+            ll2.includes("main")||act==="show_hotline"||act==="main_menu"||
+            act==="crrt_knowledge"||act.startsWith("crrt_")){
+      sc3="#1565C0";
+    }
+    // default: ฟ้าอมเทา
+    else{ sc3="#0277BD"; }
+    return {type:"button",action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
       style:ss3,color:sc3,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
   });
   if (!["main_menu","exit_crrt"].includes(trigger)&&!btns.some(b=>b.action?.text==="main_menu"))
-    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"primary",color:"#1565C0",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   return {type:"flex",altText:m.emoji+" "+m.title,contents:{type:"bubble",
     hero:{type:"box",layout:"horizontal",backgroundColor:m.color,paddingAll:"10px",spacing:"sm",contents:[
       {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
