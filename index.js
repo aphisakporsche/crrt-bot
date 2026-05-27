@@ -325,7 +325,7 @@ const PAGES=[
   {title:"🚨 เมนู Alarm (1/3)",sub:"วิกฤต / เร่งด่วน",color:"#B71C1C",
    items:[
      {label:"🫧 Air Detected",text:"air_detected",color:"#E53935"},
-     {label:"🩸 Blood Leak Detected",text:"blood_leak",color:"#C62828"},
+     {label:"🩸 Blood Leak",text:"blood_leak",color:"#C62828"},
      {label:"📉 Access Negative",text:"access_neg",color:"#1A237E"},
      {label:"📈 Return Positive",text:"return_pos",color:"#0D47A1"},
      {label:"❌ Filter Clotted",text:"filter_clotted",color:"#BF360C"},
@@ -349,7 +349,7 @@ const PAGES=[
      {label:"🟢 Line Clamped",text:"line_clamped",color:"#1B5E20"},
      {label:"⚖️ Effluent OL",text:"effluent_overload",color:"#E65100"},
      {label:"🩸 Return Blood",text:"return_blood",color:"#C62828"},
-     {label:"💧 Blood recirculation",text:"nss_recirculation",color:"#0277BD"},
+     {label:"💧 Blood Recirc",text:"nss_recirculation",color:"#0277BD"},
      {label:"⚙️ Self-Test",text:"self_test_failed",color:"#4527A0"},
    ],prev:"alarm_menu_2"}
 ];
@@ -408,15 +408,15 @@ function mainMenu(){
         {type:"button",action:{type:"message",label:"🫀 Cardiac Arrest",text:"cardiac_arrest"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"🔵 Prime set c no citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"🟠 Prime set c citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"🔵 Prime No Citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"🟠 Prime Citrate",text:"show_with_citrate"},style:"primary",color:"#E65100",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"primary",color:"#AD1457",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"uri",label:"📋 Check สถานะเครื่อง",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#5C6BC0",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"💉 วิธีหล่อเส้นด้วย Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#00695C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"💉 หล่อเส้น Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#00695C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         {type:"button",action:{type:"message",label:"✅ วิธีเก็บเครื่อง",text:"show_cleanup"},style:"primary",color:"#2E7D32",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
@@ -488,7 +488,7 @@ async function handleEvent(event) {
         ]},
       footer:{type:"box",layout:"vertical",paddingAll:"10px",
         contents:[
-          {type:"button",action:{type:"uri",label:"📞 โทร Hotline 086-341-7250",uri:"tel:0863417250"},style:"primary",color:"#C62828",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
+          {type:"button",action:{type:"uri",label:"📞 Hotline CRRT",uri:"tel:0863417250"},style:"primary",color:"#C62828",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
           {type:"button",action:{type:"message",label:"🏠 กลับหน้าแรก",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
         ]}
     }});
@@ -519,9 +519,9 @@ async function handleEvent(event) {
       {label:"📊 ค่า Pressure",action:"crrt_pressure_info",color:"#880E4F"},
       {label:"💳 สิทธิ์การรักษา",action:"crrt_billing",color:"#1565C0"},
       {label:"📦 รหัสอุปกรณ์",action:"crrt_supplies",color:"#4527A0"},
-      {label:"🩹 การทำแผล DLC",action:"crrt_wound",color:"#C62828"},
+      {label:"🩹 ทำแผล DLC",action:"crrt_wound",color:"#C62828"},
       {label:"🧮 คำนวณสารน้ำ",action:"crrt_calc",color:"#E65100"},
-      {label:"💉 วิธีหล่อเส้น Citrate",action:"how_to_flush_dlc",color:"#00695C"},
+      {label:"💉 หล่อเส้น Citrate",action:"how_to_flush_dlc",color:"#00695C"},
       {label:"✅ วิธีเก็บเครื่อง",action:"show_cleanup",color:"#2E7D32"},
       {label:"🏠 Main Menu",action:"main_menu",color:"#546E7A"},
     ];
