@@ -258,7 +258,8 @@ function alarmFlex(alarm, subRows, trigger) {
   }};
 }
 
-function subFlex(subRows, trigger) {
+function subFlex(subRows, trigger) {if(!subRows||subRows.length===0){return{type:"flex",altText:"⚠️ กรุณากดใหม่",contents:{type:"bubble",body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"sm",contents:[{type:"text",text:"⚠️ ระบบกำลังโหลด กรุณากดใหม่ครับ",weight:"bold",size:"md",color:"#E65100",wrap:true},{type:"text",text:"หรือโทร Hotline 086-341-7250",size:"sm",color:"#555",wrap:true}]},footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",contents:[{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"primary",color:"#1565C0",height:"sm",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}]}}};}
+  
   const first = subRows.find(r=>r.follow_up_msg&&r.follow_up_msg!=="nan");
   const msg = first?.follow_up_msg||"เลือกตัวเลือกด้านล่างครับ";
   const MAP={
@@ -497,10 +498,14 @@ async function handleEvent(event) {
   if(text==="alarm_menu_2"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(1));return;}
   if(text==="alarm_menu_3"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(2));return;}
 
-  // ── Early alarm trigger — TMP Too High / Battery Low / Access Positive ───────
+  // ── Early alarm trigger + Auto-activate ─────────────────────────────────────
   if(!NAV.has(text)){
-    const eDA = DB_MAIN.find(r=>T2T[r.alarm_title]===text);
+    const eDA=DB_MAIN.find(r=>T2T[r.alarm_title]===text);
     if(eDA){activate(uid);const et=T2T[eDA.alarm_title]||text;await client.replyMessage(replyToken,alarmFlex(eDA,getSub(et),et));return;}
+    // DB ว่าง → force reload แล้ว retry
+    const _T2TV2=new Set(Object.values(T2T));
+    if(_T2TV2.has(text)&&DB_MAIN.length===0){DB_LAST=0;await loadDB();const eDA2=DB_MAIN.find(r=>T2T[r.alarm_title]===text);if(eDA2){activate(uid);const et2=T2T[eDA2.alarm_title]||text;await client.replyMessage(replyToken,alarmFlex(eDA2,getSub(et2),et2));return;}}
+    if(_T2TV2.has(text))activate(uid);
   }
 
   const _KB=new Set(["crrt_mode_info","crrt_pressure_info","crrt_billing","crrt_supplies","crrt_wound","crrt_calc","crrt_knowledge","crrt_prime"]);
@@ -799,7 +804,7 @@ async function handleEvent(event) {
   if(row){const t=T2T[row.alarm_title];await client.replyMessage(replyToken,alarmFlex(row,t?getSub(t):[],t));return;}
 
   // ── Fallback ─────────────────────────────────────────────────────────────────
-  await client.replyMessage(replyToken,subFlex(getSub("fallback"),"fallback"));
+  const fbRows=getSub("fallback");await client.replyMessage(replyToken,fbRows.length>0?subFlex(fbRows,"fallback"):{type:"text",text:"⚠️ ระบบกำลังโหลดข้อมูลครับ กรุณากดอีกครั้ง หรือโทร Hotline 086-341-7250"});
 }
 
 app.post("/webhook",line.middleware(LINE_CFG),async(req,res)=>{
