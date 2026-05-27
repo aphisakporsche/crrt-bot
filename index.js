@@ -741,7 +741,24 @@ async function handleEvent(event) {
     let rt="";
     for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
     const alarmT = T2T[respRow.alarm_title]||"";
-    const displayText = F(rt).replace(/【[^】]*】/g,"").trim() || "✅ ดำเนินการเรียบร้อยครับ";
+    const cleanRt = F(rt).replace(/【[^】]*】/g,"").trim();
+
+    // ━━━ FIX: ปุ่ม "ยังแก้ไม่ได้ ไปต่อ" — response ว่าง + action เป็น Sub Flow ━━━
+    // → ส่ง subFlex แทน ไม่ใช่ "ดำเนินการเรียบร้อย"
+    if(!cleanRt){
+      const nextSub = getSub(text);
+      if(nextSub.length > 0){
+        await client.replyMessage(replyToken, subFlex(nextSub, text));
+        return;
+      }
+      // ไม่มี sub flow → fallback กลับไปหน้า alarm นั้น
+      if(alarmT){
+        const alarmRow=DB_MAIN.find(r=>T2T[r.alarm_title]===alarmT);
+        if(alarmRow){await client.replyMessage(replyToken,alarmFlex(alarmRow,getSub(alarmT),alarmT));return;}
+      }
+    }
+
+    const displayText = cleanRt || "✅ ดำเนินการเรียบร้อยครับ";
     const isOk  = displayText.includes("✅")||displayText.includes("เรียบร้อย")||displayText.includes("สำเร็จ")||displayText.includes("ยอดเยี่ยม")||displayText.includes("เยี่ยม");
     const isWarn= displayText.includes("🚨")||displayText.includes("ห้าม")||displayText.includes("วิกฤต")||displayText.includes("รีบ");
     const heroC = isWarn?"#B71C1C":isOk?"#2E7D32":"#1565C0";
@@ -769,7 +786,13 @@ async function handleEvent(event) {
   }
 
   // ── Sub flows ────────────────────────────────────────────────────────────────
-  const isBtnAction = DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text));
+  // isBtnAction: ใช้แค่ป้องกัน double-reply
+  // respRow จัดการ redirect ไปแล้ว → ถ้าถึงบรรทัดนี้ แปลว่า text ไม่ใช่ btn_action ที่มี response
+  const isBtnAction = DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>{
+    if(r[`btn_${n}_action`]!==text) return false;
+    const resp = F(r[`btn_${n}_response`]||"").replace(/【[^】]*】/g,"").trim();
+    return !!resp; // มี response จริง → block subRows (respRow จัดการแล้ว)
+  }));
   const subRows=getSub(text);
   if(subRows.length>0 && !isBtnAction){
     if(!NAV.has(text)){
