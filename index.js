@@ -340,8 +340,6 @@ const PAGES=[
      {label:"💧 Bag Empty",text:"bag_empty",color:"#00695C"},
      {label:"⚖️ Flow Error",text:"flow_error",color:"#2E7D32"},
      {label:"💉 Syringe Empty",text:"syringe_empty",color:"#6A1B9A"},
-     {label:"📉 Hypotension",text:"hypotension",color:"#B71C1C"},
-     {label:"❤️ Cardiac Arrest",text:"cardiac_arrest",color:"#B71C1C"},
    ],prev:"alarm_menu",next:"alarm_menu_3"},
   {title:"🚨 เมนู Alarm (3/3)",sub:"อุปกรณ์ / Procedure",color:"#D32F2F",
    items:[
