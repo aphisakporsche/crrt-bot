@@ -498,6 +498,10 @@ async function handleEvent(event) {
   if(text==="alarm_menu_2"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(1));return;}
   if(text==="alarm_menu_3"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(2));return;}
 
+  // ━━━ KB & Nav auto-activate — ทำก่อน eDA เพื่อให้ session active เสมอ ━━━
+  const _KB_EARLY=new Set(["crrt_mode_info","crrt_pressure_info","crrt_billing","crrt_supplies","crrt_wound","crrt_calc","crrt_knowledge","crrt_prime","how_to_flush_dlc","show_cleanup","show_hotline","how_to_return","show_non_citrate","show_with_citrate","alarm_menu","alarm_menu_2","alarm_menu_3","main_menu"]);
+  if(_KB_EARLY.has(text))activate(uid);
+
   // ── Early alarm trigger + Auto-activate ──────────────────────────────────────
   if(!NAV.has(text)){
     const eDA=DB_MAIN.find(r=>T2T[r.alarm_title]===text);
@@ -612,7 +616,7 @@ app.post("/webhook",line.middleware(LINE_CFG),async(req,res)=>{
   catch(e){console.error(e);res.status(500).end();}
 });
 
-app.get("/",(_, res)=>res.json({status:"CRRT Bot v14.0 — RA5IC",alarms:Object.keys(T2T).length}));
+app.get("/",(_, res)=>res.json({status:"CRRT Bot v22.0 — RA5IC",alarms:Object.keys(T2T).length}));
 
 loadDB().then(()=>{
   const PORT=process.env.PORT||3000;
