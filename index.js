@@ -221,7 +221,7 @@ function alarmFlex(alarm, subRows, trigger) {
   ];
   const btns = [];
   for (let n=1;n<=6;n++) {
-    const lbl = F((alarm[`btn_${n}_label`]||"").trim());
+    const lbl = F((alarm[`btn_${n}_label`]||"").trim()).slice(0,20);
     const act = (alarm[`btn_${n}_action`]||"").trim();
     if (!lbl||lbl==="nan"||!act||act==="nan") continue;
     const lblL=lbl.toLowerCase();
@@ -237,7 +237,7 @@ function alarmFlex(alarm, subRows, trigger) {
   }
   if (btns.length===0) {
     subRows.filter(r=>r.next_step_label).slice(0,4).forEach((r,i)=>{
-      const lbl=F(r.next_step_label||"");
+      const lbl=F(r.next_step_label||"").slice(0,20);
       btns.push({type:"button",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
         style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
     });
@@ -294,7 +294,7 @@ function subFlex(subRows, trigger) {if(!subRows||subRows.length===0){return{type
     F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2)
     .map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
   const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
-    const lbl=F(r.next_step_label||"");
+    const lbl=F(r.next_step_label||"").slice(0,20);
     const ll2=lbl.toLowerCase();
     let ss3=(i===0||ll2.includes("⬅")||ll2.includes("ย้อนกลับ"))?"primary":"secondary";
     let sc3=i===0?m.color:undefined;
@@ -337,7 +337,7 @@ const PAGES=[
    items:[
      {label:"📈 Access Positive",text:"access_pos",color:"#006064"},
      {label:"🔌 Disconnect",text:"disconnect",color:"#880E4F"},
-     {label:"📡 Communication Loss",text:"comm_loss",color:"#37474F"},
+     {label:"📡 Comm Loss",text:"comm_loss",color:"#37474F"},
      {label:"💧 Bag Empty",text:"bag_empty",color:"#00695C"},
      {label:"⚖️ Flow Error",text:"flow_error",color:"#2E7D32"},
      {label:"💉 Syringe Empty",text:"syringe_empty",color:"#6A1B9A"},
@@ -413,7 +413,7 @@ function mainMenu(){
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🩸 คืนเลือด",text:"how_to_return"},style:"primary",color:"#AD1457",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"uri",label:"📋 Check สถานะเครื่อง",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#5C6BC0",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"uri",label:"📋 Check สถานะ",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#5C6BC0",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"💉 หล่อเส้น Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#00695C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
