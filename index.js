@@ -258,7 +258,7 @@ function alarmFlex(alarm, subRows, trigger) {
   }};
 }
 
-function subFlex(subRows, trigger) {
+function subFlex(subRows, trigger) {if(!subRows||subRows.length===0){return{type:"flex",altText:"⚠️ กรุณากดใหม่",contents:{type:"bubble",body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"sm",contents:[{type:"text",text:"⚠️ ระบบกำลังโหลดข้อมูลครับ",weight:"bold",size:"md",color:"#E65100",wrap:true},{type:"text",text:"กรุณากดปุ่มหรือพิมพ์ชื่อ Alarm ใหม่อีกครั้งครับ",size:"sm",color:"#555",wrap:true}]},footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",contents:[{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"primary",color:"#1565C0",height:"sm",adjustMode:"shrink-to-fit"},{type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}]}}};}
   const first = subRows.find(r=>r.follow_up_msg&&r.follow_up_msg!=="nan");
   const msg = first?.follow_up_msg||"เลือกตัวเลือกด้านล่างครับ";
   const MAP={
@@ -497,26 +497,21 @@ async function handleEvent(event) {
   if(text==="alarm_menu_2"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(1));return;}
   if(text==="alarm_menu_3"){activate(uid);touch(uid);await client.replyMessage(replyToken,menuFlex(2));return;}
 
-  // ── Early alarm trigger + Auto-activate ───────────────────────────────────────
-  // ครอบคลุม TMP Too High / Battery Low / Access Positive และทุก alarm trigger
-  // ทำก่อน isActive check เพื่อให้ตอบได้แม้ session หมด
+  // ── Early alarm trigger + Auto-activate ────────────────────────────────────
   if(!NAV.has(text)){
-    const eDA = DB_MAIN.find(r=>T2T[r.alarm_title]===text);
-    if(eDA){
-      activate(uid); // activate เสมอ เมื่อกด alarm
-      const et=T2T[eDA.alarm_title]||text;
-      await client.replyMessage(replyToken,alarmFlex(eDA,getSub(et),et));
-      return;
+    const eDA=DB_MAIN.find(r=>T2T[r.alarm_title]===text);
+    if(eDA){activate(uid);const et=T2T[eDA.alarm_title]||text;await client.replyMessage(replyToken,alarmFlex(eDA,getSub(et),et));return;}
+    // DB ว่าง แต่ text เป็น alarm trigger → force reload แล้ว retry
+    const T2T_VALUES=new Set(Object.values(T2T));
+    if(T2T_VALUES.has(text)){
+      activate(uid);
+      if(DB_MAIN.length===0){DB_LAST=0;await loadDB();}
+      const eDA2=DB_MAIN.find(r=>T2T[r.alarm_title]===text);
+      if(eDA2){const et2=T2T[eDA2.alarm_title]||text;await client.replyMessage(replyToken,alarmFlex(eDA2,getSub(et2),et2));return;}
     }
-    // ถ้า text เป็น alarm trigger (เช่น tmp_high, battery_low) แต่ DB ยังไม่โหลด
-    // หรือเป็น sub flow trigger → activate ให้ผ่าน isActive ด้านล่างได้
-    const T2T_VALUES = new Set(Object.values(T2T));
-    if(T2T_VALUES.has(text)) activate(uid);
   }
-  // btn_action triggers → activate ให้ผ่าน isActive ด้านล่าง
-  if(DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text))){
-    activate(uid);
-  }
+  // btn_action triggers → activate ให้ผ่าน isActive
+  if(DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text)))activate(uid);
 
   if(!isActive(uid))return;
   touch(uid);
@@ -754,20 +749,9 @@ async function handleEvent(event) {
     let rt="";
     for(let n=1;n<=6;n++){if(respRow[`btn_${n}_action`]===text){rt=respRow[`btn_${n}_response`]||"";break;}}
     const alarmT = T2T[respRow.alarm_title]||"";
-    const cleanRt = F(rt).replace(/【[^】]*】/g,"").trim();
-    // ปุ่ม "ยังแก้ไม่ได้ ไปต่อ" → response ว่าง + action เป็น Sub Flow → redirect
-    if(!cleanRt){
-      const nextSub = getSub(text);
-      if(nextSub.length > 0){
-        await client.replyMessage(replyToken, subFlex(nextSub, text));
-        return;
-      }
-      if(alarmT){
-        const alarmRow=DB_MAIN.find(r=>T2T[r.alarm_title]===alarmT);
-        if(alarmRow){await client.replyMessage(replyToken,alarmFlex(alarmRow,getSub(alarmT),alarmT));return;}
-      }
-    }
-    const displayText = cleanRt || "✅ ดำเนินการเรียบร้อยครับ";
+    const cleanRt=F(rt).replace(/【[^】]*】/g,"").trim();
+    if(!cleanRt){const ns=getSub(text);if(ns.length>0){await client.replyMessage(replyToken,subFlex(ns,text));return;}if(alarmT){const ar=DB_MAIN.find(r=>T2T[r.alarm_title]===alarmT);if(ar){await client.replyMessage(replyToken,alarmFlex(ar,getSub(alarmT),alarmT));return;}}}
+    const displayText=cleanRt||"✅ ดำเนินการเรียบร้อยครับ";
     const isOk  = displayText.includes("✅")||displayText.includes("เรียบร้อย")||displayText.includes("สำเร็จ")||displayText.includes("ยอดเยี่ยม")||displayText.includes("เยี่ยม");
     const isWarn= displayText.includes("🚨")||displayText.includes("ห้าม")||displayText.includes("วิกฤต")||displayText.includes("รีบ");
     const heroC = isWarn?"#B71C1C":isOk?"#2E7D32":"#1565C0";
@@ -795,10 +779,9 @@ async function handleEvent(event) {
   }
 
   // ── Sub flows ────────────────────────────────────────────────────────────────
-  const isBtnAction = DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>{
-    if(r[`btn_${n}_action`]!==text) return false;
-    const resp = F(r[`btn_${n}_response`]||"").replace(/【[^】]*】/g,"").trim();
-    return !!resp;
+  const isBtnAction=DB_MAIN.some(r=>[1,2,3,4,5,6].some(n=>{
+    if(r[`btn_${n}_action`]!==text)return false;
+    return !!(F(r[`btn_${n}_response`]||"").replace(/【[^】]*】/g,"").trim());
   }));
   const subRows=getSub(text);
   if(subRows.length>0 && !isBtnAction){
@@ -815,7 +798,7 @@ async function handleEvent(event) {
   if(row){const t=T2T[row.alarm_title];await client.replyMessage(replyToken,alarmFlex(row,t?getSub(t):[],t));return;}
 
   // ── Fallback ─────────────────────────────────────────────────────────────────
-  await client.replyMessage(replyToken,subFlex(getSub("fallback"),"fallback"));
+  const fbRows=getSub("fallback");await client.replyMessage(replyToken,fbRows.length>0?subFlex(fbRows,"fallback"):{type:"text",text:"⚠️ ระบบกำลังโหลดข้อมูลครับ กรุณากดใหม่หรือโทร Hotline 086-341-7250"});
 }
 
 app.post("/webhook",line.middleware(LINE_CFG),async(req,res)=>{
