@@ -293,47 +293,52 @@ function subFlex(subRows, trigger) {if(!subRows||subRows.length===0){return{type
   const body = bs.length>0 ? bs :
     F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2)
     .map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
-  const btns = subRows.filter(r=>{
+  // ━━━ subFlex btns: กรอง + จัดกลุ่มสี + เรียงลำดับ ━━━
+  const _rawBtns = subRows.filter(r=>{
     if(!r.next_step_label) return false;
     const ll=F(r.next_step_label||"").toLowerCase();
-    // ลบปุ่มย้อนกลับออกทั้งหมด
-    if(ll.includes("⬅")||ll.includes("ย้อนกลับ")) return false;
+    if(ll.includes("⬅")||ll.includes("ย้อนกลับ")) return false; // ลบย้อนกลับ
     return true;
-  }).slice(0,5).map((r,i)=>{
-    const lbl=F(r.next_step_label||""); // ไม่ตัด — ให้ shrink-to-fit จัดการ
+  }).map(r=>{
+    const lbl=F(r.next_step_label||"");
     const ll2=lbl.toLowerCase();
     const act=r.next_step_action||"";
-    // ━━━ กำหนดสีทุกปุ่ม ━━━
-    let sc3,ss3="primary";
-    // สีเขียว: ทำได้/สำเร็จ/ดำเนินการ/คืนเลือด/พักเครื่อง
+    let sc3,order;
+    // สีเขียว (order 0): แก้ไขได้/ทำได้/ดำเนินการ
     if(ll2.includes("✅")||ll2.includes("แก้ไขได้")||ll2.includes("run")||
        ll2.includes("คืนเลือด")||ll2.includes("พักเครื่อง")||ll2.includes("หล่อเส้น")||
-       ll2.includes("ดำเนินการ")||ll2.includes("ต่อ")||ll2.includes("สำเร็จ")||
-       ll2.includes("เก็บเครื่อง")||ll2.includes("restart")||ll2.includes("ต้องการต่อ")||
+       ll2.includes("ดำเนินการ")||ll2.includes("สำเร็จ")||ll2.includes("เก็บเครื่อง")||
+       ll2.includes("ต้องการต่อ")||ll2.includes("restart")||
        act==="how_to_closeloop"||act==="how_to_flush_dlc"||act==="show_cleanup"||
        act==="restart_crrt_flow"||act==="how_to_return"){
-      sc3="#2E7D32";
+      sc3="#2E7D32"; order=0;
     }
-    // สีแดง: แก้ไม่ได้/วิกฤต/ไม่ต้องการ/end
-    else if(ll2.includes("❌")||ll2.includes("ยังไม่")||ll2.includes("alarm")||
+    // สีแดง (order 1): แก้ไม่ได้/ไปต่อ/วิกฤต
+    else if(ll2.includes("❌")||ll2.includes("ยังไม่")||ll2.includes("ยัง alarm")||
             ll2.includes("วิกฤต")||ll2.includes("ไม่ต้องการ")||ll2.includes("ไม่ต่อ")||
-            act==="end_crrt_flow"||act==="how_to_return"&&ll2.includes("❌")){
-      sc3="#C62828";
+            ll2.includes("ไปต่อ")||act==="end_crrt_flow"){
+      sc3="#C62828"; order=1;
     }
-    // สีฟ้า: Hotline/ข้อมูล/ดูขั้นตอน
+    // สีฟ้า (order 2): Hotline/ดูขั้นตอน/ข้อมูล
     else if(ll2.includes("hotline")||ll2.includes("สายด่วน")||ll2.includes("ดูขั้นตอน")||
-            ll2.includes("ดูวิดีโอ")||ll2.includes("ดู")||ll2.includes("หน้าแรก")||
-            ll2.includes("main")||act==="show_hotline"||act==="main_menu"||
-            act==="crrt_knowledge"||act.startsWith("crrt_")){
-      sc3="#1565C0";
+            ll2.includes("ดู")||act==="show_hotline"||act.startsWith("crrt_")){
+      sc3="#1565C0"; order=2;
     }
-    // default: ฟ้าอมเทา
-    else{ sc3="#0277BD"; }
-    return {type:"button",action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
-      style:ss3,color:sc3,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
+    // สีเหลือง (order 3): Main Menu
+    else if(ll2.includes("main")||ll2.includes("หน้าแรก")||act==="main_menu"){
+      sc3="#F9A825"; order=3;
+    }
+    // default ฟ้า
+    else{ sc3="#0277BD"; order=2; }
+    return {_order:order,type:"button",action:act.startsWith("http")?{type:"uri",label:_san(lbl),uri:act}:{type:"message",label:_san(lbl),text:act},
+      style:"primary",color:sc3,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
   });
+  // เรียง: เขียว(0) → แดง(1) → ฟ้า(2) → เหลือง(3)
+  _rawBtns.sort((a,b)=>a._order-b._order);
+  _rawBtns.forEach(b=>delete b._order);
+  const btns=_rawBtns.slice(0,5);
   if (!["main_menu","exit_crrt"].includes(trigger)&&!btns.some(b=>b.action?.text==="main_menu"))
-    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"primary",color:"#1565C0",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
+    btns.push({type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"primary",color:"#F9A825",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
   return {type:"flex",altText:m.emoji+" "+m.title,contents:{type:"bubble",
     hero:{type:"box",layout:"horizontal",backgroundColor:m.color,paddingAll:"10px",spacing:"sm",contents:[
       {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
@@ -496,14 +501,22 @@ async function handleEvent(event) {
   if(text==="exit_crrt")   {
     deactivate(uid);
     await client.replyMessage(replyToken,{type:"flex",altText:"👋 ออกจากระบบ CRRT Bot",contents:{type:"bubble",
-      hero:{type:"image",url:LOGO_URL,size:"full",aspectMode:"cover",aspectRatio:"20:13"},
-      body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"md",
+      hero:{type:"box",layout:"vertical",backgroundColor:"#1A237E",paddingAll:"0px",contents:[
+        {type:"image",url:MACHINE_URL,size:"full",aspectMode:"cover",aspectRatio:"20:9"},
+        {type:"box",layout:"horizontal",backgroundColor:"#1A237E",paddingAll:"10px",paddingTop:"8px",paddingBottom:"8px",contents:[
+          {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+          {type:"box",layout:"vertical",flex:1,margin:"sm",justifyContent:"center",contents:[
+            {type:"text",text:"RA5IC · RAMATHIBODI ICU",color:"#FFFFFF",size:"xs",weight:"bold"},
+            {type:"text",text:"CRRT Alarm Bot",color:"#FFD700",size:"xxs"}
+          ]}
+        ]}
+      ]},
+      body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"sm",
         contents:[
-          {type:"text",text:"👋 ขอบคุณที่ใช้งานระบบครับ",weight:"bold",size:"lg",color:"#1A237E",align:"center",wrap:true},
-          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้ว",size:"sm",color:"#1B5E20",align:"center",margin:"sm"},
+          {type:"text",text:"👋 ขอบคุณที่ใช้งานระบบครับ",weight:"bold",size:"md",color:"#1A237E",align:"center",wrap:true},
+          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้ว",size:"sm",color:"#1B5E20",align:"center",margin:"xs"},
           {type:"separator",margin:"md",color:"#E0E0E0"},
-          {type:"text",text:"CRRT Bot · RA5IC RAMATHIBODI",size:"xs",color:"#9E9E9E",align:"center",margin:"sm"},
-          {type:"text",text:"หากต้องการใช้งานอีกครั้ง\nกด Rich Menu ด้านล่างได้เลยครับ 👇",size:"sm",color:"#555555",wrap:true,align:"center",margin:"md"}
+          {type:"text",text:"หากต้องการใช้งานอีกครั้ง\nกด Rich Menu ด้านล่างได้เลยครับ 👇",size:"sm",color:"#555555",wrap:true,align:"center",margin:"sm"}
         ]},
       footer:{type:"box",layout:"vertical",paddingAll:"10px",
         contents:[
