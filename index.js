@@ -224,15 +224,15 @@ function alarmFlex(alarm, subRows, trigger) {
     const _rawLbl = F((alarm[`btn_${n}_label`]||"").trim());
     // Map label ยาว → label สั้น (LINE limit 20 chars)
     const _lblMap = {
-      "✅ ค่า TMP ลดลง / RUN เครื่องต่อได้":"✅ TMP ลดลง (Run ต่อ)",
-      "🚨 แก้ไขแล้ว TMP ไม่ลด (> 250 mmHg) ➡️ เตรียม [Return Blood]":"🚨 TMP ไม่ลด (ไปต่อ)",
-      "✅ แก้ไขสำเร็จ / รันต่อได้":"✅ แก้ไขสำเร็จ Run ต่อ",
-      "🔄 ย้ายจุดต่อแล้วยัง Alarm":"🔄 ย้ายจุดต่อแล้ว Alarm",
+      "✅ ค่า TMP ลดลง / RUN เครื่องต่อได้":"✅ TMP ลดลง Run ต่อ",
+      "✅ ค่า TMP ลดลง / RUN เครื่องต่อ":"✅ TMP ลดลง Run ต่อ",
+      "🚨 แก้ไขแล้ว TMP ไม่ลด (> 250 mmHg) ➡️ เตรียม [Return Blood]":"🚨 TMP ไม่ลด ไปต่อ",
+      "✅ แก้ไขสำเร็จ / รันต่อได้":"✅ แก้ไขสำเร็จ รันต่อ",
+      "🔄 ย้ายจุดต่อแล้วยัง Alarm":"🔄 ย้ายแล้วยัง Alarm",
       "🚨 แรงดันสูงวิกฤต (Stop เครื่อง) ➡️ พิจารณา [Return Blood]":"🚨 แรงดันสูงวิกฤต",
-      "✅ ไฟเข้าแล้ว / รันต่อได้":"✅ ไฟเข้าแล้ว Run ต่อ",
-      "🚨 แก้ไขไม่ได้แล้ว แต่ครื่องยังทำงาน  ➡️ เตรียม [Return Blood] ให้เร็วที่สุด":"🚨 แก้ไม่ได้ คืนเลือด",
-      "🚨 เครื่องดับไปแล้ว (คืนเลือดไม่ได้)":"🚨 เครื่องดับแล้ว",
-      "✅ ค่า TMP ลดลง / RUN เครื่องต่อ":"✅ TMP ลดลง (Run ต่อ)",
+      "✅ ไฟเข้าแล้ว / รันต่อได้":"✅ ไฟเข้าแล้ว รันต่อ",
+      "🚨 แก้ไขไม่ได้แล้ว แต่ครื่องยังทำงาน  ➡️ เตรียม [Return Blood] ให้เร็วที่สุด":"🚨 แก้ไม่ได้คืนเลือด",
+      "🚨 เครื่องดับไปแล้ว (คืนเลือดไม่ได้)":"🚨 เครื่องดับไปแล้ว",
     };
     const lbl = (_lblMap[_rawLbl] || _rawLbl).slice(0,20);
     const act = (alarm[`btn_${n}_action`]||"").trim();
@@ -515,7 +515,7 @@ async function handleEvent(event) {
     deactivate(uid);
     await client.replyMessage(replyToken,{type:"flex",altText:"👋 ออกจากระบบ CRRT Bot",contents:{type:"bubble",
       hero:{type:"box",layout:"vertical",backgroundColor:"#1A237E",paddingAll:"0px",contents:[
-        {type:"image",url:MACHINE_URL,size:"full",aspectMode:"cover",aspectRatio:"20:5"},
+        {type:"image",url:MACHINE_URL,size:"full",aspectMode:"fit",aspectRatio:"20:13"},
         {type:"box",layout:"horizontal",backgroundColor:"#1A237E",paddingAll:"10px",paddingTop:"8px",paddingBottom:"8px",contents:[
           {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
           {type:"box",layout:"vertical",flex:1,margin:"sm",justifyContent:"center",contents:[
@@ -526,7 +526,7 @@ async function handleEvent(event) {
       ]},
       body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"sm",
         contents:[
-          {type:"image",url:LOGO_URL,size:"sm",align:"center",aspectMode:"fit",aspectRatio:"124:100",margin:"sm"},
+          {type:"image",url:LOGO_URL,size:"md",align:"center",aspectMode:"fit",aspectRatio:"124:100",margin:"sm"},
           {type:"text",text:"👋 ขอบคุณที่ใช้งานระบบครับ",weight:"bold",size:"md",color:"#1A237E",align:"center",wrap:true},
           {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้ว",size:"sm",color:"#1B5E20",align:"center",margin:"xs"},
           {type:"separator",margin:"md",color:"#E0E0E0"},
