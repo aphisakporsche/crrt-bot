@@ -631,7 +631,7 @@ async function handleEvent(event) {
     await client.replyMessage(replyToken,{type:"flex",altText:"📚 CRRT Knowledge Base",contents:{type:"bubble",
       hero:{type:"box",layout:"horizontal",backgroundColor:"#1565C0",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+        {type:"box",layout:"vertical",flex:1,contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"📚 CRRT Knowledge Base",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
@@ -647,7 +647,7 @@ async function handleEvent(event) {
 
   if(text==="crrt_billing"){await client.replyMessage(replyToken,{type:"flex",altText:"💳 สิทธิ์การรักษา CRRT",contents:{type:"bubble",hero:{type:"box",layout:"horizontal",backgroundColor:"#2E7D32",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+        {type:"box",layout:"vertical",flex:1,contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"💰 การเบิกจ่ายตามสิทธิ์",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
@@ -655,7 +655,7 @@ async function handleEvent(event) {
 
   if(text==="crrt_supplies"){await client.replyMessage(replyToken,{type:"flex",altText:"📦 รหัสอุปกรณ์ CRRT",contents:{type:"bubble",hero:{type:"box",layout:"horizontal",backgroundColor:"#4527A0",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+        {type:"box",layout:"vertical",flex:1,contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"📦 รหัสอุปกรณ์เบิกจ่าย",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
@@ -663,7 +663,7 @@ async function handleEvent(event) {
 
   if(text==="crrt_wound"){await client.replyMessage(replyToken,{type:"flex",altText:"🩹 การทำแผล DLC",contents:{type:"bubble",hero:{type:"box",layout:"horizontal",backgroundColor:"#C62828",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+        {type:"box",layout:"vertical",flex:1,contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"🩹 การทำแผล DLC",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
@@ -671,7 +671,7 @@ async function handleEvent(event) {
 
   if(text==="crrt_calc"){await client.replyMessage(replyToken,{type:"flex",altText:"🧮 คำนวณสารน้ำ CRRT",contents:{type:"bubble",hero:{type:"box",layout:"horizontal",backgroundColor:"#E65100",paddingAll:"12px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+        {type:"box",layout:"vertical",flex:1,contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"🧮 คำนวณสารน้ำ CRRT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
@@ -702,7 +702,7 @@ async function handleEvent(event) {
     await client.replyMessage(replyToken,{type:"flex",altText:displayText.slice(0,40),contents:{type:"bubble",
       hero:{type:"box",layout:"horizontal",backgroundColor:heroC,paddingAll:"10px",spacing:"sm",contents:[
         {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
-        {type:"box",layout:"vertical",flex:1,justifyContent:"center",contents:[
+        {type:"box",layout:"vertical",flex:1,contents:[
           {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xxs"},
           {type:"text",text:"CRRT ALARM BOT",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
