@@ -250,7 +250,16 @@ function alarmFlex(alarm, subRows, trigger) {
   }
   if (btns.length===0) {
     subRows.filter(r=>r.next_step_label).slice(0,4).forEach((r,i)=>{
-      const lbl=F(r.next_step_label||"").slice(0,20);
+      const _rawSfLbl=F(r.next_step_label||"");
+    const _sfMap={
+      "🔄 พักเครื่องไล่ฟองอากาศ":"🔄 พักเครื่องไล่ฟอง",
+      "➡️ แจ้งแพทย์/เลือกแผนการรักษาต่อ":"➡️ แจ้งแพทย์เลือกแผน",
+      "📌 ขั้นตอนการหล่อเส้น DLC":"📌 หล่อเส้น DLC",
+      "🔄 พักเครื่องไล่ฟอง (Close Loop)":"🔄 พักเครื่องไล่ฟอง",
+      "✅ ต้องการ RUN CRRT ต่อ":"✅ RUN CRRT ต่อ",
+      "❌ ไม่ต้องการ RUN CRRT ต่อ":"❌ ไม่ RUN CRRT ต่อ",
+    };
+    const lbl=(_sfMap[_rawSfLbl]||_rawSfLbl).slice(0,20);
       btns.push({type:"button",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
         style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
     });
@@ -313,7 +322,16 @@ function subFlex(subRows, trigger) {if(!subRows||subRows.length===0){return{type
     if(ll.includes("⬅")||ll.includes("ย้อนกลับ")) return false; // ลบย้อนกลับ
     return true;
   }).map(r=>{
-    const lbl=F(r.next_step_label||"").slice(0,20);
+    const _rawSfLbl=F(r.next_step_label||"");
+    const _sfMap={
+      "🔄 พักเครื่องไล่ฟองอากาศ":"🔄 พักเครื่องไล่ฟอง",
+      "➡️ แจ้งแพทย์/เลือกแผนการรักษาต่อ":"➡️ แจ้งแพทย์เลือกแผน",
+      "📌 ขั้นตอนการหล่อเส้น DLC":"📌 หล่อเส้น DLC",
+      "🔄 พักเครื่องไล่ฟอง (Close Loop)":"🔄 พักเครื่องไล่ฟอง",
+      "✅ ต้องการ RUN CRRT ต่อ":"✅ RUN CRRT ต่อ",
+      "❌ ไม่ต้องการ RUN CRRT ต่อ":"❌ ไม่ RUN CRRT ต่อ",
+    };
+    const lbl=(_sfMap[_rawSfLbl]||_rawSfLbl).slice(0,20);
     const ll2=lbl.toLowerCase();
     const act=r.next_step_action||"";
     let sc3,order;
