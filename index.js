@@ -239,7 +239,7 @@ function alarmFlex(alarm, subRows, trigger) {
   }
   if (btns.length===0) {
     subRows.filter(r=>r.next_step_label).slice(0,4).forEach((r,i)=>{
-      const lbl=F(r.next_step_label||"");
+      const _rawSfLbl=F((r.next_step_label||"").trim());const _sfMap={"🔄 พักเครื่องไล่ฟองอากาศ":"🔄 พักไล่ฟอง","➡️ แจ้งแพทย์/เลือกแผนการรักษาต่อ":"➡️ แจ้งแพทย์เลือกแผน","📌 ขั้นตอนการหล่อเส้น DLC":"📌 หล่อเส้น DLC","📌 ขั้นตอนหล่อเส้น DLC":"📌 หล่อเส้น DLC","✅ ต้องการ RUN CRRT ต่อ":"✅ RUN CRRT ต่อ","❌ ไม่ต้องการ RUN CRRT ต่อ":"❌ ไม่ RUN CRRT ต่อ","🔄 พักเครื่องไล่ฟอง (Close Loop)":"🔄 พักเครื่องไล่ฟอง","➡️ แจ้งแพทย์/เลือกแผน":"➡️ แจ้งแพทย์เลือกแผน","✅ แก้ไขสำเร็จ / รันต่อได้":"✅ แก้ไขสำเร็จ รัน","✅ แก้ไขสำเร็จ Run เครื่องต่อได้":"✅ แก้ไขสำเร็จ รัน"};const lbl=(_sfMap[_rawSfLbl]||_rawSfLbl).slice(0,20);
       btns.push({type:"button",action:r.next_step_action?.startsWith("http")?{type:"uri",label:_san(lbl),uri:r.next_step_action}:{type:"message",label:_san(lbl),text:r.next_step_action},
         style:i===0?"primary":"secondary",color:i===0?c.color:undefined,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"});
     });
@@ -295,7 +295,7 @@ function subFlex(subRows, trigger) {
     F(msg).replace(/【[^】]*】/g,"").split(/\s{3,}|\n/).map(s=>s.trim()).filter(s=>s.length>2)
     .map(line=>({type:"text",text:line,size:"sm",color:"#333333",wrap:true,margin:"xs"}));
   const btns = subRows.filter(r=>r.next_step_label).slice(0,5).map((r,i)=>{
-    const lbl=F(r.next_step_label||"");
+    const _rawSfLbl=F((r.next_step_label||"").trim());const _sfMap={"🔄 พักเครื่องไล่ฟองอากาศ":"🔄 พักไล่ฟอง","➡️ แจ้งแพทย์/เลือกแผนการรักษาต่อ":"➡️ แจ้งแพทย์เลือกแผน","📌 ขั้นตอนการหล่อเส้น DLC":"📌 หล่อเส้น DLC","📌 ขั้นตอนหล่อเส้น DLC":"📌 หล่อเส้น DLC","✅ ต้องการ RUN CRRT ต่อ":"✅ RUN CRRT ต่อ","❌ ไม่ต้องการ RUN CRRT ต่อ":"❌ ไม่ RUN CRRT ต่อ","🔄 พักเครื่องไล่ฟอง (Close Loop)":"🔄 พักเครื่องไล่ฟอง","➡️ แจ้งแพทย์/เลือกแผน":"➡️ แจ้งแพทย์เลือกแผน","✅ แก้ไขสำเร็จ / รันต่อได้":"✅ แก้ไขสำเร็จ รัน","✅ แก้ไขสำเร็จ Run เครื่องต่อได้":"✅ แก้ไขสำเร็จ รัน"};const lbl=(_sfMap[_rawSfLbl]||_rawSfLbl).slice(0,20);
     const ll2=lbl.toLowerCase();
     let ss3=(i===0||ll2.includes("⬅")||ll2.includes("ย้อนกลับ"))?"primary":"secondary";
     let sc3=i===0?m.color:undefined;
@@ -472,28 +472,25 @@ async function handleEvent(event) {
   if(text==="exit_crrt")   {
     deactivate(uid);
     await client.replyMessage(replyToken,{type:"flex",altText:"👋 ออกจากระบบ CRRT Bot",contents:{type:"bubble",
-      hero:{type:"box",layout:"vertical",backgroundColor:"#1A237E",paddingAll:"20px",
+      hero:{type:"box",layout:"vertical",backgroundColor:"#1A237E",paddingAll:"0px",contents:[
+        {type:"image",url:MACHINE_URL,size:"full",aspectMode:"fit",aspectRatio:"20:11"},
+        {type:"box",layout:"horizontal",backgroundColor:"#1A237E",paddingAll:"8px",spacing:"sm",contents:[
+          {type:"image",url:LOGO_URL,size:"xxs",flex:0,aspectMode:"fit",aspectRatio:"124:100"},
+          {type:"box",layout:"vertical",flex:1,margin:"sm",contents:[
+            {type:"text",text:"RA5IC · RAMATHIBODI",color:"#FFFFFF",size:"xs",weight:"bold"},
+            {type:"text",text:"CRRT Alarm Bot",color:"#FFD700",size:"xxs"}
+          ]}
+        ]}
+      ]},
+      body:{type:"box",layout:"vertical",paddingAll:"14px",spacing:"sm",
         contents:[
-          {type:"text",text:"👋",size:"5xl",align:"center"},
-          {type:"text",text:"ขอบคุณที่ใช้งานระบบครับ",color:"#FFFFFF",size:"lg",weight:"bold",align:"center",margin:"md"},
-          {type:"text",text:"CRRT Bot RA5IC · RAMATHIBODI",color:"#FFECB3",size:"xs",align:"center"}
-        ]},
-      body:{type:"box",layout:"vertical",paddingAll:"16px",spacing:"md",
-        contents:[
-          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้ว",weight:"bold",size:"md",color:"#1B5E20",align:"center"},
-          {type:"box",layout:"vertical",backgroundColor:"#EEF2FF",cornerRadius:"8px",paddingAll:"12px",
-            contents:[
-              {type:"text",text:"📞 Hotline CRRT (24 ชั่วโมง)",weight:"bold",size:"sm",color:"#1A237E"},
-              {type:"text",text:"📱 086-341-7250",size:"lg",weight:"bold",color:"#C62828",margin:"sm"},
-              {type:"text",text:"พร้อมรับสายตลอด 24 ชั่วโมงครับ",size:"xs",color:"#666666"}
-            ]},
-          {type:"text",text:"หากต้องการใช้งานอีกครั้ง\nกด Rich Menu ด้านล่างได้เลยครับ 👇",size:"sm",color:"#555555",wrap:true,align:"center"}
+          {type:"text",text:"👋 ขอบคุณที่ใช้งานระบบครับ",weight:"bold",size:"md",color:"#1A237E",align:"center",wrap:true},
+          {type:"text",text:"✅ ออกจากระบบเรียบร้อยแล้ว",size:"sm",color:"#1B5E20",align:"center",margin:"xs"},
+          {type:"separator",margin:"md",color:"#E0E0E0"},
+          {type:"text",text:"กด Rich Menu ด้านล่างเพื่อใช้งานอีกครั้งครับ 👇",size:"sm",color:"#555555",wrap:true,align:"center",margin:"sm"}
         ]},
       footer:{type:"box",layout:"vertical",paddingAll:"10px",
-        contents:[
-          {type:"button",action:{type:"uri",label:"📞 Hotline CRRT",uri:"tel:0863417250"},style:"primary",color:"#C62828",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"},
-          {type:"button",action:{type:"message",label:"🏠 กลับหน้าแรก",text:"main_menu"},style:"secondary",height:"sm",margin:"xs",adjustMode:"shrink-to-fit"}
-        ]}
+        contents:[]}
     }});
     return;
   }
