@@ -432,6 +432,50 @@ function mainMenu(){
 
 function extractName(text){const m=text.match(/ALARM_NAME:\s*(.+)/i);return m?m[1].trim():null;}
 
+
+// ── ดึงภาพจาก LINE และแปลงเป็น base64 ──────────────────────────────────────
+async function imgB64(messageId) {
+  const url = `https://api-data.line.me/v2/bot/message/${messageId}/content`;
+  const r = await axios.get(url, {
+    headers: { Authorization: `Bearer ${LINE_CFG.channelAccessToken}` },
+    responseType: "arraybuffer",
+  });
+  return Buffer.from(r.data).toString("base64");
+}
+
+// ── วิเคราะห์ภาพด้วย Gemini Vision ─────────────────────────────────────────
+async function analyzeImg(b64) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+  const body = {
+    contents: [{
+      parts: [
+        {
+          inline_data: { mime_type: "image/jpeg", data: b64 }
+        },
+        {
+          text: `คุณเป็นผู้เชี่ยวชาญเครื่อง CRRT (Prismaflex/Aquarius/HF440)
+วิเคราะห์ภาพ Alarm บนหน้าจอเครื่องแล้วตอบในรูปแบบนี้เท่านั้น:
+
+ALARM_NAME: <ชื่อ Alarm ภาษาอังกฤษตรงๆ เช่น TMP Too High, Air Detected, Access Extremely Negative>
+
+จากนั้นอธิบาย:
+🔍 สาเหตุที่พบบ่อย: ...
+⏱️ เป้าหมาย: ...
+🚀 ขั้นตอนการแก้ไข:
+1️⃣ ...
+2️⃣ ...
+⚠️ ข้อควรระวัง: ...
+
+ถ้าไม่ใช่ภาพ Alarm ให้ตอบว่า ALARM_NAME: unknown และอธิบายว่าไม่พบ Alarm`
+        }
+      ]
+    }],
+    generationConfig: { temperature: 0.2, maxOutputTokens: 1024 }
+  };
+  const r = await axios.post(url, body, { headers: { "Content-Type": "application/json" } });
+  return r.data?.candidates?.[0]?.content?.parts?.[0]?.text || "ไม่สามารถวิเคราะห์ได้";
+}
+
 async function handleEvent(event) {
   await loadDB();
   if (OLD_WEBHOOK) axios.post(OLD_WEBHOOK,{events:[event]}).catch(()=>{});
