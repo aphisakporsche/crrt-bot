@@ -521,7 +521,6 @@ async function handleEvent(event) {
       {label:"🧮 คำนวณสารน้ำ",action:"crrt_calc",color:"#E65100"},
       {label:"💉 หล่อเส้น Citrate",action:"how_to_flush_dlc",color:"#00695C"},
       {label:"🖼️ วิธีเก็บเครื่อง",action:"show_cleanup",color:"#2E7D32"},
-      {label:"🏠 Main Menu",action:"main_menu",color:"#546E7A"},
     ];
     const kbFlexBtns=kbBtns.map(b=>({type:"button",action:{type:"message",label:b.label,text:b.action},style:"primary",color:b.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}));
     await client.replyMessage(replyToken,{type:"flex",altText:"📚 CRRT Knowledge Base",contents:{type:"bubble",
@@ -532,7 +531,7 @@ async function handleEvent(event) {
           {type:"text",text:"📚 CRRT Knowledge Base",color:"#FFD700",size:"sm",weight:"bold"}
         ]}
       ]},
-      body:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",contents:[...kbFlexBtns,{type:"button",action:{type:"uri",label:"🎬 วิดีโอเริ่ม CRRT",uri:"https://drive.google.com/file/d/1bTFgcPGU5K3WvHMxXVgBv2uA2Gt2fa7v/view?usp=drive_link"},style:"primary",color:"#AD1457",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}]},
+      body:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",contents:[...kbFlexBtns,{type:"button",action:{type:"uri",label:"🎬 วิดีโอเริ่ม CRRT",uri:"https://drive.google.com/file/d/1bTFgcPGU5K3WvHMxXVgBv2uA2Gt2fa7v/view?usp=drive_link"},style:"primary",color:"#AD1457",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}]},
       footer:{type:"box",layout:"vertical",paddingAll:"10px",backgroundColor:"#FAFAFA",
         contents:[{type:"text",text:"เลือกหัวข้อที่ต้องการครับ 👆",size:"xs",color:"#888888",align:"center"}]}
     }});return;
