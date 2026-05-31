@@ -99,7 +99,7 @@ function getSub(trigger){return DB_SUB.filter(r=>r.trigger_word===trigger);}
 
 const T2T = {
   "Return Blood":"return_blood","Blood Recirculation":"nss_recirculation",
-  "NSS Recirculation":"nss_recirculation","Cardiac Arrest":"cardiac_arrest",
+  "NSS Recirculation":"nss_recir_flow","Cardiac Arrest":"cardiac_arrest",
   "Hypotension":"hypotension","Air Detected":"air_detected",
   "Access Extremely Negative":"access_neg","Return Extremely Positive":"return_pos",
   "Blood Leak Detected":"blood_leak","Filter Clotted / Filter Pressure High":"filter_clotted",
@@ -419,7 +419,7 @@ function mainMenu(){
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"💧 Blood Recir",text:"nss_recirculation"},style:"primary",color:"#C62828",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"💧 NSS Recir",text:"nss_recirculation"},style:"primary",color:"#0277BD",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"💧 NSS Recir",text:"nss_recir_flow"},style:"primary",color:"#0277BD",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"primary",color:"#1565C0",height:"sm",adjustMode:"shrink-to-fit",flex:1},
