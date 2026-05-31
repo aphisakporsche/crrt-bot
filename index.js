@@ -342,8 +342,8 @@ const PAGES=[
      {label:"💧 Bag Empty",text:"bag_empty",color:"#00695C"},
      {label:"⚖️ Flow Error",text:"flow_error",color:"#2E7D32"},
      {label:"💉 Syringe Empty",text:"syringe_empty",color:"#6A1B9A"},
-     {label:"📉 Hypotension",text:"hypotension",color:"#B71C1C"},
-     {label:"❤️ Cardiac Arrest",text:"cardiac_arrest",color:"#B71C1C"},
+     
+     
    ],prev:"alarm_menu",next:"alarm_menu_3"},
   {title:"🚨 เมนู Alarm (3/3)",sub:"อุปกรณ์ / Procedure",color:"#D32F2F",
    items:[
@@ -407,8 +407,7 @@ function mainMenu(){
         {type:"button",action:{type:"message",label:"📞 Hotline",text:"show_hotline"},style:"primary",color:"#1B5E20",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"❤️ Hypotension",text:"hypotension"},style:"primary",color:"#C62828",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"🫀 Cardiac Arrest",text:"cardiac_arrest"},style:"primary",color:"#B71C1C",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"🔵 Prime No Citrate",text:"show_non_citrate"},style:"primary",color:"#004D40",height:"sm",adjustMode:"shrink-to-fit",flex:1},
@@ -419,8 +418,8 @@ function mainMenu(){
         {type:"button",action:{type:"uri",label:"📋 Check สถานะ",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#5C6BC0",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"💉 หล่อเส้น Citrate",text:"how_to_flush_dlc"},style:"primary",color:"#00695C",height:"sm",adjustMode:"shrink-to-fit",flex:1},
-        {type:"button",action:{type:"message",label:"✅ วิธีเก็บเครื่อง",text:"show_cleanup"},style:"primary",color:"#2E7D32",height:"sm",adjustMode:"shrink-to-fit",flex:1}
+        {type:"button",action:{type:"message",label:"💧 Blood Recirc",text:"nss_recirculation"},style:"primary",color:"#0277BD",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
         {type:"button",action:{type:"message",label:"📚 Knowledge",text:"crrt_knowledge"},style:"primary",color:"#1565C0",height:"sm",adjustMode:"shrink-to-fit",flex:1},
@@ -564,7 +563,7 @@ async function handleEvent(event) {
       {label:"🩹 ทำแผล DLC",action:"crrt_wound",color:"#C62828"},
       {label:"🧮 คำนวณสารน้ำ",action:"crrt_calc",color:"#E65100"},
       {label:"💉 หล่อเส้น Citrate",action:"how_to_flush_dlc",color:"#00695C"},
-      {label:"🖼️ วิธีเก็บเครื่อง",action:"show_cleanup",color:"#2E7D32"},
+      {label:"📸 ดูวิธีเก็บเครื่อง",action:"show_cleanup",color:"#2E7D32"},
     ];
     const kbFlexBtns=kbBtns.map(b=>({type:"button",action:{type:"message",label:b.label,text:b.action},style:"primary",color:b.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}));
     await client.replyMessage(replyToken,{type:"flex",altText:"📚 CRRT Knowledge Base",contents:{type:"bubble",
@@ -602,7 +601,7 @@ async function handleEvent(event) {
       {label:"🩹 ทำแผล DLC",action:"crrt_wound",color:"#C62828"},
       {label:"🧮 คำนวณสารน้ำ",action:"crrt_calc",color:"#E65100"},
       {label:"💉 หล่อเส้น Citrate",action:"how_to_flush_dlc",color:"#00695C"},
-      {label:"🖼️ วิธีเก็บเครื่อง",action:"show_cleanup",color:"#2E7D32"},
+      {label:"📸 ดูวิธีเก็บเครื่อง",action:"show_cleanup",color:"#2E7D32"},
     ];
     const kbFlexBtns=kbBtns.map(b=>({type:"button",action:{type:"message",label:b.label,text:b.action},style:"primary",color:b.color,height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}));
     const videoBtn={type:"button",action:{type:"uri",label:"🎬 วิดีโอเริ่ม CRRT",uri:"https://drive.google.com/file/d/1bTFgcPGU5K3WvHMxXVgBv2uA2Gt2fa7v/view?usp=drive_link"},style:"primary",color:"#AD1457",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"};
@@ -622,6 +621,8 @@ async function handleEvent(event) {
   }
 
   // ── Button responses (respRow ก่อน subRows ป้องกัน double reply) ─────────────
+  if(text==="show_cleanup"){await client.replyMessage(replyToken,{type:"flex",altText:"📦 วิธีเก็บเครื่อง CRRT",contents:{type:"bubble",body:{type:"box",layout:"vertical",paddingAll:"14px",spacing:"sm",contents:[{type:"box",layout:"horizontal",backgroundColor:"#2E7D32",paddingAll:"12px",cornerRadius:"10px",spacing:"sm",contents:[{type:"text",text:"📦",size:"xl",flex:0,gravity:"center"},{type:"box",layout:"vertical",flex:1,margin:"sm",contents:[{type:"text",text:"วิธีเก็บเครื่อง CRRT",color:"#FFFFFF",size:"sm",weight:"bold",wrap:true},{type:"text",text:"RA5IC · RAMATHIBODI",color:"#A5D6A7",size:"xxs"}]}]},{type:"separator",margin:"md",color:"#C8E6C9"},{type:"text",text:"กดปุ่มด้านล่างเพื่อเปิดรูปภาพวิธีเก็บเครื่องครับ 👇",size:"sm",color:"#444444",wrap:true,margin:"sm"}]},footer:{type:"box",layout:"vertical",paddingAll:"10px",spacing:"xs",backgroundColor:"#F8F9FC",contents:[{type:"button",action:{type:"uri",label:"📷 ดูวิธีเก็บเครื่อง",uri:"https://drive.google.com/file/d/1O8eu49l3ppjgu9ULMteWaOZkTwrgvoku/view?usp=sharing"},style:"primary",color:"#2E7D32",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"},{type:"button",action:{type:"message",label:"🏠 Main Menu",text:"main_menu"},style:"secondary",height:"sm",adjustMode:"shrink-to-fit",margin:"xs"}]}}});return;}
+
   const respRow=DB_MAIN.find(r=>[1,2,3,4,5,6].some(n=>r[`btn_${n}_action`]===text));
   if(respRow){
     let rt="";
