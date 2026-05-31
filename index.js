@@ -434,19 +434,24 @@ function extractName(text){const m=text.match(/ALARM_NAME:\s*(.+)/i);return m?m[
 
 // ── ดึงภาพจาก LINE และแปลงเป็น base64 ──────────────────────────────────────
 async function imgB64(messageId) {
-  const token = (process.env.LINE_CHANNEL_ACCESS_TOKEN || "").trim();
+  const token = (process.env.LINE_CHANNEL_ACCESS_TOKEN || LINE_CFG.channelAccessToken || "").trim();
   const url = `https://api-data.line.me/v2/bot/message/${messageId}/content`;
+  console.log(`[imgB64] start msgId=${messageId} tokenLen=${token.length} url=${url}`);
   try {
     const r = await axios.get(url, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "User-Agent": "@line/bot-sdk/9.9.0",
+      },
       responseType: "arraybuffer",
       timeout: 15000,
     });
+    console.log(`[imgB64] ok size=${r.data.byteLength}`);
     return Buffer.from(r.data).toString("base64");
   } catch(e) {
     const status = e.response?.status;
-    const hint = status===404?"messageId expired/wrong":status===401?"token invalid":"network";
-    console.error(`imgB64 err ${status} (${hint}) msgId=${messageId} tokenLen=${token.length}`);
+    const body = e.response?.data ? Buffer.from(e.response.data).toString("utf8").slice(0,200) : "";
+    console.error(`[imgB64] FAIL status=${status} body=${body} tokenLen=${token.length} msgId=${messageId}`);
     throw e;
   }
 }
