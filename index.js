@@ -458,7 +458,7 @@ async function imgB64(messageId) {
 
 // ── วิเคราะห์ภาพด้วย Gemini Vision ─────────────────────────────────────────
 async function analyzeImg(b64) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
   const body = {
     contents: [{
       parts: [
