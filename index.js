@@ -434,12 +434,13 @@ function extractName(text){const m=text.match(/ALARM_NAME:\s*(.+)/i);return m?m[
 
 // ── ดึงภาพจาก LINE และแปลงเป็น base64 ──────────────────────────────────────
 async function imgB64(messageId) {
-  const url = `https://api-data.line.me/v2/bot/message/${messageId}/content`;
-  const r = await axios.get(url, {
-    headers: { Authorization: `Bearer ${LINE_CFG.channelAccessToken}` },
-    responseType: "arraybuffer",
+  const stream = await client.getMessageContent(messageId);
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on("data", chunk => chunks.push(chunk));
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("base64")));
+    stream.on("error", reject);
   });
-  return Buffer.from(r.data).toString("base64");
 }
 
 // ── วิเคราะห์ภาพด้วย Gemini Vision ─────────────────────────────────────────
