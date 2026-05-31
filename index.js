@@ -418,7 +418,7 @@ function mainMenu(){
         {type:"button",action:{type:"uri",label:"📋 Check สถานะ",uri:"https://docs.google.com/spreadsheets/d/10vDmEV9SkaDtdsj4QV1j4vbQOqHc75InnSImHGSkM1Q/edit?usp=sharing"},style:"primary",color:"#5C6BC0",height:"sm",adjustMode:"shrink-to-fit",flex:1}
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
-        {type:"button",action:{type:"message",label:"💧 Blood Recirc",text:"nss_recirculation"},style:"primary",color:"#0277BD",height:"sm",adjustMode:"shrink-to-fit",flex:1},
+        {type:"button",action:{type:"message",label:"💧 NSS Recir",text:"nss_recirculation"},style:"primary",color:"#0277BD",height:"sm",adjustMode:"shrink-to-fit",flex:1},
         
       ]},
       {type:"box",layout:"horizontal",spacing:"xs",margin:"xs",contents:[
